@@ -6,16 +6,11 @@ import { setProfileRoutes } from "./routes/profile/ProfileRoutes.js";
 import { setProfileAvatarRoutes } from "./routes/profile/ProfileAvatarRoutes.js";
 import { setTopicRoutes } from "./routes/topic/TopicRoutes.js";
 import { pinoHttpMiddleware } from "./lib/utils/Logger.js";
-import OAuthServer from "@node-oauth/express-oauth-server";
 
 dotenv.config();
 
 const app: Express = express();
 const port = process.env.PORT;
-
-app.oauth = new OAuthServer({
-  model: {},
-});
 
 app.use(pinoHttpMiddleware);
 app.use(express.json());

@@ -7,7 +7,8 @@
     "test": "psql postgresql://freeauth:freeauth@localhost:5432/freeauth -f ./tools/resetdbdevdata.sql && tsx --test",
     "testonly": "tsx --test --test-only",
     "start": "tsx",
-    "dev": "tsx watch src/server.ts"
+    "dev": "tsx watch src/server.ts",
+    "build": "tsc"
   },
   "keywords": [],
   "author": "David Choi",
