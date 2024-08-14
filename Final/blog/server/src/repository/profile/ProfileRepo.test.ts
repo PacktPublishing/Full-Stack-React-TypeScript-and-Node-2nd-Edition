@@ -8,7 +8,7 @@ import { SortOrder } from "../lib/Constants.js";
 
 const repo = new Repository();
 
-describe("ProfileRepo calls", () => {
+describe("Repository Profile", () => {
   it("insertProfile creates a new profile", async () => {
     let avatar: Buffer | undefined = getAvatar();
     let userName = faker.internet.userName();

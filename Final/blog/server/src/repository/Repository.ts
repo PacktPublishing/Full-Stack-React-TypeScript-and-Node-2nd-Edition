@@ -1,4 +1,4 @@
-import { PrismaClient, ProfileAvatar } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { WorkRepo } from "./work/WorkRepo.js";
 import { ProfileRepo } from "./profile/ProfileRepo.js";
 import { TopicRepo } from "./topic/TopicRepo.js";
@@ -8,7 +8,7 @@ import { WorkResponseRepo } from "./work/workResponse/WorkResponseRepo.js";
 import { WorkTopicRepo } from "./work/workTopic/WorkTopicRepo.js";
 import { WorkLikesRepo } from "./work/workLikes/WorkLikesRepo.js";
 import { WorkImageRepo } from "./work/workImage/WorkImageRepo.js";
-import { ProfileAvatarRepo } from "./profile/ProfileImage/ProfileAvatarRepo.js";
+import { ProfileAvatarRepo } from "./profile/ProfileAvatarRepo.js";
 
 export class Repository {
   #client: PrismaClient;
@@ -78,7 +78,6 @@ export class Repository {
 
   constructor() {
     this.#client = new PrismaClient();
-
     this.#workImage = new WorkImageRepo(this.#client);
     this.#work = new WorkRepo(this.#client, this.#workImage);
     this.#workResp = new WorkResponseRepo();
