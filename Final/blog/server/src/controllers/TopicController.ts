@@ -1,6 +1,6 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { repo } from "../routes/RepoInstance";
-import { serializeBigInt } from "../repository/lib/JsonUtils";
+import { serializeBigInt } from "common";
 
 export const getAllTopics: RequestHandler = async (
   req: Request,

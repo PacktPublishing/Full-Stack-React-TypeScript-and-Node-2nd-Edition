@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from "express";
 import { repo } from "../routes/RepoInstance";
-import { serializeBigInt } from "../repository/lib/JsonUtils";
+import { serializeBigInt } from "common";
 
 export const getProfileAvatar: RequestHandler = async (
   req: Request,

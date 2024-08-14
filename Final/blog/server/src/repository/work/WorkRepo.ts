@@ -1,7 +1,7 @@
 import { Prisma, PrismaClient } from "@prisma/client";
 import { WorkImageRepo } from "./workImage/WorkImageRepo.js";
 import { WorkImageItem } from "./workImage/WorkImage.js";
-import { PAGE_SIZE, SortOrder } from "../lib/utils.js";
+import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 
 export class WorkRepo {

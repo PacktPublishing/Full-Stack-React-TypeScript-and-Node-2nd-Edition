@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { PAGE_SIZE, SortOrder } from "../lib/utils.js";
+import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
 
 export class ProfileRepo {
   #client: PrismaClient;

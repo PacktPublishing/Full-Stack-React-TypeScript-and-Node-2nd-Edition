@@ -4,7 +4,7 @@ import { getAvatar } from "../../__test__/avatar.js";
 import { Repository } from "../Repository.js";
 import assert from "node:assert";
 import { Profile, Work } from "@prisma/client";
-import { SortOrder } from "../lib/utils.js";
+import { SortOrder } from "../lib/Constants.js";
 
 const repo = new Repository();
 

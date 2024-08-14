@@ -1,9 +1,9 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
-import { serializeBigInt } from "../../repository/lib/JsonUtils";
+import { serializeBigInt } from "common";
 import { repo } from "../../routes/RepoInstance";
 import { PopularWorkParameter } from "./WorkModels";
 import { logger } from "../../lib/utils/Logger";
-import { PAGE_SIZE } from "../../repository/lib/utils";
+import { PAGE_SIZE } from "../../repository/lib/Constants";
 
 export const getWork: RequestHandler = async (
   req: Request,

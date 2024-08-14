@@ -3,7 +3,7 @@ import assert from "node:assert";
 import { Repository } from "../Repository.js";
 import { faker } from "@faker-js/faker";
 import { getAvatar } from "../../__test__/avatar.js";
-import { SortOrder } from "../lib/utils.js";
+import { SortOrder } from "../lib/Constants.js";
 
 const repo = new Repository();
 

@@ -14,7 +14,7 @@ RUN curl -sL https://deb.nodesource.com/setup_22.x | bash -
 RUN apt-get install -y nodejs
 
 ENV NODE_ENV=production
-WORKDIR /usr/src/fsrtn
+WORKDIR /usr/fsrtn
 COPY package.json ./
 COPY prisma ./prisma
 COPY src ./src

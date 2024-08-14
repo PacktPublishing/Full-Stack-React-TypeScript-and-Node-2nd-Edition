@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { SortOrder } from "../lib/utils.js";
+import { SortOrder } from "../lib/Constants.js";
 
 export class TopicRepo {
   #client: PrismaClient;
