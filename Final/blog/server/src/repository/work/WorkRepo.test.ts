@@ -31,7 +31,7 @@ describe("Work tests", () => {
       description,
       content,
       author.id,
-      [BigInt(topic.id)]
+      [topic.id]
     );
 
     const workTopics = await repo.WorkTopic.selectWorkTopicsByWork(work.id);

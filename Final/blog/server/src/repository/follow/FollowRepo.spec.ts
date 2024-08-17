@@ -58,7 +58,6 @@ describe("Repository Follow", () => {
 
     const followersSelected = await repo.Follow.selectFollowers(followed.id);
     const selectedIds = followersSelected.map((item) => item.id);
-    console.log("selectedIds", selectedIds);
     assert.equal(followersSelected.length, 3);
     assert.equal(selectedIds.includes(followerIds[0]), true);
     assert.equal(selectedIds.includes(followerIds[1]), true);
@@ -93,7 +92,6 @@ describe("Repository Follow", () => {
 
     const followedSelected = await repo.Follow.selectFollowing(follower.id);
     const selectedIds = followedSelected.map((item) => item.id);
-    console.log("selectedIds", selectedIds);
     assert.equal(followedSelected.length, 3);
     assert.equal(selectedIds.includes(followedIds[0]), true);
     assert.equal(selectedIds.includes(followedIds[1]), true);
