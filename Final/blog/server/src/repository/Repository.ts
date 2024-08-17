@@ -86,8 +86,8 @@ export class Repository {
     this.#profile = new ProfileRepo(this.#client);
     this.#profileAvatar = new ProfileAvatarRepo(this.#client);
     this.#topic = new TopicRepo(this.#client);
-    this.#likes = new LikeRepo();
-    this.#follow = new FollowRepo();
+    this.#likes = new LikeRepo(this.#client);
+    this.#follow = new FollowRepo(this.#client);
   }
 
   async close() {

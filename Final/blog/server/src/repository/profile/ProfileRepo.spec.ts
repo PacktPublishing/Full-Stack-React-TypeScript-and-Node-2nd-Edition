@@ -9,7 +9,7 @@ import { SortOrder } from "../lib/Constants.js";
 const repo = new Repository();
 
 describe("Repository Profile", () => {
-  it("insertProfile creates a new profile", async () => {
+  it("Create a profile and confirm its fields", async () => {
     let avatar: Buffer | undefined = getAvatar();
     let userName = faker.internet.userName();
     let fullName = faker.internet.displayName();
@@ -37,7 +37,7 @@ describe("Repository Profile", () => {
     assert.notEqual(author.avatarId, null);
   });
 
-  it("selectMostPopularAuthors() gives 10 profiles with descending work likes", async () => {
+  it("Create 10 Profiles with likes", async () => {
     const count = 10;
     const authors: Profile[] = new Array(count);
     const works: Work[] = new Array(count);
@@ -99,7 +99,7 @@ describe("Repository Profile", () => {
     assert.equal(popAuthors[9].id, rawPopAuthors[9].id);
   });
 
-  it("selectProfileAvatar returns one avatar image", async () => {
+  it("Create Profile; get it back; and confirm its avatar", async () => {
     const avatar = getAvatar();
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
