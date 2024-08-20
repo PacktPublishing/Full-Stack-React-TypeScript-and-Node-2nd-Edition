@@ -8,6 +8,7 @@ import { WorkTopicRepo } from "./work/workTopic/WorkTopicRepo.js";
 import { WorkLikesRepo } from "./work/workLikes/WorkLikesRepo.js";
 import { WorkImageRepo } from "./work/workImage/WorkImageRepo.js";
 import { ProfileAvatarRepo } from "./profile/ProfileAvatarRepo.js";
+import { WorkResponseLikeRepo } from "./work/workResponseLike/WorkResponseLikeRepo.js";
 
 export class Repository {
   #client: PrismaClient;
@@ -37,6 +38,12 @@ export class Repository {
   get WorkResp() {
     if (!this.#workResp) throw new Error("workResp is undefined");
     return this.#workResp;
+  }
+
+  #workRespLike: WorkResponseLikeRepo;
+  get WorkRespLike() {
+    if (!this.#workRespLike) throw new Error("workRespLike is undefined");
+    return this.#workRespLike;
   }
 
   #workTopic: WorkTopicRepo;
@@ -73,7 +80,8 @@ export class Repository {
     this.#client = new PrismaClient();
     this.#workImage = new WorkImageRepo(this.#client);
     this.#work = new WorkRepo(this.#client, this.#workImage);
-    this.#workResp = new WorkResponseRepo();
+    this.#workResp = new WorkResponseRepo(this.#client);
+    this.#workRespLike = new WorkResponseLikeRepo(this.#client);
     this.#workTopic = new WorkTopicRepo(this.#client);
     this.#workLikes = new WorkLikesRepo(this.#client);
     this.#profile = new ProfileRepo(this.#client);

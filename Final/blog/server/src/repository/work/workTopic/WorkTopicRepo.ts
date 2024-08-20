@@ -8,6 +8,15 @@ export class WorkTopicRepo {
     this.#client = client;
   }
 
+  async insertWorkTopic(workId: bigint, topicId: bigint) {
+    return this.#client.workTopic.create({
+      data: {
+        workId,
+        topicId,
+      },
+    });
+  }
+
   async selectWorkTopicsByWork(workId: bigint) {
     return this.#client.workTopic.findMany({
       where: {

@@ -9,17 +9,6 @@ export class WorkImageRepo {
     this.#client = client;
   }
 
-  async selectWorkImage(workId: bigint, placeholder: string) {
-    return this.#client.workImage.findFirst({
-      where: {
-        workId: {
-          equals: workId,
-        },
-        imagePlaceholder: placeholder,
-      },
-    });
-  }
-
   async insertWorkImages(
     images: WorkImageItem[] | undefined,
     workId: bigint,
@@ -48,5 +37,16 @@ export class WorkImageRepo {
       }
       await Promise.all(workImagesTask);
     }
+  }
+
+  async selectWorkImage(workId: bigint, placeholder: string) {
+    return this.#client.workImage.findFirst({
+      where: {
+        workId: {
+          equals: workId,
+        },
+        imagePlaceholder: placeholder,
+      },
+    });
   }
 }

@@ -67,7 +67,7 @@ describe("Work tests", () => {
       description,
       content,
       author.id,
-      [BigInt(topic.id)]
+      [topic.id]
     );
 
     const updateTitle = faker.lorem.sentence(5);
@@ -79,7 +79,7 @@ describe("Work tests", () => {
       updateTitle,
       updateDesc,
       updateContent,
-      [BigInt(topic.id), BigInt(updateTopic.id)]
+      [topic.id, updateTopic.id]
     );
     const updatedWork = await repo.Work.selectWork(work.id);
 
@@ -121,7 +121,7 @@ describe("Work tests", () => {
       description,
       content,
       author.id,
-      [BigInt(topic.id)],
+      [topic.id],
       [
         {
           imagePlaceholder: imagePlaceholder,
@@ -168,7 +168,7 @@ describe("Work tests", () => {
       description,
       content,
       author.id,
-      [BigInt(topic.id)]
+      [topic.id]
     );
     await repo.WorkLikes.insertWorkLike(newWork.id, author.id);
 
