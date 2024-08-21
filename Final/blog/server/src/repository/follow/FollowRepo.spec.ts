@@ -90,7 +90,7 @@ describe("Repository Follow", () => {
       await repo.Follow.insertFollow(followed.id, follower.id);
     }
 
-    const followedSelected = await repo.Follow.selectFollowing(follower.id);
+    const followedSelected = await repo.Follow.selectFollowed(follower.id);
     const selectedIds = followedSelected.map((item) => item.id);
     assert.equal(followedSelected.length, 3);
     assert.equal(selectedIds.includes(followedIds[0]), true);

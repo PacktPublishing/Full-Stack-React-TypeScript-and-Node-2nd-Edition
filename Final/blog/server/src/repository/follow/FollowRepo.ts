@@ -40,7 +40,7 @@ export class FollowRepo {
     ).map((item) => item.follower);
   }
 
-  async selectFollowing(profileId: bigint) {
+  async selectFollowed(profileId: bigint) {
     return (
       await this.#client.follow.findMany({
         select: {
