@@ -22,17 +22,15 @@ export class FollowRepo {
     pageSize: number,
     lastCursor?: bigint
   ) {
-    const skip = lastCursor ? 1 : 0;
-    const cursor = lastCursor
-      ? {
-          id: lastCursor,
-        }
-      : undefined;
     return (
       await this.#client.follow.findMany({
         take: pageSize,
-        skip,
-        cursor,
+        skip: lastCursor ? 1 : 0,
+        cursor: lastCursor
+          ? {
+              id: lastCursor,
+            }
+          : undefined,
         select: {
           id: true,
           follower: {
@@ -77,6 +75,7 @@ export class FollowRepo {
             }
           : undefined,
         select: {
+          id: true,
           followed: {
             select: {
               id: true,
@@ -96,6 +95,11 @@ export class FollowRepo {
           id: SortOrder.Desc,
         },
       })
-    ).map((item) => item.followed);
+    ).map((item) => {
+      return {
+        followId: item.id,
+        ...item.followed,
+      };
+    });
   }
 }

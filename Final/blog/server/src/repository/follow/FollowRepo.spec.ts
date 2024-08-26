@@ -67,44 +67,53 @@ describe("Repository Follow", () => {
       5,
       lastCursor
     );
+    assert.equal(nextFive[0].followId, all[5].followId);
     assert.equal(
       nextFive[nextFive.length - 1].followId,
       all[all.length - 1].followId
     );
-    assert.equal(nextFive[0].followId, all[5].followId);
   });
 
-  // it("Create new following and get them all back", async () => {
-  //   const follower = await repo.Profile.insertProfile(
-  //     faker.internet.userName(),
-  //     faker.internet.displayName(),
-  //     faker.lorem.sentence(5),
-  //     faker.lorem.sentence(6),
-  //     faker.internet.url(),
-  //     faker.internet.url(),
-  //     getAvatar()
-  //   );
+  it("Create new following and get them all back", async () => {
+    const follower = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(5),
+      faker.lorem.sentence(6),
+      faker.internet.url(),
+      faker.internet.url(),
+      getAvatar()
+    );
 
-  //   const followedIds: bigint[] = new Array(3);
-  //   for (let i = 0; i < 3; i++) {
-  //     const followed = await repo.Profile.insertProfile(
-  //       faker.internet.userName(),
-  //       faker.internet.displayName(),
-  //       faker.lorem.sentence(5),
-  //       faker.lorem.sentence(6),
-  //       faker.internet.url(),
-  //       faker.internet.url(),
-  //       getAvatar()
-  //     );
-  //     followedIds[i] = followed.id;
-  //     await repo.Follow.insertFollow(followed.id, follower.id);
-  //   }
+    const followedCount = 10;
+    const followedIds: bigint[] = new Array(followedCount);
+    for (let i = 0; i < followedCount; i++) {
+      const followed = await repo.Profile.insertProfile(
+        faker.internet.userName(),
+        faker.internet.displayName(),
+        faker.lorem.sentence(5),
+        faker.lorem.sentence(6),
+        faker.internet.url(),
+        faker.internet.url(),
+        getAvatar()
+      );
+      followedIds[i] = followed.id;
+      await repo.Follow.insertFollow(followed.id, follower.id);
+    }
 
-  //   const followedSelected = await repo.Follow.selectFollowed(follower.id);
-  //   const selectedIds = followedSelected.map((item) => item.id);
-  //   assert.equal(followedSelected.length, 3);
-  //   assert.equal(selectedIds.includes(followedIds[0]), true);
-  //   assert.equal(selectedIds.includes(followedIds[1]), true);
-  //   assert.equal(selectedIds.includes(followedIds[2]), true);
-  // });
+    const all = await repo.Follow.selectFollowed(follower.id, 10);
+    const firstFive = await repo.Follow.selectFollowed(follower.id, 5);
+    const lastCursor = firstFive[firstFive.length - 1].followId;
+
+    const nextFive = await repo.Follow.selectFollowed(
+      follower.id,
+      5,
+      lastCursor
+    );
+    assert.equal(nextFive[0].followId, all[5].followId);
+    assert.equal(
+      nextFive[nextFive.length - 1].followId,
+      all[all.length - 1].followId
+    );
+  });
 });
