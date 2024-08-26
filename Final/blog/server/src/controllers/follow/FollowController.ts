@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import { repo } from "../../routes/RepoInstance";
-import { FollowParams } from "./FollowModels";
+import { FollowParams, PagedProfileBody } from "./FollowModels";
 import { serializeBigInt } from "common/src/JsonUtils";
 
 export async function createFollow(
@@ -28,10 +28,14 @@ export async function getFollowers(
   next: NextFunction
 ) {
   try {
-    const profileId = BigInt(req.params.id);
+    const { profileId, pageSize, lastCursor }: PagedProfileBody = req.body;
     res
       .status(200)
-      .json(serializeBigInt(await repo.Follow.selectFollowers(profileId)));
+      .json(
+        serializeBigInt(
+          await repo.Follow.selectFollowers(profileId, pageSize, lastCursor)
+        )
+      );
   } catch (e) {
     next(e);
   }
@@ -43,10 +47,14 @@ export async function getFollowed(
   next: NextFunction
 ) {
   try {
-    const profileId = BigInt(req.params.id);
+    const { profileId, pageSize, lastCursor }: PagedProfileBody = req.body;
     res
       .status(200)
-      .json(serializeBigInt(await repo.Follow.selectFollowed(profileId)));
+      .json(
+        serializeBigInt(
+          await repo.Follow.selectFollowed(profileId, pageSize, lastCursor)
+        )
+      );
   } catch (e) {
     next(e);
   }

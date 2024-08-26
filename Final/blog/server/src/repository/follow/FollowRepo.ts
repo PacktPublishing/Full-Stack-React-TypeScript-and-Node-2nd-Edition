@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { SortOrder } from "../lib/Constants";
 
 export class FollowRepo {
   #client: PrismaClient;
@@ -16,10 +17,24 @@ export class FollowRepo {
     });
   }
 
-  async selectFollowers(profileId: bigint) {
+  async selectFollowers(
+    profileId: bigint,
+    pageSize: number,
+    lastCursor?: bigint
+  ) {
+    const skip = lastCursor ? 1 : 0;
+    const cursor = lastCursor
+      ? {
+          id: lastCursor,
+        }
+      : undefined;
     return (
       await this.#client.follow.findMany({
+        take: pageSize,
+        skip,
+        cursor,
         select: {
+          id: true,
           follower: {
             select: {
               id: true,
@@ -29,20 +44,38 @@ export class FollowRepo {
               description: true,
               socialLinkPrimary: true,
               socialLinkSecondary: true,
-              avatar: true,
             },
           },
         },
         where: {
           followedId: profileId,
         },
+        orderBy: {
+          id: SortOrder.Desc,
+        },
       })
-    ).map((item) => item.follower);
+    ).map((item) => {
+      return {
+        followId: item.id,
+        ...item.follower,
+      };
+    });
   }
 
-  async selectFollowed(profileId: bigint) {
+  async selectFollowed(
+    profileId: bigint,
+    pageSize: number,
+    lastCursor?: bigint
+  ) {
     return (
       await this.#client.follow.findMany({
+        take: pageSize,
+        skip: lastCursor ? 1 : 0,
+        cursor: lastCursor
+          ? {
+              id: lastCursor,
+            }
+          : undefined,
         select: {
           followed: {
             select: {
@@ -53,12 +86,14 @@ export class FollowRepo {
               description: true,
               socialLinkPrimary: true,
               socialLinkSecondary: true,
-              avatar: true,
             },
           },
         },
         where: {
           followerId: profileId,
+        },
+        orderBy: {
+          id: SortOrder.Desc,
         },
       })
     ).map((item) => item.followed);

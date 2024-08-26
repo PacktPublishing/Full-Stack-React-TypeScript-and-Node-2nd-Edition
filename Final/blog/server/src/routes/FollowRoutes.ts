@@ -8,7 +8,7 @@ import {
 const router = Router();
 
 router.post("/follow", createFollow);
-router.get("/follow/followers", getFollowers);
-router.get("/follow/followed", getFollowed);
+router.post("/follow/followers", getFollowers);
+router.post("/follow/followed", getFollowed);
 
 export default router;
