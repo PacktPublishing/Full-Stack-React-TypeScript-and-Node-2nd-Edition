@@ -1,6 +1,6 @@
 import express, { Express } from "express";
 import { pinoHttpMiddleware } from "./lib/utils/Logger";
-import profileRoutes from "./routes/ProfileRoutes";
+import profileRoutes from "./routes/Profile/ProfileRoutes";
 import workRoutes from "./routes/WorkRoutes";
 import followRoutes from "./routes/FollowRoutes";
 

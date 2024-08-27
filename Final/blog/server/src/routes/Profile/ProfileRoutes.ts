@@ -2,7 +2,7 @@ import { Router } from "express";
 import {
   getMostPopularAuthors,
   getProfileAvatar,
-} from "../controllers/ProfileController";
+} from "../../controllers/ProfileController";
 
 const router = Router();
 
