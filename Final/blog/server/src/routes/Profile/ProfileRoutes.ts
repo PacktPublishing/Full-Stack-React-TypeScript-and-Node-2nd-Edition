@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  createProfile,
   createProfileAvatar,
   getMostPopularAuthors,
   getProfileAvatar,
@@ -13,6 +14,7 @@ const router = Router();
 
 router.post("/profile/avatar/new", upload.single("file"), createProfileAvatar);
 router.get("/profile/avatar/:avatarId", getProfileAvatar);
-router.post("/profile/popular", getMostPopularAuthors);
+router.post("/profile/new", upload.single("file"), createProfile);
+router.get("/profile/popular", getMostPopularAuthors);
 
 export default router;
