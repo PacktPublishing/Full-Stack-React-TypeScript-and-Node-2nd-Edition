@@ -4,7 +4,6 @@ export type Profile = {
   username: string;
   fullname: string;
   description: string;
-  ownerAddress: string;
   socialLinkPrimary: string;
   socialLinkSecond: string;
 };

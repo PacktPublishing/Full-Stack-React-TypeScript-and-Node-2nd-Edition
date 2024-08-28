@@ -56,7 +56,6 @@ export function ConnectCreateProfile({
                 username: ownersProfile.userName,
                 fullname: ownersProfile.fullName,
                 description: ownersProfile.description,
-                ownerAddress: ownersProfile.ownerAddress,
                 socialLinkPrimary: ownersProfile.socialLinkPrimary || "",
                 socialLinkSecond: ownersProfile.socialLinkSecond || "",
               });

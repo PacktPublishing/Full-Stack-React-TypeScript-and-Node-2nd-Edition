@@ -12,7 +12,6 @@ export class ProfileRepo {
     userName: string,
     fullName: string,
     description: string,
-    ownerAddress: string,
     socialLinkPrimary: string | undefined,
     socialLinkSecondary: string | undefined,
     avatar: Buffer | undefined
@@ -33,7 +32,6 @@ export class ProfileRepo {
           userName,
           fullName,
           description,
-          ownerAddress,
           socialLinkPrimary,
           socialLinkSecondary,
           avatarId,

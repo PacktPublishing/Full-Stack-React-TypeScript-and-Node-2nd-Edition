@@ -41,7 +41,6 @@ export class Profile implements UiEntity {
     public userName: string,
     public fullName: string,
     public description: string,
-    public ownerAddress: string,
     public socialLinkPrimary: string | undefined,
     public socialLinkSecond: string | undefined
   ) {}

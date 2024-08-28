@@ -4,8 +4,8 @@ services:
   fsrtn-api:
     image: fsrtn
     build:
-      context: ../../server
-      dockerfile: ../deploy/dev/Dockerfile
+      context: ../../../blog
+      dockerfile: ./deploy/dev/Dockerfile
     depends_on:
       - fsrtn-db
     env_file: ../../server/.env.dev
@@ -17,4 +17,4 @@ services:
       - 5432:5432
     env_file: ../../server/.env.dev
     volumes:
-      - ./dbdata:/var/lib/postgresql/data
+      - ../../server/dbdata:/var/lib/postgresql/data

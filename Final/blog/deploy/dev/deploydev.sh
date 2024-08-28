@@ -9,7 +9,7 @@ else
   echo "Stopping and removing containers using images: $db_name, $api_name"
   docker stop $container_ids
   docker rm $container_ids
-  rm -rf dbdata
+  rm -rf ../../server/dbdata
 fi
 
 echo "build new images"

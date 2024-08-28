@@ -14,7 +14,6 @@ describe("Repository Profile", () => {
     let userName = faker.internet.userName();
     let fullName = faker.internet.displayName();
     let desc = faker.lorem.sentence(5);
-    let ownerAddress = faker.lorem.sentence(6);
     let primaryUrl = faker.internet.url();
     let secondaryUrl = faker.internet.url();
 
@@ -22,7 +21,6 @@ describe("Repository Profile", () => {
       userName,
       fullName,
       desc,
-      ownerAddress,
       primaryUrl,
       secondaryUrl,
       avatar
@@ -31,7 +29,6 @@ describe("Repository Profile", () => {
     assert.equal(author.userName, userName);
     assert.equal(author.fullName, fullName);
     assert.equal(author.description, desc);
-    assert.equal(author.ownerAddress, ownerAddress);
     assert.equal(author.socialLinkPrimary, primaryUrl);
     assert.equal(author.socialLinkSecondary, secondaryUrl);
     assert.notEqual(author.avatarId, null);
@@ -47,7 +44,6 @@ describe("Repository Profile", () => {
         faker.internet.userName(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
-        faker.lorem.sentence(6),
         faker.internet.url(),
         faker.internet.url(),
         getAvatar()
@@ -105,7 +101,6 @@ describe("Repository Profile", () => {
       faker.internet.userName(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar

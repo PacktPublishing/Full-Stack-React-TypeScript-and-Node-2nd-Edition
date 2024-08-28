@@ -31,7 +31,6 @@ CREATE TABLE "Profile" (
     "userName" VARCHAR(50) NOT NULL,
     "fullName" VARCHAR(100) NOT NULL,
     "description" VARCHAR(250),
-    "ownerAddress" VARCHAR(150) NOT NULL,
     "socialLinkPrimary" VARCHAR(250),
     "socialLinkSecondary" VARCHAR(250),
     "avatarId" BIGINT,

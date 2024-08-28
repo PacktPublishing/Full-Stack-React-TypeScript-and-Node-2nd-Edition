@@ -92,7 +92,6 @@ for (let i = 0; i < 10; i++) {
       userName: faker.internet.userName(),
       fullName: faker.internet.displayName(),
       description: faker.lorem.sentences(2),
-      ownerAddress: faker.lorem.sentence(6),
       socialLinkPrimary: faker.internet.url(),
       socialLinkSecondary: faker.internet.url(),
       avatarId: avatara.id,

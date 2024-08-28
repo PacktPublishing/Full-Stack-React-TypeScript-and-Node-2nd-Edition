@@ -15,9 +15,12 @@ RUN apt-get install -y nodejs
 
 ENV NODE_ENV=production
 WORKDIR /usr/fsrtn
-COPY package.json ./
-COPY prisma ./prisma
-COPY src ./src
+COPY common/ ./common/
+WORKDIR /usr/fsrtn/server
+COPY server/package.json ./
+COPY server/prisma ./prisma
+COPY server/src ./src
+
 
 # execute
 CMD npm i && \

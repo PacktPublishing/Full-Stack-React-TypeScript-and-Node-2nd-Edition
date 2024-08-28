@@ -24,6 +24,7 @@ RUN apt-get install -y nginx
 ENV NODE_ENV=production
 WORKDIR /usr/src/blog
 COPY client/ ./client/
+COPY common/ ./common/
 COPY server/package.json ./server
 COPY server/prisma ./server/prisma
 COPY server/src ./server/src

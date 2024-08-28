@@ -45,7 +45,6 @@ model Profile {
   userName              String              @unique @db.VarChar(50)
   fullName              String              @db.VarChar(100)
   description           String?             @db.VarChar(250)
-  ownerAddress          String              @db.VarChar(150)
   socialLinkPrimary     String?             @db.VarChar(250)
   socialLinkSecondary   String?             @db.VarChar(250)
   avatar                ProfileAvatar?      @relation(fields: [avatarId], references: [id])

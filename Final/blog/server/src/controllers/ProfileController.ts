@@ -62,7 +62,6 @@ export const createProfile: RequestHandler = async (
       userName,
       fullName,
       description,
-      "",
       socialLinkPrimary,
       socialLinkSecondary,
       req.file?.buffer

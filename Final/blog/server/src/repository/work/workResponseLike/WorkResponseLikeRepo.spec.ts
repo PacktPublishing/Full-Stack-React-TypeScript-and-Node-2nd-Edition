@@ -13,7 +13,6 @@ describe("Repository WorkResponseLike", () => {
       faker.internet.userName(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       getAvatar()
@@ -37,7 +36,6 @@ describe("Repository WorkResponseLike", () => {
       faker.internet.userName(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       getAvatar()

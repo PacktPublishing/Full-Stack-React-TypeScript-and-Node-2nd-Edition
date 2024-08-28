@@ -18,7 +18,6 @@ describe("Work tests", () => {
       faker.internet.userName(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar
@@ -54,7 +53,6 @@ describe("Work tests", () => {
       faker.internet.userName(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar
@@ -107,7 +105,6 @@ describe("Work tests", () => {
       faker.internet.userName(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar
@@ -157,7 +154,6 @@ describe("Work tests", () => {
       userName,
       fullName,
       desc,
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar
@@ -192,7 +188,6 @@ describe("Work tests", () => {
       userName,
       fullName,
       desc,
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar
@@ -244,7 +239,6 @@ describe("Work tests", () => {
       userName,
       fullName,
       desc,
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar
@@ -304,7 +298,6 @@ describe("Work tests", () => {
       userName,
       fullName,
       desc,
-      faker.lorem.sentence(6),
       faker.internet.url(),
       faker.internet.url(),
       avatar

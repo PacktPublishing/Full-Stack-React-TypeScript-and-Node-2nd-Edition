@@ -229,7 +229,6 @@ export function ProfileForm({
         username: profile.userName,
         fullname: profile.fullName,
         description: profile.description,
-        ownerAddress: profile.ownerAddress,
         socialLinkPrimary: profile.socialLinkPrimary || "",
         socialLinkSecond: profile.socialLinkSecond || "",
       });
@@ -281,7 +280,6 @@ export function ProfileForm({
         username: profile.userName,
         fullname: profile.fullName,
         description: profile.description,
-        ownerAddress: profile.ownerAddress,
         socialLinkPrimary: profile.socialLinkPrimary || "",
         socialLinkSecond: profile.socialLinkSecond || "",
       });
