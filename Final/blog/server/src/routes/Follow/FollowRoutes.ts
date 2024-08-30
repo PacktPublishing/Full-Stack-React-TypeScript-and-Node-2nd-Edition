@@ -3,7 +3,7 @@ import {
   createFollow,
   getFollowed,
   getFollowers,
-} from "../controllers/follow/FollowController";
+} from "../../controllers/follow/FollowController";
 
 const router = Router();
 

@@ -1,12 +1,12 @@
 import { describe, it } from "node:test";
 import request from "supertest";
-import app from "../app";
+import app from "../../app";
 import assert from "node:assert";
-import { repo } from "./RepoInstance";
+import { repo } from "../RepoInstance";
 import { faker } from "@faker-js/faker";
-import { getAvatar } from "../__test__/avatar";
+import { getAvatar } from "../../__test__/avatar";
 import { serializeBigInt } from "common/src/JsonUtils";
-import { ProfileModel } from "./Profile/ProfileModel";
+import { ProfileModel } from "../Profile/ProfileModel";
 
 describe("POST /follow", () => {
   it("should return status code 200", async () => {
