@@ -9,6 +9,7 @@ export class WorkImageRepo {
     this.#client = client;
   }
 
+  /// this function is not exposeed as api route
   async insertWorkImages(
     images: WorkImageItem[] | undefined,
     workId: bigint,
