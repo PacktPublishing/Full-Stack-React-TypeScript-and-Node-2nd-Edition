@@ -1,14 +1,15 @@
 import { describe, it } from "node:test";
-import assert from "node:assert";
-import request from "supertest";
 import app from "../../app";
+import request from "supertest";
 import { repo } from "../RepoInstance";
-import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
-import { avatars } from "../../__test__/avatar";
 import { faker } from "@faker-js/faker";
+import { avatars } from "../../__test__/avatar";
+import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
+import { serializeBigInt } from "common";
+import assert from "node:assert";
 
-describe("GET /work_image/:workId/:placeholder", () => {
-  it("get work image", async () => {
+describe("POST /work_like/new", () => {
+  it("create work like", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
       faker.internet.displayName(),
@@ -19,12 +20,6 @@ describe("GET /work_image/:workId/:placeholder", () => {
     );
     const topic = await repo.Topic.insertTopic(faker.company.name());
     const workImages: WorkImageItem[] = [];
-    for (let i = 0; i < 2; i++) {
-      workImages.push({
-        imagePlaceholder: `${i}`,
-        image: avatars[i],
-      });
-    }
     const work = await repo.Work.insertWork(
       faker.lorem.sentence(1),
       faker.lorem.sentence(3),
@@ -35,11 +30,16 @@ describe("GET /work_image/:workId/:placeholder", () => {
     );
 
     await request(app)
-      .get(`/work_image/${work.id}/0`)
-      .expect("Content-Type", "application/octet-stream")
+      .post("/work_like/new")
+      .send({
+        workId: serializeBigInt(work.id),
+        likerId: serializeBigInt(profile.id),
+      })
+      .expect("Content-Type", /json/)
       .expect(200)
-      .then((res) => {
-        assert.deepStrictEqual(res.body, avatars[0]);
+      .then(async (res) => {
+        const workLikes = await repo.WorkLikes.selectWorkLikes(work.id);
+        assert.equal(workLikes.length > 0, true);
       });
   });
 });

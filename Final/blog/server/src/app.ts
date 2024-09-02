@@ -5,6 +5,7 @@ import workRoutes from "./routes/Work/WorkRoutes";
 import topicRoutes from "./routes/Topic/TopicRoutes";
 import followRoutes from "./routes/Follow/FollowRoutes";
 import workImageRoutes from "./routes/Work/WorkImageRoutes";
+import workLikesRoutes from "./routes/Work/WorkLikesRoutes";
 
 const app: Express = express();
 
@@ -14,6 +15,7 @@ app.use(pinoHttpMiddleware);
 app.use(profileRoutes);
 app.use(workRoutes);
 app.use(workImageRoutes);
+app.use(workLikesRoutes);
 app.use(topicRoutes);
 app.use(followRoutes);
 

@@ -2,7 +2,6 @@ import { describe, it } from "node:test";
 import request from "supertest";
 import app from "../../app";
 import { faker } from "@faker-js/faker";
-import { serializeBigInt } from "common/src/JsonUtils";
 import assert from "node:assert";
 
 describe("POST /topic/new", () => {
