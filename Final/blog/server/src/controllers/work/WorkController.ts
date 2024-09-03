@@ -1,9 +1,63 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { serializeBigInt } from "common";
 import { repo } from "../../routes/RepoInstance";
-import { PopularWorkParameter } from "./WorkModels";
+import { CreateWorkParams, PopularWorkParams } from "./WorkModels";
 import { logger } from "../../lib/utils/Logger";
 import { PAGE_SIZE } from "../../repository/lib/Constants";
+import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
+
+export const createWork: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let {
+      title,
+      description,
+      content,
+      authorId,
+      topicIds,
+      images,
+    }: CreateWorkParams = req.body;
+    const workImages: WorkImageItem[] = [];
+    if (req.files) {
+      if (Array.isArray(req.files)) {
+        for (let i = 0; i < req.files.length; i++) {
+          workImages.push({
+            imagePlaceholder: images![i]["imagePlaceholder"],
+            image: req.files[i].buffer,
+          });
+        }
+      } else if (typeof req.files === "object") {
+        const files = req.files["images"];
+        for (let i = 0; i < files.length; i++) {
+          workImages.push({
+            imagePlaceholder: images![i]["imagePlaceholder"],
+            image: files[i].buffer,
+          });
+        }
+      }
+    }
+
+    res
+      .status(200)
+      .json(
+        serializeBigInt(
+          await repo.Work.insertWork(
+            title,
+            description,
+            content,
+            authorId,
+            topicIds,
+            workImages
+          )
+        )
+      );
+  } catch (e) {
+    next(e);
+  }
+};
 
 export const getWork: RequestHandler = async (
   req: Request,
@@ -25,7 +79,7 @@ export const getPopularWork: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { topicId, pageSize, cursor }: PopularWorkParameter = req.body;
+    const { topicId, pageSize, cursor }: PopularWorkParams = req.body;
     logger.info(
       "topicId, pageSize, cursor",
       req.body,

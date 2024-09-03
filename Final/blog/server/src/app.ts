@@ -9,7 +9,7 @@ import workLikesRoutes from "./routes/Work/WorkLikesRoutes";
 
 const app: Express = express();
 
-app.use(express.json());
+app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 app.use(pinoHttpMiddleware);
 app.use(profileRoutes);
