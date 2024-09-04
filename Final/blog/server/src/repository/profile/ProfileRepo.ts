@@ -19,7 +19,7 @@ export class ProfileRepo {
     return await this.#client.$transaction(async (tx) => {
       let avatarId: bigint | undefined;
       if (avatar) {
-        const avatarResult = await this.#client.profileAvatar.create({
+        const avatarResult = await tx.profileAvatar.create({
           data: {
             avatar,
           },
@@ -27,7 +27,7 @@ export class ProfileRepo {
         avatarId = avatarResult.id;
       }
 
-      return await this.#client.profile.create({
+      return await tx.profile.create({
         data: {
           userName,
           fullName,
