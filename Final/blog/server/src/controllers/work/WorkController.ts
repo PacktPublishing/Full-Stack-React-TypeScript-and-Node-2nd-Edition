@@ -44,14 +44,16 @@ export const createWork: RequestHandler = async (
       .status(200)
       .json(
         serializeBigInt(
-          await repo.Work.insertWork(
-            title,
-            description,
-            content,
-            authorId,
-            topicIds,
-            workImages
-          )
+          (
+            await repo.Work.insertWork(
+              title,
+              description,
+              content,
+              authorId,
+              topicIds,
+              workImages
+            )
+          ).id
         )
       );
   } catch (e) {

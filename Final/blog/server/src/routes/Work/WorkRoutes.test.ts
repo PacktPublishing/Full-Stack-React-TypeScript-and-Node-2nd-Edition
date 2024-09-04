@@ -5,6 +5,7 @@ import { faker } from "@faker-js/faker";
 import { repo } from "../RepoInstance";
 import { avatars } from "../../__test__/avatar";
 import { serializeBigInt } from "common";
+import assert from "node:assert";
 
 describe("POST /work/new", () => {
   it("create work", async () => {
@@ -17,19 +18,29 @@ describe("POST /work/new", () => {
       avatars[0]
     );
     const topic = await repo.Topic.insertTopic(faker.company.name());
+
+    const title = faker.lorem.sentence(1);
+    const description = faker.lorem.sentence(2);
+    const content = faker.lorem.sentence(4);
+    const authorId = serializeBigInt(profile.id);
+    const topicId = serializeBigInt(topic.id);
     await request(app)
       .post("/work/new")
       .attach("images[0][image]", avatars[0])
       .field("images[0][imagesPlaceholder]", "A")
-      .field("title", faker.lorem.sentence(1))
-      .field("description", faker.lorem.sentence(2))
-      .field("content", faker.lorem.sentence(4))
-      .field("authorId", serializeBigInt(profile.id))
-      .field("topicIds[0]", serializeBigInt(topic.id))
+      .field("title", title)
+      .field("description", description)
+      .field("content", content)
+      .field("authorId", authorId)
+      .field("topicIds[0]", topicId)
       .expect("Content-Type", /json/)
       .expect(200)
-      .then((res) => {
-        console.log(res.statusCode);
+      .then(async (res) => {
+        const work = await repo.Work.selectWork(BigInt(res.body));
+        assert.equal(work?.title, title);
+        assert.equal(work?.description, description);
+        assert.equal(work?.content, content);
+        assert.equal(work?.author.id, authorId);
       });
   });
 });

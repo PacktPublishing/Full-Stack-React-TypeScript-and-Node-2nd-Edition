@@ -114,6 +114,7 @@ export class WorkRepo {
         content: true,
         author: {
           select: {
+            id: true,
             userName: true,
             fullName: true,
             description: true,
