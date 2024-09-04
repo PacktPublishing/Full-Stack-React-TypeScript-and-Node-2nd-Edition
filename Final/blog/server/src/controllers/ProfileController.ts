@@ -73,6 +73,41 @@ export const createProfile: RequestHandler = async (
   }
 };
 
+export const updateProfile: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {
+      profileId,
+      fullName,
+      description,
+      socialLinkPrimary,
+      socialLinkSecondary,
+    }: {
+      profileId: bigint;
+      fullName: string;
+      description: string;
+      socialLinkPrimary: string | undefined;
+      socialLinkSecondary: string | undefined;
+    } = req.body;
+
+    await repo.Profile.updateProfile(
+      profileId,
+      fullName,
+      description,
+      socialLinkPrimary,
+      socialLinkSecondary,
+      req.file?.buffer
+    );
+
+    res.status(204).send();
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const getMostPopularAuthors: RequestHandler = async (
   req: Request,
   res: Response,

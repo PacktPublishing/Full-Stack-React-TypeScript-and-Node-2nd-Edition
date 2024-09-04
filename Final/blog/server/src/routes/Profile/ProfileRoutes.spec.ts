@@ -7,6 +7,7 @@ import { repo } from "../RepoInstance";
 import assert from "node:assert";
 import { faker } from "@faker-js/faker";
 import { ProfileModel } from "./ProfileModel";
+import { serializeBigInt } from "common";
 
 describe("POST /profile/avatar/new", () => {
   it("create profile avatar", async () => {
@@ -54,6 +55,42 @@ describe("POST /profile/new", () => {
       .then((res) => {
         assert.equal(res.statusCode, 200);
       });
+  });
+});
+
+describe("POST /profile/update", () => {
+  it("update profile", async () => {
+    const profile = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+
+    const fullName = faker.internet.displayName();
+    const description = faker.lorem.sentence(3);
+    const socialLinkPrimary = faker.internet.url();
+    const socialLinkSecondary = faker.internet.url();
+    await request(app)
+      .post("/profile/update")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("profileId", serializeBigInt(profile.id))
+      .field("fullName", fullName)
+      .field("description", description)
+      .field("socialLinkPrimary", socialLinkPrimary)
+      .field("socialLinkSecondary", socialLinkSecondary)
+      .expect(204)
+      .then((res) => {
+        assert.equal(res.statusCode, 204);
+      });
+
+    const updatedProfile = await repo.Profile.selectProfile(profile.id);
+    assert.equal(fullName, updatedProfile?.fullName);
   });
 });
 

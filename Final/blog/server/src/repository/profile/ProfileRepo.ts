@@ -40,6 +40,70 @@ export class ProfileRepo {
     });
   }
 
+  async updateProfile(
+    profileId: bigint,
+    fullName: string,
+    description: string,
+    socialLinkPrimary: string | undefined,
+    socialLinkSecondary: string | undefined,
+    avatar: Buffer | undefined
+  ) {
+    return await this.#client.$transaction(async (tx) => {
+      let avatarId: bigint | undefined;
+      if (avatar) {
+        const currentAvatarId = await tx.profile.findFirst({
+          select: {
+            avatarId: true,
+          },
+          where: {
+            id: profileId,
+          },
+        });
+        if (currentAvatarId && currentAvatarId.avatarId) {
+          await tx.profileAvatar.delete({
+            where: {
+              id: currentAvatarId.avatarId,
+            },
+          });
+          const avatarResult = await tx.profileAvatar.create({
+            data: {
+              avatar,
+            },
+          });
+          avatarId = avatarResult.id;
+        } else {
+          const avatarResult = await tx.profileAvatar.create({
+            data: {
+              avatar,
+            },
+          });
+          avatarId = avatarResult.id;
+        }
+      }
+
+      return await tx.profile.update({
+        where: {
+          id: profileId,
+        },
+        data: {
+          fullName,
+          description,
+          socialLinkPrimary,
+          socialLinkSecondary,
+          avatarId,
+        },
+      });
+    });
+  }
+
+  async selectProfile(profileId: bigint) {
+    return await this.#client.profile.findFirst({
+      where: {
+        id: profileId,
+      },
+    });
+  }
+
   async selectMostPopularAuthors(size: number = PAGE_SIZE) {
     const authors = await this.#client.work.findMany({
       select: {
