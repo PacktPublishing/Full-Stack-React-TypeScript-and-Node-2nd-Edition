@@ -176,3 +176,71 @@ describe("POST /work_popular", () => {
       });
   });
 });
+
+describe("POST /work_latest", () => {
+  it("get latest work", async () => {
+    const profile = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+    const topic = await repo.Topic.insertTopic(faker.company.name());
+
+    for (let i = 0; i < 10; i++) {
+      const title = faker.lorem.sentence(1);
+      const description = faker.lorem.sentence(2);
+      const content = faker.lorem.sentence(4);
+      await repo.Work.insertWork(
+        title,
+        description,
+        content,
+        profile.id,
+        [topic.id],
+        [
+          {
+            imagePlaceholder: "A",
+            image: avatars[0],
+          },
+          {
+            imagePlaceholder: "B",
+            image: avatars[1],
+          },
+        ]
+      );
+    }
+
+    const firstFive = await repo.Work.selectLatestWorksByAuthor(profile.id, 5);
+    const lastCursor = firstFive[firstFive.length - 1].id;
+
+    await request(app)
+      .post("/work_latest")
+      .send({
+        authorId: serializeBigInt(profile.id),
+        pageSize: 5,
+        lastCursor: serializeBigInt(lastCursor),
+      })
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then(async (res) => {
+        const latestWorks: {
+          id: bigint;
+          updatedAt: Date;
+          title: string;
+          description: string;
+          content: string;
+          authorId: bigint;
+          userName: string;
+          fullName: string;
+          workLikes: bigint[];
+        }[] = res.body;
+        assert.equal(
+          latestWorks[0].updatedAt >
+            latestWorks[latestWorks.length - 1].updatedAt,
+          true
+        );
+      });
+  });
+});

@@ -1,7 +1,11 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { serializeBigInt } from "common";
 import { repo } from "../../routes/RepoInstance";
-import { CreateWorkParams, PopularWorkParams } from "./WorkModels";
+import {
+  CreateWorkParams,
+  LatestWorkParams,
+  PopularWorkParams,
+} from "./WorkModels";
 import { logger } from "../../lib/utils/Logger";
 import { PAGE_SIZE } from "../../repository/lib/Constants";
 import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
@@ -81,7 +85,11 @@ export const getPopularWork: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { topicId, pageSize, cursor }: PopularWorkParams = req.body;
+    const {
+      topicId,
+      pageSize,
+      lastCursor: cursor,
+    }: PopularWorkParams = req.body;
     logger.info(
       "topicId, pageSize, cursor",
       req.body,
@@ -111,10 +119,11 @@ export const getLatestWork: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
+    const { authorId, pageSize, lastCursor }: LatestWorkParams = req.body;
     const works = await repo.Work.selectLatestWorksByAuthor(
-      BigInt(req.params.authorId),
-      PAGE_SIZE,
-      req.params.cursor ? BigInt(req.params.cursor) : undefined
+      BigInt(authorId),
+      pageSize || PAGE_SIZE,
+      lastCursor ? BigInt(lastCursor) : undefined
     );
 
     res.status(200).json(serializeBigInt(works));

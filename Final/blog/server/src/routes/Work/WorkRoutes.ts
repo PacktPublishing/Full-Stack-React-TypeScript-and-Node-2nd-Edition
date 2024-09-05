@@ -15,6 +15,6 @@ const router = Router();
 router.post("/work/new", upload.array("images", 10), createWork);
 router.get("/work/:id", getWork);
 router.post("/work_popular", getPopularWork);
-router.get("/work_latest/:authorId/:cursor?", getLatestWork);
+router.post("/work_latest", getLatestWork);
 
 export default router;

@@ -228,8 +228,8 @@ export class WorkRepo {
     authorId: bigint,
     /// to page backwards use a negative number
     pageSize: number,
-    /// if cursor is undefined this is the first call
-    lastCursor: bigint = BigInt(0)
+    /// cursor is work id
+    lastCursor?: bigint
   ) {
     const works = await this.#client.work.findMany({
       take: pageSize,
