@@ -146,6 +146,7 @@ export class WorkRepo {
   async selectMostPopularWorks(
     topicId?: bigint,
     pageSize: number = PAGE_SIZE,
+    /// lastCursor is the work id
     lastCursor?: bigint
   ) {
     const works = await this.#client.work.findMany({
