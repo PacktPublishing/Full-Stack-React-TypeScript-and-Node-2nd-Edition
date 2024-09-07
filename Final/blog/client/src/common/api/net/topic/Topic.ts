@@ -1,6 +1,6 @@
 "use server";
 
-import { Topic } from "@/repo/topic/topic";
+import { Topic } from "./TopicModels";
 
 export async function getAllTopics() {
   const response = await fetch(`${process.env.EXTERNAL_API_URL}/topic`);

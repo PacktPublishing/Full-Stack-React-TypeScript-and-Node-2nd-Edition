@@ -1,6 +1,6 @@
 import { JSX, memo, useEffect, useState } from "react";
 import { MarkdownEditor } from "../MarkdownEditor";
-import { WorkWithAuthor } from "../../ui-api/UIModels";
+import { WorkWithAuthorModel } from "../../api/ui/UIModels";
 import { RandomImg } from "../RandomImage";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
@@ -9,7 +9,7 @@ import { AuthorWorkDetail } from "../AuthorWorkDetail";
 
 /// @startFresh stop appending and create new element list
 interface WorkElementsProps {
-  works: WorkWithAuthor[] | null;
+  works: WorkWithAuthorModel[] | null;
   readOnly?: boolean;
   showAuthor?: boolean;
   showContent?: boolean;

@@ -45,6 +45,69 @@ describe("POST /work/new", () => {
   });
 });
 
+describe("POST /work/update", () => {
+  it("update work", async () => {
+    const profile = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+    const topica = await repo.Topic.insertTopic(faker.company.name());
+    const topicb = await repo.Topic.insertTopic(faker.company.name());
+    const work = await repo.Work.insertWork(
+      faker.lorem.sentence(1),
+      faker.lorem.sentence(2),
+      faker.lorem.sentence(4),
+      profile.id,
+      [topica.id],
+      [
+        {
+          imagePlaceholder: "A",
+          image: avatars[0],
+        },
+      ]
+    );
+
+    const title = faker.lorem.sentence(1);
+    const description = faker.lorem.sentence(2);
+    const content = faker.lorem.sentence(4);
+    const authorId = serializeBigInt(profile.id);
+    const topicId = serializeBigInt(topicb.id);
+    await request(app)
+      .post("/work/update")
+      .attach("images[0][image]", avatars[1])
+      .field("images[0][imagesPlaceholder]", "B")
+      .field("workId", serializeBigInt(work.id))
+      .field("title", title)
+      .field("description", description)
+      .field("content", content)
+      .field("topicIds[0]", topicId)
+      .expect(204)
+      .then(async () => {
+        const comparisonWork = await repo.Work.selectWork(work.id);
+        assert.equal(comparisonWork?.title, title);
+        assert.equal(comparisonWork?.description, description);
+        assert.equal(comparisonWork?.content, content);
+        assert.equal(comparisonWork?.author.id, profile.id);
+        assert.equal(
+          comparisonWork?.workTopics
+            .map((wt) => wt.topic.id)
+            .includes(topica.id),
+          false
+        );
+        assert.equal(
+          comparisonWork?.workTopics
+            .map((wt) => wt.topic.id)
+            .includes(topicb.id),
+          true
+        );
+      });
+  });
+});
+
 describe("GET /work/:id", () => {
   it("get work", async () => {
     const profile = await repo.Profile.insertProfile(

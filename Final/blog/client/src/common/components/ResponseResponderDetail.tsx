@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
 import { Link } from "react-router-dom";
-import { ResponseWithResponder } from "../ui-api/UIModels";
+import { ResponseWithResponderModel } from "../api/ui/UIModels";
 import { useUiApi } from "../context/UiApiContext";
 
 interface ResponseResponderDetailProps {
   showAuthor: boolean;
-  work: ResponseWithResponder;
+  work: ResponseWithResponderModel;
   showWorkTitle?: boolean;
 }
 

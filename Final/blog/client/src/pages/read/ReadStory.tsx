@@ -1,9 +1,9 @@
 import { ChangeEvent, FocusEvent, useEffect, useState } from "react";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
 import {
-  ResponseWithResponder,
-  WorkWithAuthor,
-} from "../../common/ui-api/UIModels";
+  ResponseWithResponderModel,
+  WorkWithAuthorModel,
+} from "../../common/api/ui/UIModels";
 import { useParams } from "react-router-dom";
 import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
 import { Layout } from "../../common/components/Layout";
@@ -26,7 +26,7 @@ enum ValidationStates {
 export function ReadStory() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>("");
-  const [work, setWork] = useState<WorkWithAuthor | null>();
+  const [work, setWork] = useState<WorkWithAuthorModel | null>();
   const { work_id } = useParams<{ work_id: string }>();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
   const [responseValue, setResponseValue] = useState("");
@@ -62,7 +62,7 @@ export function ReadStory() {
   };
 
   const getData = async (priorKeyset: string) => {
-    let responses: ResponseWithResponder[] | null | undefined;
+    let responses: ResponseWithResponderModel[] | null | undefined;
     if (priorKeyset === "") {
       if (!work_id)
         throw new Error("Work id is undefined, cannot get top responses");

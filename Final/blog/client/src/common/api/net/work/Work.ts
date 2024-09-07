@@ -1,13 +1,50 @@
-"use server";
+import { serializeBigInt } from "common";
+import { friendlyDate } from "../../../lib/utils/DateTimeUtils";
+import { PAGE_SIZE } from "../../../lib/utils/StandardValues";
+import { Work, WorkImageItem } from "./WorkModels";
+import { GET_WORK_URL, NEW_WORK_URL } from "../../lib/Url";
 
-import { friendlyDate } from "@/lib/utils/DateTimeUtils";
-import { PAGE_SIZE } from "@/lib/utils/StandardValues";
-import { Work } from "@/repo/work/work";
+export async function createWork(
+  title: string,
+  description: string,
+  content: string,
+  authorId: bigint,
+  topicIds: bigint[],
+  images: WorkImageItem[]
+) {
+  const response = await fetch(NEW_WORK_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      title,
+      description,
+      content,
+      authorId: serializeBigInt(authorId),
+      topicIds: serializeBigInt(topicIds),
+      images,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to create new work");
+  }
+  return BigInt(await response.json());
+}
+
+export async function getWork(workId: bigint) {
+  const response = await fetch(`${GET_WORK_URL}${workId}}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to get work");
+  }
+  return (await response.json()) as Work;
+}
 
 export async function getMostPopularWorks(
   topicId?: string,
-  cursor?: string,
-  pageSize: number = PAGE_SIZE
+  pageSize: number = PAGE_SIZE,
+  cursor?: string
 ) {
   console.log(topicId, cursor, pageSize);
   const url = `${process.env.EXTERNAL_API_URL}/work_popular`;

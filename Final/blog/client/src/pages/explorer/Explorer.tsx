@@ -16,7 +16,7 @@ import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { TabHeader } from "../../common/components/TabHeader";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import { Topic, WorkWithAuthor } from "../../common/ui-api/UIModels";
+import { TopicModel, WorkWithAuthorModel } from "../../common/api/ui/UIModels";
 import { useUiApi } from "../../common/context/UiApiContext";
 
 enum ValidationStates {
@@ -28,7 +28,7 @@ enum ValidationStates {
 export function Explorer() {
   const [searchTxt, setSearchTxt] = useState("");
   const [topicElements, setTopicElements] = useState<JSX.Element[]>([]);
-  const [topics, setTopics] = useState<Topic[] | null>(null);
+  const [topics, setTopics] = useState<TopicModel[] | null>(null);
   const [topicName, setTopicName] = useState("");
   const { topic_id } = useParams<{ topic_id: string | undefined }>();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
@@ -98,7 +98,7 @@ export function Explorer() {
         return null;
       }
 
-      let works: WorkWithAuthor[] | null | undefined;
+      let works: WorkWithAuthorModel[] | null | undefined;
       if (priorKeyset === "") {
         works = await api?.searchWorksTop(searchTxt);
       } else {
@@ -112,7 +112,7 @@ export function Explorer() {
       return works;
     } else {
       console.log("priorKeyset:", priorKeyset);
-      let works: WorkWithAuthor[] | null | undefined;
+      let works: WorkWithAuthorModel[] | null | undefined;
       if (priorKeyset === "") {
         works = await api?.getWorksByTopicTop(topic_id || "", PAGE_SIZE);
       } else {

@@ -1,6 +1,6 @@
 "use server";
 
-import { Profile } from "./ProfileModel";
+import { Profile } from "./ProfileModels";
 
 export async function getMostPopularAuthors() {
   const response = await fetch(

@@ -58,26 +58,26 @@ describe("Work tests", () => {
       avatar
     );
 
-    const topic = await repo.Topic.insertTopic(faker.company.name());
+    const topica = await repo.Topic.insertTopic(faker.company.name());
+    const topicb = await repo.Topic.insertTopic(faker.company.name());
 
     const work = await repo.Work.insertWork(
       title,
       description,
       content,
       author.id,
-      [topic.id]
+      [topica.id] // work created with topica
     );
 
     const updateTitle = faker.lorem.sentence(5);
     const updateDesc = faker.lorem.sentence(10);
     const updateContent = faker.lorem.sentences(2);
-    const updateTopic = await repo.Topic.insertTopic(faker.company.name());
     await repo.Work.updateWork(
       work.id,
       updateTitle,
       updateDesc,
       updateContent,
-      [topic.id, updateTopic.id]
+      [topicb.id] // work updated where topica is removed and topicb is added
     );
     const updatedWork = await repo.Work.selectWork(work.id);
 
@@ -86,10 +86,13 @@ describe("Work tests", () => {
     assert.equal(updatedWork?.content, updateContent);
 
     const workTopics = await repo.WorkTopic.selectWorkTopicsByWork(work.id);
-    assert.equal(workTopics.length, 2);
-    assert.equal(workTopics.filter((wt) => wt.topicId === topic.id)?.length, 1);
+    assert.equal(workTopics.length, 1);
     assert.equal(
-      workTopics.filter((wt) => wt.topicId === updateTopic.id)?.length,
+      workTopics.filter((wt) => wt.topicId === topica.id)?.length,
+      0
+    );
+    assert.equal(
+      workTopics.filter((wt) => wt.topicId === topicb.id)?.length,
       1
     );
   });

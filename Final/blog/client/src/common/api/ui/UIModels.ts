@@ -4,7 +4,7 @@ export interface UiEntity {
   cursor?: string;
 }
 
-export class WorkWithAuthor implements UiEntity {
+export class WorkWithAuthorModel implements UiEntity {
   constructor(
     public id: string,
     public updatedAt: string,
@@ -19,7 +19,7 @@ export class WorkWithAuthor implements UiEntity {
   ) {}
 }
 
-export class ResponseWithResponder implements UiEntity {
+export class ResponseWithResponderModel implements UiEntity {
   constructor(
     public id: string,
     public updatedAt: string,
@@ -34,7 +34,7 @@ export class ResponseWithResponder implements UiEntity {
   ) {}
 }
 
-export class Profile implements UiEntity {
+export class ProfileModel implements UiEntity {
   constructor(
     public id: string,
     public updatedAt: string,
@@ -46,7 +46,7 @@ export class Profile implements UiEntity {
   ) {}
 }
 
-export class Topic implements UiEntity {
+export class TopicModel implements UiEntity {
   constructor(
     public id: string,
     public updatedAt: string,
@@ -54,7 +54,7 @@ export class Topic implements UiEntity {
   ) {}
 }
 
-export class WorkTopic implements UiEntity {
+export class WorkTopicModel implements UiEntity {
   constructor(
     public id: string,
     public updatedAt: string,

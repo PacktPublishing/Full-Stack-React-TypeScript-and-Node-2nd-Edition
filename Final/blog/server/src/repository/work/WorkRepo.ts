@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { WorkImageRepo } from "./workImage/WorkImageRepo.js";
 import { WorkImageItem } from "./workImage/WorkImage.js";
 import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
@@ -55,8 +55,7 @@ export class WorkRepo {
     title: string,
     description: string,
     content: string,
-    /// the topics here are considered adds,
-    /// if any already exist it will get skipped else it is added
+    /// the topics here are considered overwrites, if any existing they will be deleted
     topicIds: bigint[],
     images?: WorkImageItem[]
   ) {
@@ -73,28 +72,50 @@ export class WorkRepo {
       });
 
       const existingWorkTopics = await tx.workTopic.findMany({
-        select: { topicId: true },
+        select: { id: true, topicId: true },
         where: {
           workId: {
             equals: workId,
           },
           topicId: {
-            in: topicIds,
+            notIn: topicIds,
+          },
+        },
+      });
+      const existingWorkTopicIds = new Set(
+        existingWorkTopics.map((wt) => wt.id)
+      );
+      await tx.workTopic.deleteMany({
+        where: {
+          id: {
+            in: Array.from(existingWorkTopicIds),
           },
         },
       });
 
-      const existingWorkTopicIds = new Set(
-        existingWorkTopics.map((wt) => wt.topicId)
-      );
-      const workTopicsToAdd = new Set<bigint>();
+      const topicsToAdd = new Set<bigint>();
+      const existingTopicIds = (
+        await tx.workTopic.findMany({
+          select: {
+            topicId: true,
+          },
+          where: {
+            workId: {
+              equals: workId,
+            },
+            topicId: {
+              in: topicIds,
+            },
+          },
+        })
+      ).map((wt) => wt.topicId);
       for (let i = 0; i < topicIds.length; i++) {
-        if (!existingWorkTopicIds.has(topicIds[i])) {
-          workTopicsToAdd.add(topicIds[i]);
+        if (!existingTopicIds.includes(topicIds[i])) {
+          topicsToAdd.add(topicIds[i]);
         }
       }
       await tx.workTopic.createMany({
-        data: Array.from(workTopicsToAdd).map((topicId) => ({
+        data: Array.from(topicsToAdd).map((topicId) => ({
           workId,
           topicId,
         })),
@@ -118,6 +139,16 @@ export class WorkRepo {
             userName: true,
             fullName: true,
             description: true,
+          },
+        },
+        workTopics: {
+          select: {
+            topic: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
         },
         workLikes: {

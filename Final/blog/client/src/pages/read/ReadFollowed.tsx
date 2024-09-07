@@ -5,7 +5,7 @@ import { PagedWorkElements } from "../../common/components/display-elements/Page
 import { Layout } from "../../common/components/Layout";
 import { FollowedList } from "../../common/components/FollowedList";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import { WorkWithAuthor } from "../../common/ui-api/UIModels";
+import { WorkWithAuthorModel } from "../../common/api/ui/UIModels";
 import { useUiApi } from "../../common/context/UiApiContext";
 
 export function ReadFollowed() {
@@ -30,7 +30,7 @@ export function ReadFollowed() {
 
     // todo: need to test these calls each
     if (currentFollowedId === "") {
-      let works: WorkWithAuthor[] | null | undefined;
+      let works: WorkWithAuthorModel[] | null | undefined;
       if (priorKeyset === "") {
         works = await api?.getWorksByAllFollowedTop(profile.id);
       } else {
@@ -47,7 +47,7 @@ export function ReadFollowed() {
 
       return works;
     } else {
-      let works: WorkWithAuthor[] | null | undefined;
+      let works: WorkWithAuthorModel[] | null | undefined;
       if (priorKeyset === "") {
         works = await api?.getWorksByOneFollowedTop(currentFollowedId);
       } else {

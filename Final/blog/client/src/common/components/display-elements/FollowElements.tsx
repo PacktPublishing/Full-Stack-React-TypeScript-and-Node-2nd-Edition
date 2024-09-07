@@ -1,12 +1,12 @@
 import { JSX, memo, useEffect, useState } from "react";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { Profile } from "../../ui-api/UIModels";
+import { ProfileModel } from "../../api/ui/UIModels";
 import { ProfileConcentractedDesc } from "../ProfileConcentratedDesc";
 
 /// @works is named such do to sharing with PagedWorkElements component
 interface FollowElementsProps {
-  works: Profile[] | null;
+  works: ProfileModel[] | null;
 }
 
 function FollowElementsComponent({ works }: FollowElementsProps) {

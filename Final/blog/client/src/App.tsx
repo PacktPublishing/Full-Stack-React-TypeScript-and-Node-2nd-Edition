@@ -13,8 +13,7 @@ import { Write } from "./pages/write/Write";
 import { ReadFollowed } from "./pages/read/ReadFollowed";
 import { ReadStory } from "./pages/read/ReadStory";
 import { Profile } from "./pages/Profile";
-import SolflareProvider from "./common/context/SolflareContext";
-import UiApiProvider from "./common/context/UiApiContext";
+import UiApiProvider from "./common/context/ui-api/UiApiContext";
 
 const router = createBrowserRouter([
   {
@@ -59,11 +58,9 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <SolflareProvider>
-      <UiApiProvider>
-        <RouterProvider router={router} />
-      </UiApiProvider>
-    </SolflareProvider>
+    <UiApiProvider>
+      <RouterProvider router={router} />;
+    </UiApiProvider>
   );
 }
 

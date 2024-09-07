@@ -20,3 +20,8 @@ export type CreateWorkParams = {
   topicIds: bigint[];
   images?: WorkImageItem[];
 };
+
+export type UpdateWorkParams = { workId: bigint } & Omit<
+  CreateWorkParams,
+  "authorId"
+>;

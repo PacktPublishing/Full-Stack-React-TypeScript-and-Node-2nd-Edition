@@ -1,7 +1,14 @@
 import ReactDOM from "react-dom/client";
 import App from "./App.tsx";
-import ReactModal from "react-modal";
 
-ReactModal.setAppElement("#root");
+async function deferRender() {
+  if (import.meta.env.DEV) return;
 
-ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+  const { worker } = await import("./mocks/browser");
+
+  return worker.start();
+}
+
+deferRender().then(() => {
+  ReactDOM.createRoot(document.getElementById("root")!).render(<App />);
+});

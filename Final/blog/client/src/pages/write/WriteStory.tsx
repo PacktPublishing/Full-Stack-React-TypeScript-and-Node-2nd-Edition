@@ -1,12 +1,22 @@
-import { ChangeEvent, MouseEvent, useEffect, useRef, useState } from "react";
-import { useProfile } from "../../common/redux/Store";
+import {
+  ChangeEvent,
+  MouseEvent,
+  use,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+import { useUserProfile } from "../../common/redux/profile/ProfileHooks";
 import { PrimaryButton } from "../../common/components/Buttons";
 import { MDXEditorMethods } from "@mdxeditor/editor";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
 import { ValidationAndProgressMsg } from "../../common/components/ValidationProgressMsg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DropDown, { OptionType } from "../../common/components/DropDown";
-import { useUiApi } from "../../common/context/UiApiContext";
+import {
+  UiApiContext,
+  UiApiType,
+} from "../../common/context/ui-api/UiApiContext";
 
 enum WriteValidation {
   TitleTooLong = "Title must be less than 100 characters",
@@ -28,7 +38,7 @@ enum PageState {
 
 export function WriteStory() {
   const mdRef = useRef<MDXEditorMethods>(null);
-  const profile = useProfile((state) => state.profile);
+  const [profile, _setProfile] = useUserProfile();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState<string | undefined>("");
   const [validationMsg, setValidationMsg] = useState("");
@@ -42,11 +52,11 @@ export function WriteStory() {
   }>();
   const [selectedTopicId, setSelectedTopicId] = useState("");
   const [topics, setTopics] = useState<OptionType[]>([]);
-  const api = useUiApi();
+  const { uiApi } = use(UiApiContext) as UiApiType;
 
   useEffect(() => {
-    api
-      ?.getAllTopics()
+    uiApi
+      .getAllTopics()
       .then((topics) => {
         if (!topics || topics.length === 0) {
           setTopics([]);
@@ -77,20 +87,16 @@ export function WriteStory() {
   useEffect(() => {
     if (work_id) {
       console.log("work_id", work_id);
-      api?.getWork(work_id).then((work) => {
+      uiApi.getWork(BigInt(work_id)).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
         console.log("getTopicByWork work", work);
-        api
-          .getTopicByWork(work.id)
-          .then((topic) => {
-            console.log("getTopicByWork topic", topic);
-            setTitle(work.title);
-            setDescription(work.description);
-            mdRef.current?.setMarkdown(work.content);
-            setValidationMsg(validation_msg || "");
-            setSelectedTopicId(topic ? topic[0].id : "");
-          })
-          .catch((e: any) => console.log(e));
+        setTitle(work.title);
+        setDescription(work.description);
+        mdRef.current?.setMarkdown(work.content);
+        setValidationMsg(validation_msg || "");
+        setSelectedTopicId(
+          work.workTopics ? work.workTopics[0].topic.id.toString() : ""
+        );
       });
     }
   }, [work_id]);
@@ -107,12 +113,13 @@ export function WriteStory() {
     try {
       setIsSubmitBtnDisabled(true);
 
-      const tx = await api?.addWorkWithTopic(
+      const tx = await uiApi.createWork(
         title,
-        description,
+        description || "",
         mdRef.current?.getMarkdown() || "",
         profile.id,
-        selectedTopicId
+        [selectedTopicId],
+        [] // todo: need to add images!!!
       );
       // todo: remove when ready for prod
       console.log("addWork tx", tx);
@@ -140,7 +147,7 @@ export function WriteStory() {
 
     try {
       setIsSubmitBtnDisabled(true);
-      const tx = await api?.updateWorkWithTopic(
+      const tx = await uiApi.updateWorkWithTopic(
         work_id || "",
         title,
         description,

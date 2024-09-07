@@ -3,7 +3,7 @@ import { useProfile } from "../../common/redux/Store";
 import { PAGE_SIZE } from "../../common/utils/StandardValues";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import { WorkWithAuthor } from "../../common/ui-api/UIModels";
+import { WorkWithAuthorModel } from "../../common/api/ui/UIModels";
 import { useUiApi } from "../../common/context/UiApiContext";
 
 export function ManageStories() {
@@ -18,7 +18,7 @@ export function ManageStories() {
   const getData = async (priorKeyset: string) => {
     if (!profile) return null;
 
-    let works: WorkWithAuthor[] | null | undefined;
+    let works: WorkWithAuthorModel[] | null | undefined;
     if (priorKeyset === "") {
       works = await api?.getAuthorWorksTop(profile.id, PAGE_SIZE);
     } else {

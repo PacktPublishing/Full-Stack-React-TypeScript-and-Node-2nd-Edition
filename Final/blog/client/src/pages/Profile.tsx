@@ -11,9 +11,9 @@ import { TabBar } from "../common/components/TabBar";
 import { ResponseElements } from "../common/components/display-elements/ResponseElements";
 import { FollowElements } from "../common/components/display-elements/FollowElements";
 import {
-  ResponseWithResponder,
-  WorkWithAuthor,
-} from "../common/ui-api/UIModels";
+  ResponseWithResponderModel,
+  WorkWithAuthorModel,
+} from "../common/api/ui/UIModels";
 import { useUiApi } from "../common/context/UiApiContext";
 
 /// Register by creating a profile with optional avatar/image
@@ -51,7 +51,7 @@ export function Profile() {
   };
 
   const getStories = async (priorKeyset: string) => {
-    let works: WorkWithAuthor[] | null | undefined;
+    let works: WorkWithAuthorModel[] | null | undefined;
     if (priorKeyset === "") {
       works = await api?.getAuthorWorksTop(profile_id || "", PAGE_SIZE);
     } else {
@@ -68,7 +68,7 @@ export function Profile() {
   };
 
   const getResponses = async (priorKeyset: string) => {
-    let workResponses: ResponseWithResponder[] | null | undefined;
+    let workResponses: ResponseWithResponderModel[] | null | undefined;
     if (priorKeyset === "") {
       workResponses = await api?.getWorkResponsesByProfileTop(
         profile_id || "",

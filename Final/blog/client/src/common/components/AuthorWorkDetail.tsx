@@ -2,12 +2,12 @@ import { useState, useRef, useEffect } from "react";
 import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
-import { WorkWithAuthor } from "../ui-api/UIModels";
+import { WorkWithAuthorModel } from "../api/ui/UIModels";
 import { useUiApi } from "../context/UiApiContext";
 
 interface AuthorWorkDetailProps {
   showAuthor: boolean;
-  work: WorkWithAuthor;
+  work: WorkWithAuthorModel;
 }
 
 export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {

@@ -2,11 +2,11 @@ import { JSX, memo, useEffect, useState } from "react";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { ResponseResponderDetail } from "../ResponseResponderDetail";
-import { ResponseWithResponder } from "../../ui-api/UIModels";
+import { ResponseWithResponderModel } from "../../api/ui/UIModels";
 
 /// @works is named such do to sharing with PagedWorkElements component
 interface ResponseElementsProps {
-  works: ResponseWithResponder[] | null;
+  works: ResponseWithResponderModel[] | null;
   showAuthor?: boolean;
   showWorkTitle?: boolean;
 }

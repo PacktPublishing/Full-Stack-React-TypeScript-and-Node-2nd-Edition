@@ -1,4 +1,4 @@
-import { format } from "date-fns";
+import { format, formatDistanceToNow } from "date-fns";
 
 const dateFormat = "yyyy-MM-dd HH:mm:ss";
 /// Uses 24hour time
@@ -8,4 +8,8 @@ export function formattedNow() {
 
 export function formattedDate(date: Date) {
   return format(date, dateFormat);
+}
+
+export function friendlyDate(date: Date) {
+  return formatDistanceToNow(date);
 }

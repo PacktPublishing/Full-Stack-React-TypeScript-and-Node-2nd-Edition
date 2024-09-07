@@ -5,6 +5,7 @@ import {
   CreateWorkParams,
   LatestWorkParams,
   PopularWorkParams,
+  UpdateWorkParams,
 } from "./WorkModels";
 import { logger } from "../../lib/utils/Logger";
 import { PAGE_SIZE } from "../../repository/lib/Constants";
@@ -60,6 +61,55 @@ export const createWork: RequestHandler = async (
           ).id
         )
       );
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const updateWork: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    let {
+      workId,
+      title,
+      description,
+      content,
+      topicIds,
+      images,
+    }: UpdateWorkParams = req.body;
+    const workImages: WorkImageItem[] = [];
+    if (req.files) {
+      if (Array.isArray(req.files)) {
+        for (let i = 0; i < req.files.length; i++) {
+          workImages.push({
+            imagePlaceholder: images![i]["imagePlaceholder"],
+            image: req.files[i].buffer,
+          });
+        }
+      } else if (typeof req.files === "object") {
+        const files = req.files["images"];
+        for (let i = 0; i < files.length; i++) {
+          workImages.push({
+            imagePlaceholder: images![i]["imagePlaceholder"],
+            image: files[i].buffer,
+          });
+        }
+      }
+    }
+
+    await repo.Work.updateWork(
+      workId,
+      title,
+      description,
+      content,
+      topicIds,
+      workImages
+    );
+
+    res.status(204).send();
   } catch (e) {
     next(e);
   }
