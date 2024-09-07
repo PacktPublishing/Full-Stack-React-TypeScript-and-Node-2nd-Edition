@@ -1,8 +1,8 @@
-import { NextFunction, Request, Response } from "express";
+import { NextFunction, Request, RequestHandler, Response } from "express";
 import { repo } from "../../routes/RepoInstance";
 import { serializeBigInt } from "common";
 
-export const createWorkLike = async (
+export const createWorkLike: RequestHandler = async (
   req: Request,
   res: Response,
   next: NextFunction

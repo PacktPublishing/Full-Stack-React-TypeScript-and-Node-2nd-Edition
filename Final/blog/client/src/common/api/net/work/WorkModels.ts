@@ -1,6 +1,6 @@
 export type Work = {
   id: bigint;
-  updatedAt: string;
+  updatedAt: Date;
   title: string;
   description: string;
   content: string;

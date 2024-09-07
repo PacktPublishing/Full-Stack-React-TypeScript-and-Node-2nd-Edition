@@ -257,7 +257,6 @@ export class WorkRepo {
 
   async selectLatestWorksByAuthor(
     authorId: bigint,
-    /// to page backwards use a negative number
     pageSize: number,
     /// cursor is work id
     lastCursor?: bigint

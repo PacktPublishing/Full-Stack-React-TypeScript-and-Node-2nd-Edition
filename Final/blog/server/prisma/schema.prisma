@@ -53,6 +53,7 @@ model Profile {
   followers             Follow[]            @relation("Followed")
   following             Follow[]            @relation("Follower")
   workLikes             WorkLike[]          @relation("WorkLiker")
+  workResponses         WorkResponse[]      @relation("Responder")
   workResponseLikes     WorkResponseLike[]  @relation("ResponseLiker")
 }
 
@@ -107,6 +108,8 @@ model WorkResponse {
   createdAt           DateTime            @default(now())
   updatedAt           DateTime            @updatedAt
   response            String              @db.Text()
+  responder           Profile             @relation("Responder", fields: [responderId], references: [id])
+  responderId         BigInt
   work                Work                @relation("RespondedWork", fields: [workId], references: [id])
   workId              BigInt
   workResponseLikes   WorkResponseLike[]  @relation("WorkResponse")

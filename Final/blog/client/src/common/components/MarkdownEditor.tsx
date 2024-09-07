@@ -20,7 +20,7 @@ import { useCallback } from "react";
 interface MarkdownEditorProps {
   readOnly: boolean;
   markdown?: string;
-  mdRef?: React.RefObject<MDXEditorMethods>;
+  mdRef?: React.RefObject<MDXEditorMethods | null>;
 }
 
 /// @markdown parameter can only be set on first load, subsequent sets are ignored by MDXEditor!

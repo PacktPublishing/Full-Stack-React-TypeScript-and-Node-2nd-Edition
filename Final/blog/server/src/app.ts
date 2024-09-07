@@ -6,6 +6,7 @@ import topicRoutes from "./routes/Topic/TopicRoutes";
 import followRoutes from "./routes/Follow/FollowRoutes";
 import workImageRoutes from "./routes/Work/WorkImageRoutes";
 import workLikesRoutes from "./routes/Work/WorkLikesRoutes";
+import workResponseRoutes from "./routes/Work/WorkResponseRoutes";
 
 const app: Express = express();
 
@@ -16,6 +17,7 @@ app.use(profileRoutes);
 app.use(workRoutes);
 app.use(workImageRoutes);
 app.use(workLikesRoutes);
+app.use(workResponseRoutes);
 app.use(topicRoutes);
 app.use(followRoutes);
 

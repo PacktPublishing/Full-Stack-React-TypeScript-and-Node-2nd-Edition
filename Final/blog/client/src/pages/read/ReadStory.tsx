@@ -1,19 +1,20 @@
-import { ChangeEvent, FocusEvent, useEffect, useState } from "react";
+import { ChangeEvent, FocusEvent, use, useEffect, useState } from "react";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
-import {
-  ResponseWithResponderModel,
-  WorkWithAuthorModel,
-} from "../../common/api/ui/UIModels";
+import { ResponseWithResponderModel } from "../../common/api/ui/UIModels";
 import { useParams } from "react-router-dom";
 import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
 import { Layout } from "../../common/components/Layout";
 import { ResponseElements } from "../../common/components/display-elements/ResponseElements";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
-import { PAGE_SIZE } from "../../common/utils/StandardValues";
+import { PAGE_SIZE } from "../../common/lib/utils/StandardValues";
 import { TabHeader } from "../../common/components/TabHeader";
 import { ReturnEnabledInput } from "../../common/components/ReturnEnabledInput";
-import { useProfile } from "../../common/redux/Store";
-import { useUiApi } from "../../common/context/UiApiContext";
+import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
+import { useUserProfile } from "../../common/redux/profile/ProfileHooks";
+import {
+  UiApiContext,
+  UiApiType,
+} from "../../common/context/ui-api/UiApiContext";
 
 enum ValidationStates {
   ResponseValueIsEmpty = "Response must have a value",
@@ -33,8 +34,8 @@ export function ReadStory() {
   const [validationMsg, setValidationMsg] = useState(
     ValidationStates.FieldIsValid
   );
-  const profile = useProfile((state) => state.profile);
-  const api = useUiApi();
+  const [profile] = useUserProfile();
+  const { uiApi } = use(UiApiContext) as UiApiType;
 
   useEffect(() => {
     if (work) setRefreshWorksData(true);
@@ -42,8 +43,8 @@ export function ReadStory() {
 
   useEffect(() => {
     console.log("work_id", work_id);
-    api
-      ?.getWork(work_id || "")
+    uiApi
+      .getWork(work_id || "")
       .then((work) => {
         if (!work) {
           setWork(null);
@@ -61,19 +62,10 @@ export function ReadStory() {
     setResponseValue(e.target.value);
   };
 
-  const getData = async (priorKeyset: string) => {
-    let responses: ResponseWithResponderModel[] | null | undefined;
-    if (priorKeyset === "") {
-      if (!work_id)
-        throw new Error("Work id is undefined, cannot get top responses");
-      responses = await api?.getWorkResponsesTop(work_id, PAGE_SIZE);
-    } else {
-      responses = await api?.getWorkResponses(
-        work_id || "",
-        PAGE_SIZE,
-        priorKeyset
-      );
-    }
+  const getData = async (lastCursor: string) => {
+    let responses: ResponseWithResponderModel[] | null =
+      await uiApi.getWorkResponses(work_id || "", PAGE_SIZE, lastCursor);
+
     if (!responses || responses.length === 0) {
       return null;
     }

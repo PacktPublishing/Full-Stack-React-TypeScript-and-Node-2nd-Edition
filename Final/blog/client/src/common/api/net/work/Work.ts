@@ -1,15 +1,19 @@
-import { serializeBigInt } from "common";
-import { friendlyDate } from "../../../lib/utils/DateTimeUtils";
 import { PAGE_SIZE } from "../../../lib/utils/StandardValues";
 import { Work, WorkImageItem } from "./WorkModels";
-import { GET_WORK_URL, NEW_WORK_URL } from "../../lib/Url";
+import {
+  GET_LATEST_WORK_URL,
+  GET_MOST_POP_WORK_URL,
+  GET_WORK_URL,
+  NEW_WORK_URL,
+  UPDATE_WORK_URL,
+} from "../../lib/Url";
 
 export async function createWork(
   title: string,
   description: string,
   content: string,
-  authorId: bigint,
-  topicIds: bigint[],
+  authorId: string,
+  topicIds: string[],
   images: WorkImageItem[]
 ) {
   const response = await fetch(NEW_WORK_URL, {
@@ -18,8 +22,8 @@ export async function createWork(
       title,
       description,
       content,
-      authorId: serializeBigInt(authorId),
-      topicIds: serializeBigInt(topicIds),
+      authorId,
+      topicIds,
       images,
     }),
     headers: { "Content-Type": "application/json" },
@@ -30,7 +34,33 @@ export async function createWork(
   return BigInt(await response.json());
 }
 
-export async function getWork(workId: bigint) {
+export async function updateWork(
+  workId: string,
+  title: string,
+  description: string,
+  content: string,
+  topicIds: string[],
+  images: WorkImageItem[]
+) {
+  const response = await fetch(UPDATE_WORK_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      workId,
+      title,
+      description,
+      content,
+      topicIds,
+      images,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to update work");
+  }
+  return;
+}
+
+export async function getWork(workId: string) {
   const response = await fetch(`${GET_WORK_URL}${workId}}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
@@ -38,22 +68,22 @@ export async function getWork(workId: bigint) {
   if (!response.ok) {
     throw new Error("Failed to get work");
   }
-  return (await response.json()) as Work;
+  const work: Work | null = await response.json();
+  return work;
 }
 
 export async function getMostPopularWorks(
   topicId?: string,
   pageSize: number = PAGE_SIZE,
-  cursor?: string
+  lastCursor?: string
 ) {
-  console.log(topicId, cursor, pageSize);
-  const url = `${process.env.EXTERNAL_API_URL}/work_popular`;
-  const response = await fetch(url, {
+  console.log(topicId, lastCursor, pageSize);
+  const response = await fetch(GET_MOST_POP_WORK_URL, {
     method: "POST",
     body: JSON.stringify({
       topicId,
       pageSize,
-      cursor,
+      lastCursor,
     }),
     headers: { "Content-Type": "application/json" },
   });
@@ -63,42 +93,29 @@ export async function getMostPopularWorks(
     throw new Error("Failed to get most popular works list");
   }
 
-  return convertToWork(await response.json());
+  const work: Work[] | null = await response.json();
+  return work;
 }
 
 export async function getLatestWorksByAuthor(
-  authorId: bigint,
-  cursor?: bigint
+  authorId: string,
+  pageSize: number = PAGE_SIZE,
+  lastCursor?: string
 ) {
-  const response = await fetch(
-    `${process.env.EXTERNAL_API_URL}/work_latest/${authorId}${
-      cursor ? "/" + cursor : ""
-    }`
-  );
+  const response = await fetch(GET_LATEST_WORK_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      authorId,
+      pageSize,
+      lastCursor,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
 
   if (!response.ok) {
     throw new Error("Failed to get latest works list");
   }
 
-  const json = await response.json();
-  return convertToWork(json);
-}
-
-function convertToWork(json: any): Work[] {
-  return json.map(
-    (item: any) =>
-      new Work(
-        item.id,
-        friendlyDate(item.updatedAt),
-        item.title,
-        item.description,
-        item.content,
-        item.authorId,
-        item.userName,
-        item.fullName,
-        item.authorDesc,
-        item.workTopics,
-        item.workLikes
-      )
-  );
+  const work: Work[] | null = await response.json();
+  return work;
 }

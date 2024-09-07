@@ -4,36 +4,6 @@ export interface UiEntity {
   cursor?: string;
 }
 
-export class WorkWithAuthorModel implements UiEntity {
-  constructor(
-    public id: string,
-    public updatedAt: string,
-    public title: string,
-    public content: string,
-    public description: string | undefined,
-    public authorId: string,
-    public fullName: string,
-    public userName: string,
-    public profileDesc: string,
-    public cursor?: string
-  ) {}
-}
-
-export class ResponseWithResponderModel implements UiEntity {
-  constructor(
-    public id: string,
-    public updatedAt: string,
-    public workId: string,
-    public workTitle: string,
-    public responseContent: string,
-    public responderId: string,
-    public userName: string,
-    public fullName: string,
-    public profileDesc: string,
-    public cursor?: string
-  ) {}
-}
-
 export class ProfileModel implements UiEntity {
   constructor(
     public id: string,

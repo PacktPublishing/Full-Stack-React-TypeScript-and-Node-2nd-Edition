@@ -97,6 +97,7 @@ CREATE TABLE "WorkResponse" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "response" TEXT NOT NULL,
+    "responderId" BIGINT NOT NULL,
     "workId" BIGINT NOT NULL,
 
     CONSTRAINT "WorkResponse_pkey" PRIMARY KEY ("id")
@@ -145,6 +146,9 @@ ALTER TABLE "WorkLike" ADD CONSTRAINT "WorkLike_workId_fkey" FOREIGN KEY ("workI
 
 -- AddForeignKey
 ALTER TABLE "WorkLike" ADD CONSTRAINT "WorkLike_likerId_fkey" FOREIGN KEY ("likerId") REFERENCES "Profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "WorkResponse" ADD CONSTRAINT "WorkResponse_responderId_fkey" FOREIGN KEY ("responderId") REFERENCES "Profile"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "WorkResponse" ADD CONSTRAINT "WorkResponse_workId_fkey" FOREIGN KEY ("workId") REFERENCES "Work"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

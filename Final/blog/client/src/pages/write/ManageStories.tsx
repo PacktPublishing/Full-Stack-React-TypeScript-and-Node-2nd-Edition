@@ -1,29 +1,29 @@
-import { useEffect, useState } from "react";
-import { useProfile } from "../../common/redux/Store";
-import { PAGE_SIZE } from "../../common/utils/StandardValues";
+import { use, useEffect, useState } from "react";
+import { PAGE_SIZE } from "../../common/lib/utils/StandardValues";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import { WorkWithAuthorModel } from "../../common/api/ui/UIModels";
-import { useUiApi } from "../../common/context/UiApiContext";
+import {
+  UiApiContext,
+  UiApiType,
+} from "../../common/context/ui-api/UiApiContext";
+import { useUserProfile } from "../../common/redux/profile/ProfileHooks";
+import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
 
 export function ManageStories() {
-  const profile = useProfile((state) => state.profile);
+  const [profile] = useUserProfile();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
-  const api = useUiApi();
+  const { uiApi } = use(UiApiContext) as UiApiType;
 
   useEffect(() => {
     if (profile) setRefreshWorksData(true);
   }, [profile]);
 
-  const getData = async (priorKeyset: string) => {
+  const getData = async (lastCursor: string) => {
     if (!profile) return null;
 
-    let works: WorkWithAuthorModel[] | null | undefined;
-    if (priorKeyset === "") {
-      works = await api?.getAuthorWorksTop(profile.id, PAGE_SIZE);
-    } else {
-      works = await api?.getAuthorWorks(profile.id, PAGE_SIZE, priorKeyset);
-    }
+    let works: WorkWithAuthorModel[] | undefined =
+      await uiApi.getLatestWorkByAuthor(profile.id, PAGE_SIZE, lastCursor);
+
     if (!works) {
       return null;
     }

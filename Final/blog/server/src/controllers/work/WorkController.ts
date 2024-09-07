@@ -153,7 +153,7 @@ export const getPopularWork: RequestHandler = async (
         serializeBigInt(
           await repo.Work.selectMostPopularWorks(
             topicId ? BigInt(topicId) : undefined,
-            pageSize ? pageSize : undefined,
+            pageSize,
             cursor ? BigInt(cursor) : undefined
           )
         )
@@ -172,7 +172,7 @@ export const getLatestWork: RequestHandler = async (
     const { authorId, pageSize, lastCursor }: LatestWorkParams = req.body;
     const works = await repo.Work.selectLatestWorksByAuthor(
       BigInt(authorId),
-      pageSize || PAGE_SIZE,
+      pageSize,
       lastCursor ? BigInt(lastCursor) : undefined
     );
 

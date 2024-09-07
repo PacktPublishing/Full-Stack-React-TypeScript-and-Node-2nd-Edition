@@ -184,7 +184,6 @@ describe("POST /work_popular", () => {
       const title = faker.lorem.sentence(1);
       const description = faker.lorem.sentence(2);
       const content = faker.lorem.sentence(4);
-      const authorId = serializeBigInt(profile.id);
       const work = await repo.Work.insertWork(
         title,
         description,

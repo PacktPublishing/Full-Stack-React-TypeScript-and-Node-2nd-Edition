@@ -87,7 +87,7 @@ export function WriteStory() {
   useEffect(() => {
     if (work_id) {
       console.log("work_id", work_id);
-      uiApi.getWork(BigInt(work_id)).then((work) => {
+      uiApi.getWork(work_id).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
         console.log("getTopicByWork work", work);
         setTitle(work.title);
@@ -95,7 +95,7 @@ export function WriteStory() {
         mdRef.current?.setMarkdown(work.content);
         setValidationMsg(validation_msg || "");
         setSelectedTopicId(
-          work.workTopics ? work.workTopics[0].topic.id.toString() : ""
+          work.workTopics ? work.workTopics[0].id.toString() : ""
         );
       });
     }
@@ -147,13 +147,13 @@ export function WriteStory() {
 
     try {
       setIsSubmitBtnDisabled(true);
-      const tx = await uiApi.updateWorkWithTopic(
+      const tx = await uiApi.updateWork(
         work_id || "",
         title,
-        description,
+        description || "",
         mdRef.current?.getMarkdown() || "",
-        profile.id,
-        selectedTopicId
+        [selectedTopicId],
+        [] // todo: need to add images!!!
       );
       console.log("updateWork tx", tx);
       setValidationMsg(

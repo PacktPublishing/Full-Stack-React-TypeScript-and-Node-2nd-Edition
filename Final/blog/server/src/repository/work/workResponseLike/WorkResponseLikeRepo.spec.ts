@@ -1,6 +1,6 @@
 import { faker } from "@faker-js/faker";
 import { describe, it } from "node:test";
-import { getAvatar } from "../../../__test__/avatar";
+import { avatars, getAvatar } from "../../../__test__/avatar";
 import { repo } from "../../../routes/RepoInstance";
 import assert from "node:assert";
 
@@ -17,6 +17,14 @@ describe("Repository WorkResponseLike", () => {
       faker.internet.url(),
       getAvatar()
     );
+    const responder = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
     const topic = await repo.Topic.insertTopic(faker.company.name());
     const work = await repo.Work.insertWork(
       title,
@@ -29,6 +37,7 @@ describe("Repository WorkResponseLike", () => {
     const response = faker.lorem.sentence(5);
     const workResponse = await repo.WorkResp.insertWorkResponse(
       work.id,
+      responder.id,
       response
     );
 

@@ -1,10 +1,10 @@
 import { Layout } from "../../common/components/Layout";
 import { NavAnchor } from "../../common/components/NavAnchor";
 import { Outlet } from "react-router-dom";
-import { useProfile } from "../../common/redux/Store";
+import { useUserProfile } from "../../common/redux/profile/ProfileHooks";
 
 export function Write() {
-  const profile = useProfile((state) => state.profile);
+  const [profile] = useUserProfile();
 
   return (
     <Layout>

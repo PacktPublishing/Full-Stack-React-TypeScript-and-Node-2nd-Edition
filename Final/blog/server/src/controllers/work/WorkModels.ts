@@ -8,7 +8,7 @@ export type PopularWorkParams = {
 
 export type LatestWorkParams = {
   authorId: string;
-  pageSize: number | undefined;
+  pageSize: number;
   lastCursor: string | undefined;
 };
 
