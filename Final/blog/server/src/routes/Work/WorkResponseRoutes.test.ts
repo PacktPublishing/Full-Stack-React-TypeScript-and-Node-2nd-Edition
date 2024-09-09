@@ -58,13 +58,13 @@ describe("POST /work_resp/new", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .then(async (res) => {
-        const workResp = await repo.WorkResp.selectWorkResponses(work.id);
+        const workResp = await repo.WorkResp.selectWorkResponses(work.id, 1);
         assert.equal(workResp[0].id, BigInt(res.body));
       });
   });
 });
 
-describe("GET /work_resp/:workId", () => {
+describe("POST /work_resp", () => {
   it("get response to a work", async () => {
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
@@ -103,15 +103,30 @@ describe("GET /work_resp/:workId", () => {
         },
       ]
     );
-    const responseStr = faker.lorem.sentence(1);
-    const workResponse = await repo.WorkResp.insertWorkResponse(
-      work.id,
-      responder.id,
-      responseStr
+
+    const responses: string[] = new Array(10);
+    for (let i = 0; i < 10; i++) {
+      responses[i] = faker.lorem.sentence(1);
+      await repo.WorkResp.insertWorkResponse(
+        work.id,
+        responder.id,
+        responses[i]
+      );
+    }
+    const firstFive = await repo.WorkResp.selectWorkResponses(work.id, 5);
+    console.log(
+      "firstFive",
+      firstFive.map((ff) => ff.response)
     );
+    const lastCursor = firstFive[firstFive.length - 1].id;
 
     await request(app)
-      .get(`/work_resp/${work.id}`)
+      .post("/work_resp")
+      .send({
+        id: serializeBigInt(work.id),
+        pageSize: 5,
+        lastCursor: serializeBigInt(lastCursor),
+      })
       .expect(200)
       .then((res) => {
         const workResp: {
@@ -124,9 +139,8 @@ describe("GET /work_resp/:workId", () => {
           };
         }[] = res.body;
 
-        assert.equal(workResp[0].work.title, work.title);
-        assert.equal(workResp[0].id, workResponse.id);
-        assert.equal(workResp[0].response, responseStr);
+        const revResponses = responses.reverse();
+        assert.equal(workResp[0].response, revResponses[5]);
       });
   });
 });

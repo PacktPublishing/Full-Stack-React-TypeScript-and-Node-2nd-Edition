@@ -8,7 +8,9 @@ import {
   updateWork,
 } from "../net/work/Work";
 import { WorkImageItem } from "../net/work/WorkModels";
-import { convert } from "./WorkWithAuthorModel";
+import { convert as convertWork } from "./WorkWithAuthorModel";
+import { convert as convertWorkResponse } from "./ResponseWithResponderModel";
+import { getWorkResponses } from "../net/work/WorkResponse";
 
 export default class UiApi {
   createWork = async function (
@@ -48,7 +50,7 @@ export default class UiApi {
     lastCursor?: string
   ) {
     return (await getMostPopularWorks(topicId, pageSize, lastCursor))?.map(
-      (work) => convert(work)!
+      (work) => convertWork(work)!
     );
   };
 
@@ -58,15 +60,19 @@ export default class UiApi {
     lastCursor?: string
   ) {
     return (await getLatestWorksByAuthor(authorId, pageSize, lastCursor))?.map(
-      (work) => convert(work)!
+      (work) => convertWork(work)!
     );
   };
 
   getWork = async function (workId: string) {
-    return convert(await getWork(workId));
+    return convertWork(await getWork(workId));
   };
 
-  getWorkResponses = async function (workId: string) {};
+  getWorkResponses = async function (workId: string) {
+    return (await getWorkResponses(workId))?.map((wr) =>
+      convertWorkResponse(wr)
+    );
+  };
 
   getAllTopics = async function () {
     return await getAllTopics();

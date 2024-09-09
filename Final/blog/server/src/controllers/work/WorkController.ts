@@ -1,15 +1,10 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { serializeBigInt } from "common";
 import { repo } from "../../routes/RepoInstance";
-import {
-  CreateWorkParams,
-  LatestWorkParams,
-  PopularWorkParams,
-  UpdateWorkParams,
-} from "./WorkModels";
+import { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
 import { logger } from "../../lib/utils/Logger";
-import { PAGE_SIZE } from "../../repository/lib/Constants";
 import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
+import { PagingParams, PopularWorkParams } from "../PagingParams";
 
 export const createWork: RequestHandler = async (
   req: Request,
@@ -140,22 +135,12 @@ export const getPopularWork: RequestHandler = async (
       pageSize,
       lastCursor: cursor,
     }: PopularWorkParams = req.body;
-    logger.info(
-      "topicId, pageSize, cursor",
-      req.body,
-      topicId,
-      pageSize,
-      cursor
-    );
+
     res
       .status(200)
       .json(
         serializeBigInt(
-          await repo.Work.selectMostPopularWorks(
-            topicId ? BigInt(topicId) : undefined,
-            pageSize,
-            cursor ? BigInt(cursor) : undefined
-          )
+          await repo.Work.selectMostPopularWorks(topicId, pageSize, cursor)
         )
       );
   } catch (e) {
@@ -169,11 +154,11 @@ export const getLatestWork: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const { authorId, pageSize, lastCursor }: LatestWorkParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
     const works = await repo.Work.selectLatestWorksByAuthor(
-      BigInt(authorId),
+      id,
       pageSize,
-      lastCursor ? BigInt(lastCursor) : undefined
+      lastCursor
     );
 
     res.status(200).json(serializeBigInt(works));

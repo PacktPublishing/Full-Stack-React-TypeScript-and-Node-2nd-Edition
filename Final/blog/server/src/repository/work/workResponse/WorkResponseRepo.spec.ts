@@ -34,13 +34,24 @@ describe("Repository WorkResponse", () => {
       [topic.id]
     );
 
-    const response = faker.lorem.sentence(5);
-    await repo.WorkResp.insertWorkResponse(work.id, responder.id, response);
-    const selectedWorkResponse = await repo.WorkResp.selectWorkResponses(
-      work.id
+    const responses: string[] = new Array(10);
+    for (let i = 0; i < 10; i++) {
+      responses[i] = faker.lorem.sentence(5);
+      await repo.WorkResp.insertWorkResponse(
+        work.id,
+        responder.id,
+        responses[i]
+      );
+    }
+    const firstFive = await repo.WorkResp.selectWorkResponses(work.id, 5);
+    const lastCursor = firstFive[firstFive.length - 1].id;
+
+    const nextFive = await repo.WorkResp.selectWorkResponses(
+      work.id,
+      5,
+      lastCursor
     );
 
-    assert.equal(selectedWorkResponse[0].work.title, work.title);
-    assert.equal(selectedWorkResponse[0].response, response);
+    assert.equal(nextFive[0].response, responses.reverse()[5]);
   });
 });

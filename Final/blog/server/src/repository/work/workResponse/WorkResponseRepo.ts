@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { SortOrder } from "../../lib/Constants";
 
 export class WorkResponseRepo {
   #client: PrismaClient;
@@ -21,8 +22,19 @@ export class WorkResponseRepo {
     });
   }
 
-  async selectWorkResponses(workId: bigint) {
+  async selectWorkResponses(
+    workId: bigint,
+    pageSize: number,
+    lastCursor?: bigint
+  ) {
     return await this.#client.workResponse.findMany({
+      take: pageSize,
+      skip: lastCursor ? 1 : 0,
+      cursor: lastCursor
+        ? {
+            id: lastCursor,
+          }
+        : undefined,
       select: {
         id: true,
         createdAt: true,
@@ -44,6 +56,9 @@ export class WorkResponseRepo {
       },
       where: {
         workId,
+      },
+      orderBy: {
+        id: SortOrder.Desc,
       },
     });
   }

@@ -7,6 +7,6 @@ import {
 const router = Router();
 
 router.post("/work_resp/new", createWorkResponse);
-router.get("/work_resp/:workId", getWorkResponses);
+router.post("/work_resp", getWorkResponses);
 
 export default router;

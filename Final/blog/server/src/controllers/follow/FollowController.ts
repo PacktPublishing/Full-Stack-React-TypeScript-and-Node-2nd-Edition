@@ -1,7 +1,8 @@
 import { NextFunction, Request, Response } from "express";
 import { repo } from "../../routes/RepoInstance";
-import { FollowParams, PagedProfileBody } from "./FollowModels";
+import { FollowParams } from "./FollowModels";
 import { serializeBigInt } from "common/src/JsonUtils";
+import { PagingParams } from "../PagingParams";
 
 export async function createFollow(
   req: Request,
@@ -28,12 +29,12 @@ export async function getFollowers(
   next: NextFunction
 ) {
   try {
-    const { profileId, pageSize, lastCursor }: PagedProfileBody = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
     res
       .status(200)
       .json(
         serializeBigInt(
-          await repo.Follow.selectFollowers(profileId, pageSize, lastCursor)
+          await repo.Follow.selectFollowers(id, pageSize, lastCursor)
         )
       );
   } catch (e) {
@@ -47,12 +48,12 @@ export async function getFollowed(
   next: NextFunction
 ) {
   try {
-    const { profileId, pageSize, lastCursor }: PagedProfileBody = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
     res
       .status(200)
       .json(
         serializeBigInt(
-          await repo.Follow.selectFollowed(profileId, pageSize, lastCursor)
+          await repo.Follow.selectFollowed(id, pageSize, lastCursor)
         )
       );
   } catch (e) {

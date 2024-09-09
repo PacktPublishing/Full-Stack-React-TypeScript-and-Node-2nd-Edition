@@ -52,7 +52,7 @@ describe("POST /follow/followers", () => {
     await request(app)
       .post("/follow/followers")
       .send({
-        profileId: serializeBigInt(followed.id),
+        id: serializeBigInt(followed.id),
         pageSize: 10,
       })
       .expect("Content-Type", /json/)
@@ -93,7 +93,7 @@ describe("POST /follow/followers", () => {
     await request(app)
       .post("/follow/followers")
       .send({
-        profileId: serializeBigInt(followed.id),
+        id: serializeBigInt(followed.id),
         pageSize: 5,
         lastCursor: serializeBigInt(lastCursor),
       })
@@ -137,7 +137,7 @@ describe("POST /follow/followed", () => {
     await request(app)
       .post("/follow/followed")
       .send({
-        profileId: serializeBigInt(follower.id),
+        id: serializeBigInt(follower.id),
         pageSize: 10,
       })
       .expect("Content-Type", /json/)
@@ -179,7 +179,7 @@ describe("POST /follow/followed", () => {
     await request(app)
       .post("/follow/followed")
       .send({
-        profileId: serializeBigInt(follower.id),
+        id: serializeBigInt(follower.id),
         pageSize: 5,
         lastCursor: serializeBigInt(lastCursor),
       })

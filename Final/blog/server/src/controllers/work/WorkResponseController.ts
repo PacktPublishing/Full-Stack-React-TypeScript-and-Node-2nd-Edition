@@ -1,6 +1,7 @@
 import { NextFunction, Request, RequestHandler, Response } from "express";
 import { repo } from "../../routes/RepoInstance";
 import { serializeBigInt } from "common";
+import { PagingParams } from "../PagingParams";
 
 export const createWorkResponse: RequestHandler = async (
   req: Request,
@@ -37,11 +38,13 @@ export const getWorkResponses: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    const workId = req.params.workId;
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
     res
       .status(200)
       .json(
-        serializeBigInt(await repo.WorkResp.selectWorkResponses(BigInt(workId)))
+        serializeBigInt(
+          await repo.WorkResp.selectWorkResponses(id, pageSize, lastCursor)
+        )
       );
   } catch (e) {
     next(e);
