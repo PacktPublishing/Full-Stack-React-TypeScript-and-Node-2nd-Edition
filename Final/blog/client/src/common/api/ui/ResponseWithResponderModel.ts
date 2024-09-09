@@ -17,10 +17,8 @@ export class ResponseWithResponderModel implements UiEntity {
 }
 
 export function convert(
-  workResponse: WorkResponse | null
-): ResponseWithResponderModel | null {
-  if (!workResponse) return null;
-
+  workResponse: WorkResponse
+): ResponseWithResponderModel {
   return new ResponseWithResponderModel(
     workResponse.id.toString(),
     friendlyDate(workResponse.updatedAt),
@@ -31,4 +29,12 @@ export function convert(
     workResponse.responder.fullName,
     workResponse.responder.description
   );
+}
+
+export function convertArray(
+  workResponses: WorkResponse[] | null
+): ResponseWithResponderModel[] | null {
+  if (!workResponses) return null;
+
+  return workResponses.map((wr) => convert(wr));
 }

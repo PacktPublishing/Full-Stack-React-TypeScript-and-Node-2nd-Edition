@@ -9,8 +9,8 @@ import {
 } from "../net/work/Work";
 import { WorkImageItem } from "../net/work/WorkModels";
 import { convert as convertWork } from "./WorkWithAuthorModel";
-import { convert as convertWorkResponse } from "./ResponseWithResponderModel";
-import { getWorkResponses } from "../net/work/WorkResponse";
+import { convertArray as convertWorkResponseArray } from "./ResponseWithResponderModel";
+import { createWorkResponse, getWorkResponses } from "../net/work/WorkResponse";
 
 export default class UiApi {
   createWork = async function (
@@ -68,9 +68,21 @@ export default class UiApi {
     return convertWork(await getWork(workId));
   };
 
-  getWorkResponses = async function (workId: string) {
-    return (await getWorkResponses(workId))?.map((wr) =>
-      convertWorkResponse(wr)
+  createWorkResponse = async function (
+    workId: string,
+    responderId: string,
+    response: string
+  ) {
+    return (await createWorkResponse(workId, responderId, response)).toString();
+  };
+
+  getWorkResponses = async function (
+    workId: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertWorkResponseArray(
+      await getWorkResponses(workId, pageSize, lastCursor)
     );
   };
 

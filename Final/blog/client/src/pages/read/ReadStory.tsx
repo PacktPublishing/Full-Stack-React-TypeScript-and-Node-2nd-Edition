@@ -1,6 +1,5 @@
 import { ChangeEvent, FocusEvent, use, useEffect, useState } from "react";
 import { MarkdownEditor } from "../../common/components/MarkdownEditor";
-import { ResponseWithResponderModel } from "../../common/api/ui/UIModels";
 import { useParams } from "react-router-dom";
 import { AuthorWorkDetail } from "../../common/components/AuthorWorkDetail";
 import { Layout } from "../../common/components/Layout";
@@ -15,6 +14,7 @@ import {
   UiApiContext,
   UiApiType,
 } from "../../common/context/ui-api/UiApiContext";
+import { ResponseWithResponderModel } from "../../common/api/ui/ResponseWithResponderModel";
 
 enum ValidationStates {
   ResponseValueIsEmpty = "Response must have a value",
@@ -42,7 +42,6 @@ export function ReadStory() {
   }, [work]);
 
   useEffect(() => {
-    console.log("work_id", work_id);
     uiApi
       .getWork(work_id || "")
       .then((work) => {
@@ -63,14 +62,13 @@ export function ReadStory() {
   };
 
   const getData = async (lastCursor: string) => {
-    let responses: ResponseWithResponderModel[] | null =
+    const responses: ResponseWithResponderModel[] | null =
       await uiApi.getWorkResponses(work_id || "", PAGE_SIZE, lastCursor);
 
     if (!responses || responses.length === 0) {
       return null;
     }
 
-    console.log("responses", responses);
     return responses || null;
   };
 
@@ -99,7 +97,7 @@ export function ReadStory() {
 
     if (!work_id || !profile.id)
       throw new Error("Work id is undefined, cannot add response");
-    await api?.addWorkResponse(value, work_id || "", profile.id);
+    await uiApi.createWorkResponse(work_id || "", profile.id, value);
     setRefreshWorksData(true);
   };
 

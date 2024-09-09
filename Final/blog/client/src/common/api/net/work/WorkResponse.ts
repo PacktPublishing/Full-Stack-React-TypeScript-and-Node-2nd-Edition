@@ -1,11 +1,16 @@
 import { GET_WORK_RESPONSE_URL, NEW_WORK_RESPONSE_URL } from "../../lib/Url";
 import { WorkResponse } from "./WorkResponseModel";
 
-export async function createWorkResponse(workId: string, responseStr: string) {
+export async function createWorkResponse(
+  workId: string,
+  responderId: string,
+  responseStr: string
+) {
   const response = await fetch(NEW_WORK_RESPONSE_URL, {
     method: "POST",
     body: JSON.stringify({
       workId,
+      responderId,
       response: responseStr,
     }),
     headers: { "Content-Type": "application/json" },
@@ -18,9 +23,18 @@ export async function createWorkResponse(workId: string, responseStr: string) {
   return BigInt(await response.json());
 }
 
-export async function getWorkResponses(workId: string) {
+export async function getWorkResponses(
+  workId: string,
+  pageSize: number,
+  lastCursor?: string
+) {
   const response = await fetch(`${GET_WORK_RESPONSE_URL}${workId}`, {
-    method: "GET",
+    method: "POST",
+    body: JSON.stringify({
+      id: workId,
+      pageSize,
+      lastCursor,
+    }),
     headers: { "Content-Type": "application/json" },
   });
 

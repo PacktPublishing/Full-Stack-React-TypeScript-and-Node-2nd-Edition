@@ -1,21 +1,23 @@
-import { useEffect, useState } from "react";
-import { PAGE_SIZE } from "../../common/utils/StandardValues";
-import { useProfile } from "../../common/redux/Store";
+import { use, useEffect, useState } from "react";
+import { useUserProfile } from "../../common/redux/Store";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { Layout } from "../../common/components/Layout";
 import { FollowedList } from "../../common/components/FollowedList";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import { WorkWithAuthorModel } from "../../common/api/ui/UIModels";
-import { useUiApi } from "../../common/context/UiApiContext";
+import {
+  UiApiContext,
+  UiApiType,
+} from "../../common/context/ui-api/UiApiContext";
+import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
+import { PAGE_SIZE } from "../../common/lib/utils/StandardValues";
 
 export function ReadFollowed() {
-  const profile = useProfile((state) => state.profile);
+  const profile = useUserProfile();
   const [currentFollowedId, setCurrentFollowedId] = useState(""); // 0 means all
   const [refreshWorksData, setRefreshWorksData] = useState(false);
-  const api = useUiApi();
+  const { uiApi } = use(UiApiContext) as UiApiType;
 
   useEffect(() => {
-    console.log("profile, currentFollowedId, priorKeyset updated, run getData");
     setRefreshWorksData(true);
   }, [profile, currentFollowedId]);
 
@@ -30,16 +32,8 @@ export function ReadFollowed() {
 
     // todo: need to test these calls each
     if (currentFollowedId === "") {
-      let works: WorkWithAuthorModel[] | null | undefined;
-      if (priorKeyset === "") {
-        works = await api?.getWorksByAllFollowedTop(profile.id);
-      } else {
-        works = await api?.getWorksByAllFollowed(
-          profile.id,
-          PAGE_SIZE,
-          priorKeyset
-        );
-      }
+      let works: WorkWithAuthorModel[] | null =
+        await uiApi.getWorksByAllFollowed(profile.id, PAGE_SIZE, priorKeyset);
 
       if (!works || works.length === 0) {
         return null;
@@ -49,9 +43,9 @@ export function ReadFollowed() {
     } else {
       let works: WorkWithAuthorModel[] | null | undefined;
       if (priorKeyset === "") {
-        works = await api?.getWorksByOneFollowedTop(currentFollowedId);
+        works = await uiApi.getWorksByOneFollowedTop(currentFollowedId);
       } else {
-        works = await api?.getWorksByOneFollowed(
+        works = await uiApi.getWorksByOneFollowed(
           currentFollowedId || "",
           PAGE_SIZE,
           priorKeyset
