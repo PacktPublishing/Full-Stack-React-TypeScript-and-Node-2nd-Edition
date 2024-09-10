@@ -4,6 +4,7 @@ import {
   GET_LATEST_WORK_URL,
   GET_MOST_POP_WORK_URL,
   GET_WORK_URL,
+  GET_WORKS_OF_FOLLOWED_URL,
   NEW_WORK_URL,
   UPDATE_WORK_URL,
 } from "../../lib/Url";
@@ -105,7 +106,7 @@ export async function getLatestWorksByAuthor(
   const response = await fetch(GET_LATEST_WORK_URL, {
     method: "POST",
     body: JSON.stringify({
-      authorId,
+      id: authorId,
       pageSize,
       lastCursor,
     }),
@@ -114,6 +115,29 @@ export async function getLatestWorksByAuthor(
 
   if (!response.ok) {
     throw new Error("Failed to get latest works list");
+  }
+
+  const work: Work[] | null = await response.json();
+  return work;
+}
+
+export async function getWorksOfFollowed(
+  followerId: string,
+  pageSize: number = PAGE_SIZE,
+  lastCursor?: string
+) {
+  const response = await fetch(GET_WORKS_OF_FOLLOWED_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      id: followerId,
+      pageSize,
+      lastCursor,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get works of followed");
   }
 
   const work: Work[] | null = await response.json();

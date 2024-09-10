@@ -5,10 +5,14 @@ import {
   getLatestWorksByAuthor,
   getMostPopularWorks,
   getWork,
+  getWorksOfFollowed,
   updateWork,
 } from "../net/work/Work";
 import { WorkImageItem } from "../net/work/WorkModels";
-import { convert as convertWork } from "./WorkWithAuthorModel";
+import {
+  convert as convertWork,
+  convertArray as convertWorkArray,
+} from "./WorkWithAuthorModel";
 import { convertArray as convertWorkResponseArray } from "./ResponseWithResponderModel";
 import { createWorkResponse, getWorkResponses } from "../net/work/WorkResponse";
 
@@ -49,8 +53,8 @@ export default class UiApi {
     pageSize: number = PAGE_SIZE,
     lastCursor?: string
   ) {
-    return (await getMostPopularWorks(topicId, pageSize, lastCursor))?.map(
-      (work) => convertWork(work)!
+    return convertWorkArray(
+      await getMostPopularWorks(topicId, pageSize, lastCursor)
     );
   };
 
@@ -59,13 +63,25 @@ export default class UiApi {
     pageSize: number = PAGE_SIZE,
     lastCursor?: string
   ) {
-    return (await getLatestWorksByAuthor(authorId, pageSize, lastCursor))?.map(
-      (work) => convertWork(work)!
+    return convertWorkArray(
+      await getLatestWorksByAuthor(authorId, pageSize, lastCursor)
+    );
+  };
+
+  getWorksOfFollowed = async function (
+    followerId: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertWorkArray(
+      await getWorksOfFollowed(followerId, pageSize, lastCursor)
     );
   };
 
   getWork = async function (workId: string) {
-    return convertWork(await getWork(workId));
+    const works = await getWork(workId);
+    if (works) return convertWork(works);
+    return null;
   };
 
   createWorkResponse = async function (

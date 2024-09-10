@@ -32,8 +32,8 @@ export function ReadFollowed() {
 
     // todo: need to test these calls each
     if (currentFollowedId === "") {
-      let works: WorkWithAuthorModel[] | null =
-        await uiApi.getWorksByAllFollowed(profile.id, PAGE_SIZE, priorKeyset);
+      const works: WorkWithAuthorModel[] | null =
+        await uiApi.getWorksOfFollowed(profile.id, PAGE_SIZE, priorKeyset);
 
       if (!works || works.length === 0) {
         return null;

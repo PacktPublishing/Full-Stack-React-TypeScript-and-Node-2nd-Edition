@@ -19,9 +19,7 @@ export class WorkWithAuthorModel implements UiEntity {
   ) {}
 }
 
-export function convert(work: Work | null): WorkWithAuthorModel | null {
-  if (!work) return null;
-
+export function convert(work: Work): WorkWithAuthorModel {
   return {
     id: work.id.toString(),
     updatedAt: friendlyDate(work.updatedAt),
@@ -38,4 +36,12 @@ export function convert(work: Work | null): WorkWithAuthorModel | null {
     })),
     likeCount: work.workLikes ? work.workLikes.length : 0,
   };
+}
+
+export function convertArray(
+  works: Work[] | null
+): WorkWithAuthorModel[] | null {
+  if (!works) return null;
+
+  return works.map((w) => convert(w));
 }

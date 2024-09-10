@@ -186,3 +186,23 @@ export const getWorksOfFollowed: RequestHandler = async (
     next(e);
   }
 };
+
+export const getWorksOfOneFollowed: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // id = followedId
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const works = await repo.Work.selectWorksOfOneFollowed(
+      id,
+      pageSize,
+      lastCursor
+    );
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};

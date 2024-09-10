@@ -5,6 +5,7 @@ import {
   getPopularWork,
   getWork,
   getWorksOfFollowed,
+  getWorksOfOneFollowed,
   updateWork,
 } from "../../controllers/work/WorkController.js";
 import multer from "multer";
@@ -20,5 +21,6 @@ router.get("/work/:id", getWork);
 router.post("/work_popular", getPopularWork);
 router.post("/work_latest", getLatestWork);
 router.post("/work_followed", getWorksOfFollowed);
+router.post("/work_followed_one", getWorksOfOneFollowed);
 
 export default router;

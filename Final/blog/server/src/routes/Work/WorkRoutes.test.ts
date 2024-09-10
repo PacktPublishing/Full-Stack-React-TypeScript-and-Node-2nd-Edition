@@ -380,3 +380,76 @@ describe("POST /work_followed", () => {
       });
   });
 });
+
+describe("POST /work_followed_one", () => {
+  it("get one followed profile's works", async () => {
+    const title = faker.lorem.sentence(6);
+    const description = faker.lorem.sentence(10);
+    const content = faker.lorem.sentences(2);
+    let avatar: Buffer | undefined = getAvatar();
+
+    const userName = faker.internet.userName();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(3);
+    const follower = await repo.Profile.insertProfile(
+      userName,
+      fullName,
+      desc,
+      faker.internet.url(),
+      faker.internet.url(),
+      avatar
+    );
+
+    const followedWorkIds: bigint[] = [];
+    const followed = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(3),
+      faker.internet.url(),
+      faker.internet.url(),
+      getAvatar()
+    );
+    await repo.Follow.insertFollow(followed.id, follower.id);
+
+    for (let i = 0; i < 10; i++) {
+      const followedWork = await repo.Work.insertWork(
+        title,
+        description,
+        content,
+        followed.id,
+        []
+      );
+      followedWorkIds.push(followedWork.id);
+    }
+
+    const firstFive = await repo.Work.selectWorksOfOneFollowed(followed.id, 5);
+    console.log("firstFive", firstFive);
+    const lastCursor = firstFive[firstFive.length - 1].id;
+
+    await request(app)
+      .post("/work_followed_one")
+      .send({
+        id: serializeBigInt(followed.id),
+        pageSize: 5,
+        lastCursor: serializeBigInt(lastCursor),
+      })
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        const response: {
+          id: bigint;
+          updatedAt: Date;
+          title: string;
+          description: string;
+          content: string;
+          authorId: bigint;
+          userName: string;
+          fullName: string;
+          authorDesc: string | null;
+        }[] = res.body;
+        console.log("nextFive", response);
+        const reversedWorkIds = followedWorkIds.reverse();
+        assert.equal(response[0].id, reversedWorkIds[5]);
+      });
+  });
+});
