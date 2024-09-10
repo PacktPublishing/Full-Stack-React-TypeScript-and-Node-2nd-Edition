@@ -42,6 +42,21 @@ export async function getFollowers(
   }
 }
 
+export async function getFollowersCount(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const followedId = req.params.followedId;
+    res
+      .status(200)
+      .json(await repo.Follow.selectFollowersCount(BigInt(followedId)));
+  } catch (e) {
+    next(e);
+  }
+}
+
 export async function getFollowed(
   req: Request,
   res: Response,
@@ -56,6 +71,21 @@ export async function getFollowed(
           await repo.Follow.selectFollowed(id, pageSize, lastCursor)
         )
       );
+  } catch (e) {
+    next(e);
+  }
+}
+
+export async function getFollowedCount(
+  req: Request,
+  res: Response,
+  next: NextFunction
+) {
+  try {
+    const followerId = req.params.followerId;
+    res
+      .status(200)
+      .json(await repo.Follow.selectFollowedCount(BigInt(followerId)));
   } catch (e) {
     next(e);
   }

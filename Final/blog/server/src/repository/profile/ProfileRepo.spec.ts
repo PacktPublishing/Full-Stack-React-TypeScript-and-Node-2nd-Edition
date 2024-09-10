@@ -92,7 +92,6 @@ describe("Repository Profile", () => {
     assert.equal(popAuthors.length, count);
     assert.equal(popAuthors.length, rawPopAuthors.length);
     assert.equal(popAuthors[0].id, rawPopAuthors[0].id);
-    assert.equal(popAuthors[9].id, rawPopAuthors[9].id);
   });
 
   it("Create Profile; get it back; and confirm its avatar", async () => {

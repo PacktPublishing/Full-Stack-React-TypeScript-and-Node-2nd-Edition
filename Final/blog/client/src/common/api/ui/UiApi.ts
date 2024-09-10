@@ -18,6 +18,8 @@ import {
 } from "./WorkWithAuthorModel";
 import { convertArray as convertWorkResponseArray } from "./ResponseWithResponderModel";
 import { createWorkResponse, getWorkResponses } from "../net/work/WorkResponse";
+import { convertArray as convertFollowArray } from "./FollowModel";
+import { getFollowed } from "../net/follow/Follow";
 
 export default class UiApi {
   createWork = async function (
@@ -135,5 +137,15 @@ export default class UiApi {
 
   getAllTopics = async function () {
     return await getAllTopics();
+  };
+
+  getFollowed = async function (
+    followerId: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertFollowArray(
+      await getFollowed(followerId, pageSize, lastCursor)
+    );
   };
 }

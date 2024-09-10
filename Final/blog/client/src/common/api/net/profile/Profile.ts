@@ -1,5 +1,3 @@
-"use server";
-
 import { Profile } from "./ProfileModels";
 
 export async function getMostPopularAuthors() {

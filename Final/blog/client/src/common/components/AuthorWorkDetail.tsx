@@ -1,9 +1,9 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import { RandomImg } from "./RandomImage";
 import { TipsResponses } from "./TipsResponses";
 import { FollowTooltip, useFollowTooltip } from "./modals/FollowTooltip";
-import { WorkWithAuthorModel } from "../api/ui/UIModels";
-import { useUiApi } from "../context/UiApiContext";
+import { WorkWithAuthorModel } from "../api/ui/WorkWithAuthorModel";
+import { UiApiContext } from "../context/ui-api/UiApiContext";
 
 interface AuthorWorkDetailProps {
   showAuthor: boolean;
@@ -21,21 +21,21 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
     onMouseEnter,
     onMouseLeave,
   } = useFollowTooltip(spanRef);
-  const api = useUiApi();
+  const api = use(UiApiContext);
 
   useEffect(() => {
-    api
-      ?.getFollowedCount(work.authorId)
+    api?.uiApi
+      .getFollowedCount(work.authorId)
       .then((followingCount) => {
-        api
+        api?.uiApi
           .getFollowerCount(work.authorId)
           .then((followerCount) => {
             setFollowingCount(followingCount);
             setFollowerCount(followerCount);
           })
-          .catch((e) => console.log(e));
+          .catch((e: unknown) => console.log(e));
       })
-      .catch((e) => console.log(e));
+      .catch((e: unknown) => console.log(e));
   }, [work]);
 
   return (

@@ -193,3 +193,77 @@ describe("POST /follow/followed", () => {
       });
   });
 });
+
+describe("GET /follow/follower/count", () => {
+  it("get follower count", async () => {
+    const followed = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(5),
+      faker.internet.url(),
+      faker.internet.url(),
+      getAvatar()
+    );
+
+    const followerCount = 10;
+    const followerIds: bigint[] = new Array(followerCount);
+    for (let i = 0; i < followerCount; i++) {
+      const follower = await repo.Profile.insertProfile(
+        faker.internet.userName(),
+        faker.internet.displayName(),
+        faker.lorem.sentence(5),
+        faker.internet.url(),
+        faker.internet.url(),
+        getAvatar()
+      );
+      followerIds[i] = follower.id;
+      await repo.Follow.insertFollow(followed.id, follower.id);
+    }
+
+    await request(app)
+      .get(`/follow/followers/count/${followed.id}`)
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        console.log("count:", res.body);
+        assert.equal(res.body, followerIds.length);
+      });
+  });
+});
+
+describe("GET /follow/followed/count", () => {
+  it("get followed count", async () => {
+    const follower = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(5),
+      faker.internet.url(),
+      faker.internet.url(),
+      getAvatar()
+    );
+
+    const followedCount = 10;
+    const followedIds: bigint[] = new Array(followedCount);
+    for (let i = 0; i < followedCount; i++) {
+      const followed = await repo.Profile.insertProfile(
+        faker.internet.userName(),
+        faker.internet.displayName(),
+        faker.lorem.sentence(5),
+        faker.internet.url(),
+        faker.internet.url(),
+        getAvatar()
+      );
+      followedIds[i] = followed.id;
+      await repo.Follow.insertFollow(followed.id, follower.id);
+    }
+
+    await request(app)
+      .get(`/follow/followed/count/${follower.id}`)
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        console.log("count:", res.body);
+        assert.equal(res.body, followedIds.length);
+      });
+  });
+});

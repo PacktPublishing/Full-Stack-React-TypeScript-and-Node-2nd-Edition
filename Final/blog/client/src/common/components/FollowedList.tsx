@@ -1,10 +1,10 @@
-import { JSX, MouseEvent, useEffect, useState } from "react";
+import { JSX, MouseEvent, use, useEffect, useState } from "react";
 import allFollow from "../../theme/assets/profiles/l-all.png";
-import { useProfile } from "../redux/Store";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { RandomImg } from "./RandomImage";
-import { useUiApi } from "../context/UiApiContext";
+import { useUserProfile } from "../redux/profile/ProfileHooks";
+import { UiApiContext } from "../context/ui-api/UiApiContext";
 
 const SELECTED_CLASS = "followed-list-selected";
 
@@ -16,8 +16,8 @@ export function FollowedList({
   getCurrentSelectedFollowedId,
 }: FollowedListProps) {
   const [followedProfiles, setFollowedProfiles] = useState<JSX.Element[]>([]);
-  const profile = useProfile((state) => state.profile);
-  const api = useUiApi();
+  const [profile] = useUserProfile();
+  const api = use(UiApiContext);
 
   const onClickSelectProfile = (e: MouseEvent<HTMLDivElement>) => {
     const currentElementProfileId = e.currentTarget.dataset.profileId || "";
@@ -65,8 +65,8 @@ export function FollowedList({
 
   useEffect(() => {
     if (profile) {
-      api
-        ?.getFollowedProfiles(profile.id)
+      api?.uiApi
+        .getFollowed(profile.id)
         .then((profiles) => {
           if (!profiles || profiles.length === 0) {
             setFollowedProfiles([
@@ -102,7 +102,7 @@ export function FollowedList({
               0,
               <div
                 data-profile-id={0}
-                key={`followed-${profile.username}`}
+                key={`followed-${profile.userName}`}
                 className="followed-list-item"
                 style={{ marginLeft: "1em", marginRight: "1em" }}
                 onClick={onClickSelectProfile}

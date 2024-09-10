@@ -18,7 +18,7 @@ export class FollowRepo {
   }
 
   async selectFollowers(
-    profileId: bigint,
+    followedId: bigint,
     pageSize: number,
     lastCursor?: bigint
   ) {
@@ -46,7 +46,7 @@ export class FollowRepo {
           },
         },
         where: {
-          followedId: profileId,
+          followedId,
         },
         orderBy: {
           id: SortOrder.Desc,
@@ -60,8 +60,16 @@ export class FollowRepo {
     });
   }
 
+  async selectFollowersCount(followedId: bigint) {
+    return await this.#client.follow.count({
+      where: {
+        followedId,
+      },
+    });
+  }
+
   async selectFollowed(
-    profileId: bigint,
+    followerId: bigint,
     pageSize: number,
     lastCursor?: bigint
   ) {
@@ -89,7 +97,7 @@ export class FollowRepo {
           },
         },
         where: {
-          followerId: profileId,
+          followerId,
         },
         orderBy: {
           id: SortOrder.Desc,
@@ -100,6 +108,14 @@ export class FollowRepo {
         followId: item.id,
         ...item.followed,
       };
+    });
+  }
+
+  async selectFollowedCount(followerId: bigint) {
+    return await this.#client.follow.count({
+      where: {
+        followerId: followerId,
+      },
     });
   }
 }

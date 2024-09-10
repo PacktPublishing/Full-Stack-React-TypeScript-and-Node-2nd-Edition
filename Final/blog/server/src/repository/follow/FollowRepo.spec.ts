@@ -110,4 +110,62 @@ describe("Repository Follow", () => {
       all[all.length - 1].followId
     );
   });
+
+  it("Get follower count", async () => {
+    const followed = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(5),
+      faker.internet.url(),
+      faker.internet.url(),
+      getAvatar()
+    );
+
+    const followerCount = 10;
+    const followerIds: bigint[] = new Array(followerCount);
+    for (let i = 0; i < followerCount; i++) {
+      const follower = await repo.Profile.insertProfile(
+        faker.internet.userName(),
+        faker.internet.displayName(),
+        faker.lorem.sentence(5),
+        faker.internet.url(),
+        faker.internet.url(),
+        getAvatar()
+      );
+      followerIds[i] = follower.id;
+      await repo.Follow.insertFollow(followed.id, follower.id);
+    }
+
+    const count = await repo.Follow.selectFollowersCount(followed.id);
+    assert.equal(count, followerIds.length);
+  });
+
+  it("Get followed count", async () => {
+    const follower = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(5),
+      faker.internet.url(),
+      faker.internet.url(),
+      getAvatar()
+    );
+
+    const followedCount = 10;
+    const followedIds: bigint[] = new Array(followedCount);
+    for (let i = 0; i < followedCount; i++) {
+      const followed = await repo.Profile.insertProfile(
+        faker.internet.userName(),
+        faker.internet.displayName(),
+        faker.lorem.sentence(5),
+        faker.internet.url(),
+        faker.internet.url(),
+        getAvatar()
+      );
+      followedIds[i] = follower.id;
+      await repo.Follow.insertFollow(followed.id, follower.id);
+    }
+
+    const count = await repo.Follow.selectFollowedCount(follower.id);
+    assert.equal(count, followedIds.length);
+  });
 });
