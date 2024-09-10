@@ -3,7 +3,7 @@ import request from "supertest";
 import app from "../../app";
 import { faker } from "@faker-js/faker";
 import { repo } from "../RepoInstance";
-import { avatars } from "../../__test__/avatar";
+import { avatars, getAvatar } from "../../__test__/avatar";
 import { serializeBigInt } from "common";
 import assert from "node:assert";
 
@@ -303,6 +303,80 @@ describe("POST /work_latest", () => {
             latestWorks[latestWorks.length - 1].updatedAt,
           true
         );
+      });
+  });
+});
+
+describe("POST /work_followed", () => {
+  it("get followed works", async () => {
+    const title = faker.lorem.sentence(6);
+    const description = faker.lorem.sentence(10);
+    const content = faker.lorem.sentences(2);
+    let avatar: Buffer | undefined = getAvatar();
+
+    const userName = faker.internet.userName();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(3);
+    const follower = await repo.Profile.insertProfile(
+      userName,
+      fullName,
+      desc,
+      faker.internet.url(),
+      faker.internet.url(),
+      avatar
+    );
+
+    const followedCount = 10;
+    const followedWorkIds: bigint[] = [];
+    for (let i = 0; i < followedCount; i++) {
+      const followed = await repo.Profile.insertProfile(
+        faker.internet.userName(),
+        faker.internet.displayName(),
+        faker.lorem.sentence(3),
+        faker.internet.url(),
+        faker.internet.url(),
+        getAvatar()
+      );
+      await repo.Follow.insertFollow(followed.id, follower.id);
+
+      for (let i = 0; i < 5; i++) {
+        const followedWork = await repo.Work.insertWork(
+          title,
+          description,
+          content,
+          followed.id,
+          []
+        );
+        followedWorkIds.push(followedWork.id);
+      }
+    }
+
+    const firstFive = await repo.Work.selectWorksOfFollowed(follower.id, 5);
+    const lastCursor = firstFive[firstFive.length - 1].id;
+
+    await request(app)
+      .post("/work_followed")
+      .send({
+        id: serializeBigInt(follower.id),
+        pageSize: 5,
+        lastCursor: serializeBigInt(lastCursor),
+      })
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        const response: {
+          id: bigint;
+          updatedAt: Date;
+          title: string;
+          description: string;
+          content: string;
+          authorId: bigint;
+          userName: string;
+          fullName: string;
+          authorDesc: string | null;
+        }[] = res.body;
+        const reversedWorkIds = followedWorkIds.reverse();
+        assert.equal(response[0].id, reversedWorkIds[5]);
       });
   });
 });
