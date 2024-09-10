@@ -61,7 +61,7 @@ export function ReadStory() {
     setResponseValue(e.target.value);
   };
 
-  const getData = async (lastCursor: string) => {
+  const getData = async (lastCursor?: string) => {
     const responses: ResponseWithResponderModel[] | null =
       await uiApi.getWorkResponses(work_id || "", PAGE_SIZE, lastCursor);
 

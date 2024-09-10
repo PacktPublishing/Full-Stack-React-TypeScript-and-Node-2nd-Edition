@@ -6,6 +6,7 @@ import {
   getMostPopularWorks,
   getWork,
   getWorksOfFollowed,
+  getWorksOfOneFollowed,
   updateWork,
 } from "../net/work/Work";
 import { WorkImageItem } from "../net/work/WorkModels";
@@ -75,6 +76,16 @@ export default class UiApi {
   ) {
     return convertWorkArray(
       await getWorksOfFollowed(followerId, pageSize, lastCursor)
+    );
+  };
+
+  getWorksOfOneFollowed = async function (
+    followerId: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertWorkArray(
+      await getWorksOfOneFollowed(followerId, pageSize, lastCursor)
     );
   };
 

@@ -410,7 +410,7 @@ export class WorkRepo {
   async selectWorksOfOneFollowed(
     followedId: bigint,
     pageSize: number,
-    lastCursor?: bigint
+    workIdCursor?: bigint
   ) {
     const works = await this.#client.follow.findMany({
       select: {
@@ -451,10 +451,10 @@ export class WorkRepo {
                   },
                 },
               },
-              where: lastCursor
+              where: workIdCursor
                 ? {
                     id: {
-                      lt: lastCursor,
+                      lt: workIdCursor,
                     },
                   }
                 : undefined,
@@ -489,5 +489,76 @@ export class WorkRepo {
         return 0;
       })
       .slice(0, pageSize);
+  }
+
+  /// cursor is work id
+  async selectWorksByTopic(
+    topicId: bigint,
+    pageSize: number,
+    workIdCursor?: bigint
+  ) {
+    const works = await this.#client.work.findMany({
+      take: pageSize,
+      skip: workIdCursor ? 1 : 0,
+      cursor: workIdCursor
+        ? {
+            id: workIdCursor,
+          }
+        : undefined,
+      select: {
+        id: true,
+        updatedAt: true,
+        title: true,
+        description: true,
+        content: true,
+        authorId: true,
+        author: {
+          select: {
+            userName: true,
+            fullName: true,
+            description: true,
+          },
+        },
+        workTopics: {
+          select: {
+            topic: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        workLikes: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      where: {
+        workTopics: {
+          every: {
+            topicId,
+          },
+        },
+      },
+      orderBy: {
+        id: SortOrder.Desc,
+      },
+    });
+
+    return works.map((w) => ({
+      id: w.id,
+      updatedAt: w.updatedAt,
+      title: w.title,
+      description: w.description,
+      content: w.content,
+      authorId: w.authorId,
+      userName: w.author.userName,
+      fullName: w.author.fullName,
+      authorDesc: w.author.description,
+      workTopics: w.workTopics,
+      workLikes: w.workLikes,
+    }));
   }
 }

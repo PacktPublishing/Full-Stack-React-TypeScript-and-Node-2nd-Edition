@@ -435,4 +435,46 @@ describe("Work tests", () => {
     assert.equal(nextFive[0].id, reversedWorkIds[5]);
     assert.equal(nextFive[nextFive.length - 1].id, reversedWorkIds[9]);
   });
+
+  it("selectWorksByTopic, gets works by topic", async () => {
+    const title = faker.lorem.sentence(6);
+    const description = faker.lorem.sentence(10);
+    const content = faker.lorem.sentences(2);
+    let avatar: Buffer | undefined = getAvatar();
+
+    const userName = faker.internet.userName();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(5);
+    const author = await repo.Profile.insertProfile(
+      userName,
+      fullName,
+      desc,
+      faker.internet.url(),
+      faker.internet.url(),
+      avatar
+    );
+    const topic = await repo.Topic.insertTopic(faker.company.name());
+    const topicWorkIds = [];
+    for (let i = 0; i < 10; i++) {
+      topicWorkIds.push(
+        (
+          await repo.Work.insertWork(title, description, content, author.id, [
+            topic.id,
+          ])
+        ).id
+      );
+    }
+
+    const firstFive = await repo.Work.selectWorksByTopic(topic.id, 5);
+    const workIdCursor = firstFive[firstFive.length - 1].id;
+
+    const nextFive = await repo.Work.selectWorksByTopic(
+      topic.id,
+      5,
+      workIdCursor
+    );
+    const reversedTopicWorkIds = topicWorkIds.reverse();
+    assert.equal(nextFive[0].id, reversedTopicWorkIds[5]);
+    assert.equal(nextFive[4].id, reversedTopicWorkIds[9]);
+  });
 });

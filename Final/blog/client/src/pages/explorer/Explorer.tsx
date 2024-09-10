@@ -6,18 +6,23 @@ import {
   FocusEvent,
   MouseEvent,
   JSX,
+  use,
 } from "react";
 import { Layout } from "../../common/components/Layout";
 import { TopicElement } from "../../common/components/TopicElement";
 import searchIcon from "../../theme/assets/app-icons/search1.png";
-import { PAGE_SIZE } from "../../common/utils/StandardValues";
+import { PAGE_SIZE } from "../../common/lib/utils/StandardValues";
 import { useParams } from "react-router-dom";
-import { upperCaseFirstLetterOfWords } from "../../common/utils/CharacterUtils";
+import { upperCaseFirstLetterOfWords } from "../../common/lib/utils/CharacterUtils";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { TabHeader } from "../../common/components/TabHeader";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import { TopicModel, WorkWithAuthorModel } from "../../common/api/ui/UIModels";
-import { useUiApi } from "../../common/context/UiApiContext";
+import { TopicModel } from "../../common/api/ui/UIModels";
+import {
+  UiApiContext,
+  UiApiType,
+} from "../../common/context/ui-api/UiApiContext";
+import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
 
 enum ValidationStates {
   SearchTxtTooShort = "Search string must be at least 3 characters",
@@ -33,7 +38,7 @@ export function Explorer() {
   const { topic_id } = useParams<{ topic_id: string | undefined }>();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
   const [validationMsg, setValidationMsg] = useState("");
-  const api = useUiApi();
+  const api = use(UiApiContext);
 
   const onChangeSearch = (e: ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
@@ -90,7 +95,7 @@ export function Explorer() {
     setRefreshWorksData(true);
   }, [topic_id, topics]);
 
-  const getNextData = async (priorKeyset: string) => {
+  const getNextData = async (lastCursor?: string) => {
     console.log("searchTxt:", searchTxt);
     if (searchTxt && searchTxt.length > 0) {
       if (validateSearchTxt(searchTxt) !== ValidationStates.FieldIsValid) {
@@ -99,10 +104,10 @@ export function Explorer() {
       }
 
       let works: WorkWithAuthorModel[] | null | undefined;
-      if (priorKeyset === "") {
+      if (lastCursor === "") {
         works = await api?.searchWorksTop(searchTxt);
       } else {
-        works = await api?.searchWorks(searchTxt, PAGE_SIZE, priorKeyset);
+        works = await api?.searchWorks(searchTxt, PAGE_SIZE, lastCursor);
       }
 
       if (!works || works.length === 0) {
@@ -111,15 +116,15 @@ export function Explorer() {
 
       return works;
     } else {
-      console.log("priorKeyset:", priorKeyset);
+      console.log("priorKeyset:", lastCursor);
       let works: WorkWithAuthorModel[] | null | undefined;
-      if (priorKeyset === "") {
+      if (lastCursor === "") {
         works = await api?.getWorksByTopicTop(topic_id || "", PAGE_SIZE);
       } else {
         works = await api?.getWorksByTopic(
           topic_id || "",
           PAGE_SIZE,
-          priorKeyset
+          lastCursor
         );
       }
 

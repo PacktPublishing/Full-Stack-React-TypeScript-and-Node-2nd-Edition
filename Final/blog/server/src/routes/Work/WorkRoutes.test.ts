@@ -7,6 +7,18 @@ import { avatars, getAvatar } from "../../__test__/avatar";
 import { serializeBigInt } from "common";
 import assert from "node:assert";
 
+type TestWorkModel = {
+  id: bigint;
+  updatedAt: Date;
+  title: string;
+  description: string;
+  content: string;
+  authorId: bigint;
+  userName: string;
+  fullName: string;
+  authorDesc: string | null;
+};
+
 describe("POST /work/new", () => {
   it("create work", async () => {
     const profile = await repo.Profile.insertProfile(
@@ -364,17 +376,7 @@ describe("POST /work_followed", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .then((res) => {
-        const response: {
-          id: bigint;
-          updatedAt: Date;
-          title: string;
-          description: string;
-          content: string;
-          authorId: bigint;
-          userName: string;
-          fullName: string;
-          authorDesc: string | null;
-        }[] = res.body;
+        const response: TestWorkModel[] = res.body;
         const reversedWorkIds = followedWorkIds.reverse();
         assert.equal(response[0].id, reversedWorkIds[5]);
       });
@@ -436,20 +438,61 @@ describe("POST /work_followed_one", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .then((res) => {
-        const response: {
-          id: bigint;
-          updatedAt: Date;
-          title: string;
-          description: string;
-          content: string;
-          authorId: bigint;
-          userName: string;
-          fullName: string;
-          authorDesc: string | null;
-        }[] = res.body;
+        const response: TestWorkModel[] = res.body;
         console.log("nextFive", response);
         const reversedWorkIds = followedWorkIds.reverse();
         assert.equal(response[0].id, reversedWorkIds[5]);
+      });
+  });
+});
+
+describe("POST /work_topic", () => {
+  it("selectWorksByTopic, gets works by topic", async () => {
+    const title = faker.lorem.sentence(6);
+    const description = faker.lorem.sentence(10);
+    const content = faker.lorem.sentences(2);
+    let avatar: Buffer | undefined = getAvatar();
+
+    const userName = faker.internet.userName();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(5);
+    const author = await repo.Profile.insertProfile(
+      userName,
+      fullName,
+      desc,
+      faker.internet.url(),
+      faker.internet.url(),
+      avatar
+    );
+    const topic = await repo.Topic.insertTopic(faker.company.name());
+    const topicWorkIds: bigint[] = [];
+    for (let i = 0; i < 10; i++) {
+      topicWorkIds.push(
+        (
+          await repo.Work.insertWork(title, description, content, author.id, [
+            topic.id,
+          ])
+        ).id
+      );
+    }
+
+    const firstFive = await repo.Work.selectWorksByTopic(topic.id, 5);
+    const workIdCursor = firstFive[firstFive.length - 1].id;
+
+    await request(app)
+      .post("/work_topic")
+      .send({
+        id: serializeBigInt(topic.id),
+        pageSize: 5,
+        lastCursor: serializeBigInt(workIdCursor),
+      })
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        const nextFive: TestWorkModel[] = res.body;
+        const reversedTopicWorkIds = topicWorkIds.reverse();
+        assert.equal(nextFive[0].id, reversedTopicWorkIds[5]);
+        assert.equal(nextFive[4].id, reversedTopicWorkIds[9]);
       });
   });
 });

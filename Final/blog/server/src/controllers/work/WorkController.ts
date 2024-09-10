@@ -173,7 +173,6 @@ export const getWorksOfFollowed: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    // id = followerId
     const { id, pageSize, lastCursor }: PagingParams = req.body;
     const works = await repo.Work.selectWorksOfFollowed(
       id,
@@ -193,13 +192,27 @@ export const getWorksOfOneFollowed: RequestHandler = async (
   next: NextFunction
 ) => {
   try {
-    // id = followedId
     const { id, pageSize, lastCursor }: PagingParams = req.body;
     const works = await repo.Work.selectWorksOfOneFollowed(
       id,
       pageSize,
       lastCursor
     );
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getWorksByTopic: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const works = await repo.Work.selectWorksByTopic(id, pageSize, lastCursor);
 
     res.status(200).json(serializeBigInt(works));
   } catch (e) {

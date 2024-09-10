@@ -1,5 +1,4 @@
 import { use, useEffect, useState } from "react";
-import { useUserProfile } from "../../common/redux/Store";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { Layout } from "../../common/components/Layout";
 import { FollowedList } from "../../common/components/FollowedList";
@@ -10,9 +9,10 @@ import {
 } from "../../common/context/ui-api/UiApiContext";
 import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
 import { PAGE_SIZE } from "../../common/lib/utils/StandardValues";
+import { useUserProfile } from "../../common/redux/profile/ProfileHooks";
 
 export function ReadFollowed() {
-  const profile = useUserProfile();
+  const [profile] = useUserProfile();
   const [currentFollowedId, setCurrentFollowedId] = useState(""); // 0 means all
   const [refreshWorksData, setRefreshWorksData] = useState(false);
   const { uiApi } = use(UiApiContext) as UiApiType;
@@ -26,14 +26,14 @@ export function ReadFollowed() {
     setCurrentFollowedId(id);
   };
 
-  const getData = async (priorKeyset: string) => {
+  const getData = async (lastCursor?: string) => {
     console.log("begin getData", currentFollowedId);
     if (!profile) return null;
 
     // todo: need to test these calls each
     if (currentFollowedId === "") {
       const works: WorkWithAuthorModel[] | null =
-        await uiApi.getWorksOfFollowed(profile.id, PAGE_SIZE, priorKeyset);
+        await uiApi.getWorksOfFollowed(profile.id, PAGE_SIZE, lastCursor);
 
       if (!works || works.length === 0) {
         return null;
@@ -41,16 +41,12 @@ export function ReadFollowed() {
 
       return works;
     } else {
-      let works: WorkWithAuthorModel[] | null | undefined;
-      if (priorKeyset === "") {
-        works = await uiApi.getWorksByOneFollowedTop(currentFollowedId);
-      } else {
-        works = await uiApi.getWorksByOneFollowed(
+      const works: WorkWithAuthorModel[] | null =
+        await uiApi.getWorksOfOneFollowed(
           currentFollowedId || "",
           PAGE_SIZE,
-          priorKeyset
+          lastCursor
         );
-      }
 
       if (!works || works.length === 0) {
         return null;

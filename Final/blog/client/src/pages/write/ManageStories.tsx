@@ -18,10 +18,10 @@ export function ManageStories() {
     if (profile) setRefreshWorksData(true);
   }, [profile]);
 
-  const getData = async (lastCursor: string) => {
+  const getData = async (lastCursor?: string) => {
     if (!profile) return null;
 
-    let works: WorkWithAuthorModel[] | undefined =
+    const works: WorkWithAuthorModel[] | null =
       await uiApi.getLatestWorkByAuthor(profile.id, PAGE_SIZE, lastCursor);
 
     if (!works) {

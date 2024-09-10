@@ -4,6 +4,7 @@ import {
   GET_LATEST_WORK_URL,
   GET_MOST_POP_WORK_URL,
   GET_WORK_URL,
+  GET_WORKS_OF_FOLLOWED_ONE_URL,
   GET_WORKS_OF_FOLLOWED_URL,
   NEW_WORK_URL,
   UPDATE_WORK_URL,
@@ -138,6 +139,29 @@ export async function getWorksOfFollowed(
 
   if (!response.ok) {
     throw new Error("Failed to get works of followed");
+  }
+
+  const work: Work[] | null = await response.json();
+  return work;
+}
+
+export async function getWorksOfOneFollowed(
+  followedId: string,
+  pageSize: number = PAGE_SIZE,
+  lastCursor?: string
+) {
+  const response = await fetch(GET_WORKS_OF_FOLLOWED_ONE_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      id: followedId,
+      pageSize,
+      lastCursor,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get works of one followed");
   }
 
   const work: Work[] | null = await response.json();

@@ -4,6 +4,7 @@ import {
   getLatestWork,
   getPopularWork,
   getWork,
+  getWorksByTopic,
   getWorksOfFollowed,
   getWorksOfOneFollowed,
   updateWork,
@@ -22,5 +23,6 @@ router.post("/work_popular", getPopularWork);
 router.post("/work_latest", getLatestWork);
 router.post("/work_followed", getWorksOfFollowed);
 router.post("/work_followed_one", getWorksOfOneFollowed);
+router.post("/work_topic", getWorksByTopic);
 
 export default router;
