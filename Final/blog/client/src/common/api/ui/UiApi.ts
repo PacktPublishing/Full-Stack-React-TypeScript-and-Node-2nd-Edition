@@ -8,6 +8,7 @@ import {
   getWorksByTopic,
   getWorksOfFollowed,
   getWorksOfOneFollowed,
+  searchWorks,
   updateWork,
 } from "../net/work/Work";
 import { WorkImageItem } from "../net/work/WorkModels";
@@ -98,6 +99,14 @@ export default class UiApi {
     return convertWorkArray(
       await getWorksByTopic(topicId, pageSize, lastCursor)
     );
+  };
+
+  searchWorks = async function (
+    searchTxt: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertWorkArray(await searchWorks(searchTxt, pageSize, lastCursor));
   };
 
   getWork = async function (workId: string) {

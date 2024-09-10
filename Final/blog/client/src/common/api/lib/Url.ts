@@ -8,6 +8,7 @@ export const GET_LATEST_WORK_URL = `${process.env.EXTERNAL_API_URL}/work_latest`
 export const GET_WORKS_OF_FOLLOWED_URL = `${process.env.EXTERNAL_API_URL}/work_followed`;
 export const GET_WORKS_OF_FOLLOWED_ONE_URL = `${process.env.EXTERNAL_API_URL}/work_followed_one`;
 export const GET_WORKS_BY_TOPIC_URL = `${process.env.EXTERNAL_API_URL}/work_topic`;
+export const GET_WORKS_BY_SEARCH_URL = `${process.env.EXTERNAL_API_URL}/work_search`;
 export const NEW_WORK_RESPONSE_URL = `${
   import.meta.env.VITE_EXTERNAL_API_URL
 }/work_resp/new`;

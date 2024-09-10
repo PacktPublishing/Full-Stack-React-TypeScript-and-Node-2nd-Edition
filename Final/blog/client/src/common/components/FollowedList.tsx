@@ -121,7 +121,7 @@ export function FollowedList({
             setFollowedProfiles(followed);
           }
         })
-        .catch((e) => console.log(e));
+        .catch((e: unknown) => console.log(e));
     } else {
       setFollowedProfiles([
         <span key={1} style={{ fontSize: "1.15em", marginTop: "1.2em" }}>

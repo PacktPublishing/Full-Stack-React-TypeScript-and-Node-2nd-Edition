@@ -4,6 +4,7 @@ import {
   GET_LATEST_WORK_URL,
   GET_MOST_POP_WORK_URL,
   GET_WORK_URL,
+  GET_WORKS_BY_SEARCH_URL,
   GET_WORKS_BY_TOPIC_URL,
   GET_WORKS_OF_FOLLOWED_ONE_URL,
   GET_WORKS_OF_FOLLOWED_URL,
@@ -186,6 +187,29 @@ export async function getWorksByTopic(
 
   if (!response.ok) {
     throw new Error("Failed to get works by topic");
+  }
+
+  const work: Work[] | null = await response.json();
+  return work;
+}
+
+export async function searchWorks(
+  searchTxt: string,
+  pageSize: number = PAGE_SIZE,
+  lastCursor?: string
+) {
+  const response = await fetch(GET_WORKS_BY_SEARCH_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      id: searchTxt,
+      pageSize,
+      lastCursor,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get works by search text");
   }
 
   const work: Work[] | null = await response.json();
