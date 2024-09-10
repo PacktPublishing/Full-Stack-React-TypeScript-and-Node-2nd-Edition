@@ -3,7 +3,7 @@ import { serializeBigInt } from "common";
 import { repo } from "../../routes/RepoInstance";
 import { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
 import { logger } from "../../lib/utils/Logger";
-import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
+import { WorkImageItem } from "../../repository/work/WorkImage";
 import { PagingParams, PopularWorkParams } from "../PagingParams";
 
 export const createWork: RequestHandler = async (
@@ -156,6 +156,26 @@ export const getLatestWork: RequestHandler = async (
   try {
     const { id, pageSize, lastCursor }: PagingParams = req.body;
     const works = await repo.Work.selectLatestWorksByAuthor(
+      id,
+      pageSize,
+      lastCursor
+    );
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getWorksOfFollowed: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    // id = followerId
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const works = await repo.Work.selectWorksOfFollowed(
       id,
       pageSize,
       lastCursor

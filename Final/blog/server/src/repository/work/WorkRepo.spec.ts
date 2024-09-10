@@ -328,4 +328,59 @@ describe("Work tests", () => {
     assert.equal(works.length, 4); // because query skips one when using cursor
     assert.equal(works[0].updatedAt > works[3].updatedAt, true);
   });
+
+  it("selectWorksOfFollowed, gets works by follower's followed users desc", async () => {
+    const title = faker.lorem.sentence(6);
+    const description = faker.lorem.sentence(10);
+    const content = faker.lorem.sentences(2);
+    let avatar: Buffer | undefined = getAvatar();
+
+    const userName = faker.internet.userName();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(5);
+    const follower = await repo.Profile.insertProfile(
+      userName,
+      fullName,
+      desc,
+      faker.internet.url(),
+      faker.internet.url(),
+      avatar
+    );
+
+    const followedCount = 10;
+    const followedWorkIds: bigint[] = [];
+    for (let i = 0; i < followedCount; i++) {
+      const followed = await repo.Profile.insertProfile(
+        faker.internet.userName(),
+        faker.internet.displayName(),
+        faker.lorem.sentence(5),
+        faker.internet.url(),
+        faker.internet.url(),
+        getAvatar()
+      );
+      await repo.Follow.insertFollow(followed.id, follower.id);
+
+      for (let i = 0; i < 5; i++) {
+        const followedWork = await repo.Work.insertWork(
+          title,
+          description,
+          content,
+          followed.id,
+          []
+        );
+        followedWorkIds.push(followedWork.id);
+      }
+    }
+
+    const firstFive = await repo.Work.selectWorksOfFollowed(follower.id, 5);
+    const lastCursor = firstFive[firstFive.length - 1].id;
+    const nextFive = await repo.Work.selectWorksOfFollowed(
+      follower.id,
+      5,
+      lastCursor
+    );
+    const reversedWorkIds = followedWorkIds.reverse();
+    assert.equal(nextFive[0].id, reversedWorkIds[5]);
+    assert.equal(nextFive[nextFive.length - 1].id, reversedWorkIds[9]);
+  });
 });

@@ -3,12 +3,12 @@ import { WorkRepo } from "./work/WorkRepo.js";
 import { ProfileRepo } from "./profile/ProfileRepo.js";
 import { TopicRepo } from "./topic/TopicRepo.js";
 import { FollowRepo } from "./follow/FollowRepo.js";
-import { WorkResponseRepo } from "./work/workResponse/WorkResponseRepo.js";
-import { WorkTopicRepo } from "./work/workTopic/WorkTopicRepo.js";
-import { WorkLikesRepo } from "./work/workLikes/WorkLikesRepo.js";
-import { WorkImageRepo } from "./work/workImage/WorkImageRepo.js";
+import { WorkResponseRepo } from "./work/WorkResponseRepo.js";
+import { WorkTopicRepo } from "./work/WorkTopicRepo.js";
+import { WorkLikesRepo } from "./work/WorkLikesRepo.js";
+import { WorkImageRepo } from "./work/WorkImageRepo.js";
 import { ProfileAvatarRepo } from "./profile/ProfileAvatarRepo.js";
-import { WorkResponseLikeRepo } from "./work/workResponseLike/WorkResponseLikeRepo.js";
+import { WorkResponseLikeRepo } from "./work/WorkResponseLikeRepo.js";
 
 export class Repository {
   #client: PrismaClient;

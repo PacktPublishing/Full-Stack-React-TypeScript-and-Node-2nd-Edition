@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { SortOrder } from "../../lib/Constants";
+import { SortOrder } from "../lib/Constants";
 
 export class WorkResponseRepo {
   #client: PrismaClient;

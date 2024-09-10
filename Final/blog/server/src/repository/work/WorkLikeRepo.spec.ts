@@ -1,7 +1,7 @@
 import { describe, it } from "node:test";
-import { repo } from "../../../routes/RepoInstance";
+import { repo } from "../../routes/RepoInstance";
 import { faker } from "@faker-js/faker";
-import { getAvatar } from "../../../__test__/avatar";
+import { getAvatar } from "../../__test__/avatar";
 import assert from "node:assert";
 
 describe("Repository Like", () => {

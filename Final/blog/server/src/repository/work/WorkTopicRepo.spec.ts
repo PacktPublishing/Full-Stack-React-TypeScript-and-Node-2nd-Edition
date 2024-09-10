@@ -1,7 +1,7 @@
 import { faker } from "@faker-js/faker";
 import { describe, it } from "node:test";
-import { getAvatar } from "../../../__test__/avatar";
-import { repo } from "../../../routes/RepoInstance";
+import { getAvatar } from "../../__test__/avatar";
+import { repo } from "../../routes/RepoInstance";
 import assert from "node:assert";
 
 describe("Repository WorkTopic", () => {

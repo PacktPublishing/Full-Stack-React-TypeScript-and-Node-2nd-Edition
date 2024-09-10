@@ -1,4 +1,4 @@
-import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
+import { WorkImageItem } from "../../repository/work/WorkImage";
 
 export type CreateWorkParams = {
   title: string;

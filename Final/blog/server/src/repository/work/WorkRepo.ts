@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
-import { WorkImageRepo } from "./workImage/WorkImageRepo.js";
-import { WorkImageItem } from "./workImage/WorkImage.js";
+import { WorkImageRepo } from "./WorkImageRepo.js";
+import { WorkImageItem } from "./WorkImage.js";
 import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 
@@ -320,5 +320,89 @@ export class WorkRepo {
       workTopics: w.workTopics,
       workLikes: w.workLikes,
     }));
+  }
+
+  async selectWorksOfFollowed(
+    followerId: bigint,
+    pageSize: number,
+    lastCursor?: bigint
+  ) {
+    const works = await this.#client.follow.findMany({
+      select: {
+        followed: {
+          select: {
+            works: {
+              take: pageSize,
+              orderBy: {
+                id: SortOrder.Desc,
+              },
+              select: {
+                id: true,
+                updatedAt: true,
+                title: true,
+                description: true,
+                content: true,
+                authorId: true,
+                author: {
+                  select: {
+                    userName: true,
+                    fullName: true,
+                    description: true,
+                  },
+                },
+                workTopics: {
+                  select: {
+                    topic: {
+                      select: {
+                        id: true,
+                        name: true,
+                      },
+                    },
+                  },
+                },
+                workLikes: {
+                  select: {
+                    id: true,
+                  },
+                },
+              },
+              where: lastCursor
+                ? {
+                    id: {
+                      lt: lastCursor,
+                    },
+                  }
+                : undefined,
+            },
+          },
+        },
+      },
+      where: {
+        followerId,
+      },
+    });
+
+    return works
+      .flatMap((ws) => {
+        return ws.followed.works.map((w) => ({
+          id: w.id,
+          updatedAt: w.updatedAt,
+          title: w.title,
+          description: w.description,
+          content: w.content,
+          authorId: w.authorId,
+          userName: w.author.userName,
+          fullName: w.author.fullName,
+          authorDesc: w.author.description,
+          workTopics: w.workTopics,
+          workLikes: w.workLikes,
+        }));
+      })
+      .sort((a, b) => {
+        if (a.id > b.id) return -1;
+        if (a.id < b.id) return 1;
+        return 0;
+      })
+      .slice(0, pageSize);
   }
 }

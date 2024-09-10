@@ -4,7 +4,7 @@ import request from "supertest";
 import { repo } from "../RepoInstance";
 import { faker } from "@faker-js/faker";
 import { avatars } from "../../__test__/avatar";
-import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
+import { WorkImageItem } from "../../repository/work/WorkImage";
 import { serializeBigInt } from "common";
 import assert from "node:assert";
 

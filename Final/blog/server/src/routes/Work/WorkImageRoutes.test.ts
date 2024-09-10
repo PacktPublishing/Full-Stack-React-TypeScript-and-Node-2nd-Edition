@@ -3,7 +3,7 @@ import assert from "node:assert";
 import request from "supertest";
 import app from "../../app";
 import { repo } from "../RepoInstance";
-import { WorkImageItem } from "../../repository/work/workImage/WorkImage";
+import { WorkImageItem } from "../../repository/work/WorkImage";
 import { avatars } from "../../__test__/avatar";
 import { faker } from "@faker-js/faker";
 

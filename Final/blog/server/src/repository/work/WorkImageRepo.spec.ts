@@ -1,9 +1,9 @@
 import { describe, it } from "node:test";
-import { repo } from "../../../routes/RepoInstance";
+import { repo } from "../../routes/RepoInstance";
 import { faker } from "@faker-js/faker";
 import assert from "node:assert";
-import { avatars, getAvatar } from "../../../__test__/avatar";
-import { Repository } from "../../Repository";
+import { avatars, getAvatar } from "../../__test__/avatar";
+import { Repository } from "../Repository";
 import { WorkImageItem } from "./WorkImage";
 
 describe("Repository WorkImage", () => {
