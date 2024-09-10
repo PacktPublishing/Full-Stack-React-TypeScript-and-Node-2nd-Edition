@@ -5,6 +5,7 @@ import {
   getLatestWorksByAuthor,
   getMostPopularWorks,
   getWork,
+  getWorksByTopic,
   getWorksOfFollowed,
   getWorksOfOneFollowed,
   updateWork,
@@ -86,6 +87,16 @@ export default class UiApi {
   ) {
     return convertWorkArray(
       await getWorksOfOneFollowed(followerId, pageSize, lastCursor)
+    );
+  };
+
+  getWorksByTopic = async function (
+    topicId: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertWorkArray(
+      await getWorksByTopic(topicId, pageSize, lastCursor)
     );
   };
 

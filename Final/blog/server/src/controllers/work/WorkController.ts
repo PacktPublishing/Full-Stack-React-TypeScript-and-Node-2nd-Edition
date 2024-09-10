@@ -219,3 +219,22 @@ export const getWorksByTopic: RequestHandler = async (
     next(e);
   }
 };
+
+export const searchWorks: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {
+      searchTxt,
+      pageSize,
+      lastCursor,
+    }: { searchTxt: string; pageSize: number; lastCursor: bigint } = req.body;
+    const works = await repo.Work.searchWorks(searchTxt, pageSize, lastCursor);
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};

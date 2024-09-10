@@ -18,10 +18,7 @@ import { PagedWorkElements } from "../../common/components/display-elements/Page
 import { TabHeader } from "../../common/components/TabHeader";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
 import { TopicModel } from "../../common/api/ui/UIModels";
-import {
-  UiApiContext,
-  UiApiType,
-} from "../../common/context/ui-api/UiApiContext";
+import { UiApiContext } from "../../common/context/ui-api/UiApiContext";
 import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
 
 enum ValidationStates {
@@ -64,7 +61,7 @@ export function Explorer() {
   };
 
   useEffect(() => {
-    api?.getAllTopics().then((topics) => {
+    api?.uiApi.getAllTopics().then((topics) => {
       setTopics(topics);
     });
   }, [api]);
@@ -103,12 +100,8 @@ export function Explorer() {
         return null;
       }
 
-      let works: WorkWithAuthorModel[] | null | undefined;
-      if (lastCursor === "") {
-        works = await api?.searchWorksTop(searchTxt);
-      } else {
-        works = await api?.searchWorks(searchTxt, PAGE_SIZE, lastCursor);
-      }
+      const works: WorkWithAuthorModel[] | null | undefined =
+        await api?.uiApi.searchWorks(searchTxt, PAGE_SIZE, lastCursor);
 
       if (!works || works.length === 0) {
         return null;
@@ -117,16 +110,8 @@ export function Explorer() {
       return works;
     } else {
       console.log("priorKeyset:", lastCursor);
-      let works: WorkWithAuthorModel[] | null | undefined;
-      if (lastCursor === "") {
-        works = await api?.getWorksByTopicTop(topic_id || "", PAGE_SIZE);
-      } else {
-        works = await api?.getWorksByTopic(
-          topic_id || "",
-          PAGE_SIZE,
-          lastCursor
-        );
-      }
+      const works: WorkWithAuthorModel[] | null | undefined =
+        await api?.uiApi.getWorksByTopic(topic_id || "", PAGE_SIZE, lastCursor);
 
       if (!works || works.length === 0) {
         return null;

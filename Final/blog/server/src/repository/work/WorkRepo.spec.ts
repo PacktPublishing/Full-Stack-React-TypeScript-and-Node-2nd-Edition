@@ -477,4 +477,58 @@ describe("Work tests", () => {
     assert.equal(nextFive[0].id, reversedTopicWorkIds[5]);
     assert.equal(nextFive[4].id, reversedTopicWorkIds[9]);
   });
+
+  it("searchWorks, gets works by search text", async () => {
+    const title = faker.lorem.sentence(6);
+    const description = faker.lorem.sentence(10);
+    const content = faker.lorem.sentences(2);
+    let avatar: Buffer | undefined = getAvatar();
+
+    const userName = faker.internet.userName();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(5);
+    const author = await repo.Profile.insertProfile(
+      userName,
+      fullName,
+      desc,
+      faker.internet.url(),
+      faker.internet.url(),
+      avatar
+    );
+    const topic = await repo.Topic.insertTopic(faker.company.name());
+    const topicWorkIds = [];
+    // create exactly 3 works with same title and description and confirm
+    // when searched only those 3 come back
+    for (let i = 0; i < 3; i++) {
+      topicWorkIds.push(
+        (
+          await repo.Work.insertWork(
+            title,
+            title + description,
+            content,
+            author.id,
+            [topic.id]
+          )
+        ).id
+      );
+    }
+    for (let i = 0; i < 7; i++) {
+      topicWorkIds.push(
+        (
+          await repo.Work.insertWork(
+            faker.lorem.sentence(1),
+            faker.lorem.sentence(2),
+            faker.lorem.sentence(3),
+            author.id,
+            [topic.id]
+          )
+        ).id
+      );
+    }
+
+    const searchedWorks = await repo.Work.searchWorks(title, 5);
+    assert.equal(searchedWorks.length, 3);
+    assert.equal(searchedWorks[0].title, title);
+    assert.equal(searchedWorks[0].description, title + description);
+  });
 });

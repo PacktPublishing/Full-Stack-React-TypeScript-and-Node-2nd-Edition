@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { WorkImageRepo } from "./WorkImageRepo.js";
 import { WorkImageItem } from "./WorkImage.js";
-import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
+import { CaseSensitivity, PAGE_SIZE, SortOrder } from "../lib/Constants.js";
 import { DefaultArgs } from "@prisma/client/runtime/library";
 
 export class WorkRepo {
@@ -491,7 +491,6 @@ export class WorkRepo {
       .slice(0, pageSize);
   }
 
-  /// cursor is work id
   async selectWorksByTopic(
     topicId: bigint,
     pageSize: number,
@@ -541,6 +540,85 @@ export class WorkRepo {
             topicId,
           },
         },
+      },
+      orderBy: {
+        id: SortOrder.Desc,
+      },
+    });
+
+    return works.map((w) => ({
+      id: w.id,
+      updatedAt: w.updatedAt,
+      title: w.title,
+      description: w.description,
+      content: w.content,
+      authorId: w.authorId,
+      userName: w.author.userName,
+      fullName: w.author.fullName,
+      authorDesc: w.author.description,
+      workTopics: w.workTopics,
+      workLikes: w.workLikes,
+    }));
+  }
+
+  async searchWorks(
+    searchTxt: string,
+    pageSize: number,
+    workIdCursor?: bigint
+  ) {
+    const works = await this.#client.work.findMany({
+      take: pageSize,
+      skip: workIdCursor ? 1 : 0,
+      cursor: workIdCursor
+        ? {
+            id: workIdCursor,
+          }
+        : undefined,
+      select: {
+        id: true,
+        updatedAt: true,
+        title: true,
+        description: true,
+        content: true,
+        authorId: true,
+        author: {
+          select: {
+            userName: true,
+            fullName: true,
+            description: true,
+          },
+        },
+        workTopics: {
+          select: {
+            topic: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
+        workLikes: {
+          select: {
+            id: true,
+          },
+        },
+      },
+      where: {
+        OR: [
+          {
+            title: {
+              contains: searchTxt,
+              mode: CaseSensitivity.Insensitive,
+            },
+          },
+          {
+            description: {
+              contains: searchTxt,
+              mode: CaseSensitivity.Insensitive,
+            },
+          },
+        ],
       },
       orderBy: {
         id: SortOrder.Desc,

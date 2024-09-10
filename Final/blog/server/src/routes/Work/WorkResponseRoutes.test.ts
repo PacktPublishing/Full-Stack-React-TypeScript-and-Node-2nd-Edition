@@ -114,10 +114,6 @@ describe("POST /work_resp", () => {
       );
     }
     const firstFive = await repo.WorkResp.selectWorkResponses(work.id, 5);
-    console.log(
-      "firstFive",
-      firstFive.map((ff) => ff.response)
-    );
     const lastCursor = firstFive[firstFive.length - 1].id;
 
     await request(app)

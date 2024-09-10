@@ -7,6 +7,7 @@ import {
   getWorksByTopic,
   getWorksOfFollowed,
   getWorksOfOneFollowed,
+  searchWorks,
   updateWork,
 } from "../../controllers/work/WorkController.js";
 import multer from "multer";
@@ -24,5 +25,6 @@ router.post("/work_latest", getLatestWork);
 router.post("/work_followed", getWorksOfFollowed);
 router.post("/work_followed_one", getWorksOfOneFollowed);
 router.post("/work_topic", getWorksByTopic);
+router.post("/work_search", searchWorks);
 
 export default router;
