@@ -15,3 +15,15 @@ export const NEW_WORK_RESPONSE_URL = `${
 export const GET_WORK_RESPONSE_URL = `${
   import.meta.env.VITE_EXTERNAL_API_URL
 }/work_resp/`;
+export const GET_FOLLOWED_URL = `${
+  import.meta.env.VITE_EXTERNAL_API_URL
+}/follow/followed`;
+export const GET_FOLLOWER_URL = `${
+  import.meta.env.VITE_EXTERNAL_API_URL
+}/follow/followers`;
+export const GET_FOLLOWED_COUNT_URL = `${
+  import.meta.env.VITE_EXTERNAL_API_URL
+}/follow/followed/count/`;
+export const GET_FOLLOWER_COUNT_URL = `${
+  import.meta.env.VITE_EXTERNAL_API_URL
+}/follow/followers/count/`;

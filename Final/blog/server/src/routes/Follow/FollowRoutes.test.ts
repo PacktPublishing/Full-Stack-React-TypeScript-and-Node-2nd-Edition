@@ -225,7 +225,6 @@ describe("GET /follow/follower/count", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .then((res) => {
-        console.log("count:", res.body);
         assert.equal(res.body, followerIds.length);
       });
   });
@@ -262,7 +261,6 @@ describe("GET /follow/followed/count", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .then((res) => {
-        console.log("count:", res.body);
         assert.equal(res.body, followedIds.length);
       });
   });

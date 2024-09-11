@@ -19,7 +19,12 @@ import {
 import { convertArray as convertWorkResponseArray } from "./ResponseWithResponderModel";
 import { createWorkResponse, getWorkResponses } from "../net/work/WorkResponse";
 import { convertArray as convertFollowArray } from "./FollowModel";
-import { getFollowed } from "../net/follow/Follow";
+import {
+  getFollowed,
+  getFollowedCount,
+  getFollowers,
+  getFollowersCount,
+} from "../net/follow/Follow";
 
 export default class UiApi {
   createWork = async function (
@@ -147,5 +152,23 @@ export default class UiApi {
     return convertFollowArray(
       await getFollowed(followerId, pageSize, lastCursor)
     );
+  };
+
+  getFollowedCount = async function (followerId: string) {
+    return await getFollowedCount(followerId);
+  };
+
+  getFollowers = async function (
+    followedId: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertFollowArray(
+      await getFollowers(followedId, pageSize, lastCursor)
+    );
+  };
+
+  getFollowersCount = async function (followedId: string) {
+    return await getFollowersCount(followedId);
   };
 }

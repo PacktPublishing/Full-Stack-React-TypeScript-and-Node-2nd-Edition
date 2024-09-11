@@ -28,7 +28,7 @@ export function AuthorWorkDetail({ showAuthor, work }: AuthorWorkDetailProps) {
       .getFollowedCount(work.authorId)
       .then((followingCount) => {
         api?.uiApi
-          .getFollowerCount(work.authorId)
+          .getFollowersCount(work.authorId)
           .then((followerCount) => {
             setFollowingCount(followingCount);
             setFollowerCount(followerCount);
