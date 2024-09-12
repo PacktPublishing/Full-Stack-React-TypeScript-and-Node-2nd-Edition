@@ -1,8 +1,9 @@
-import { ChangeEvent, useState, MouseEvent, useEffect } from "react";
-import { useProfile } from "../redux/Store";
+import { useState, useEffect, use, useActionState } from "react";
 import { PrimaryButton } from "./Buttons";
 import { ValidationAndProgressMsg } from "./ValidationProgressMsg";
-import { useUiApi } from "../context/UiApiContext";
+import { useUserProfile } from "../redux/profile/ProfileHooks";
+import { UiApiContext } from "../context/ui-api/UiApiContext";
+import { useFormStatus } from "react-dom";
 
 enum ValidationStates {
   UsernameTooLong = "Username cannot be greater than 50 characters",
@@ -36,89 +37,83 @@ export function ProfileForm({
 }: ProfileFormProps) {
   const [pageState, setPageState] = useState(PageState.Create);
   const [validationMsg, setValidationMsg] = useState("");
-  const [username, setUsername] = useState("");
-  const [fullname, setFullname] = useState("");
-  const [description, setDescription] = useState("");
-  const [socialPrimary, setSocialPrimary] = useState("");
-  const [socialSecondary, setSocialSecondary] = useState("");
-  const setProfile = useProfile((state) => state.setProfile);
-  const [submitProfileBtnDisabled, setSubmitCreateProfileBtnDisabled] =
-    useState(true);
-  const api = useUiApi();
+  const [_localProfile, setProfile] = useUserProfile();
+  const { data: formData } = useFormStatus();
+  const [_state, formAction, isPending] = useActionState(
+    async (_previousState: any, formData: FormData) => {
+      if (pageState === PageState.Create) {
+        if (!validateAllFields()) return;
+        setValidationMsg(START_CREATE_PROFILE_MSG);
+
+        try {
+          const newProfileId = await api?.uiApi.createProfile(formData);
+
+          const profile = await api?.uiApi.getProfile(newProfileId!.toString());
+          if (!profile) throw new Error("Profile has not been created!");
+
+          setProfile({
+            id: profile.id,
+            updatedAt: profile.updatedAt,
+            userName: profile.userName,
+            fullName: profile.fullName,
+            description: profile.description,
+            socialLinkPrimary: profile.socialLinkPrimary || "",
+            socialLinkSecond: profile.socialLinkSecond || "",
+          });
+        } catch (e) {
+          console.log(e);
+        } finally {
+          profileCreatedCallback();
+          setValidationMsg("");
+        }
+      } else {
+        if (!profileId) {
+          setValidationMsg("Error profile id was not given");
+          return;
+        }
+
+        if (!validateAllFields()) return;
+        setValidationMsg(START_EDIT_PROFILE_MSG);
+
+        try {
+          const existingProfile = await api?.uiApi.getProfile(profileId);
+          if (!existingProfile) {
+            setValidationMsg(`No profile with the id ${profileId} exists`);
+            return;
+          }
+
+          await api?.uiApi.updateProfile(formData);
+
+          const profile = await api?.uiApi.getProfile(profileId);
+          if (!profile) throw new Error("Error profile has not been updated!");
+
+          setProfile({
+            id: profile.id,
+            updatedAt: profile.updatedAt,
+            userName: profile.userName,
+            fullName: profile.fullName,
+            description: profile.description,
+            socialLinkPrimary: profile.socialLinkPrimary || "",
+            socialLinkSecond: profile.socialLinkSecond || "",
+          });
+        } catch (e) {
+          console.log(e);
+        } finally {
+          profileCreatedCallback();
+          setValidationMsg("");
+        }
+      }
+    },
+    null
+  );
+  const api = use(UiApiContext);
 
   useEffect(() => {
     if (profileId) {
-      api
-        ?.getProfile(profileId)
-        .then((profile) => {
-          if (!profile)
-            throw new Error(`Failed to get Profile with id: ${profileId}`);
-
-          setPageState(PageState.Edit);
-
-          setUsername(profile.userName);
-          setFullname(profile.fullName);
-          setDescription(profile.description);
-          setSocialPrimary(profile.socialLinkPrimary || "");
-          setSocialSecondary(profile.socialLinkSecond || "");
-          setValidationMsg("");
-        })
-        .catch((e) => console.log(e));
+      setPageState(PageState.Edit);
+      // todo: section needs rewrite
     }
   }, [profileId]);
-
-  const onChangeUsername = (e: ChangeEvent<HTMLInputElement>) => {
-    const validation = validateUsername(e.target.value);
-
-    setSubmitCreateProfileBtnDisabled(
-      validation === ValidationStates.FieldIsValid ? false : true
-    );
-
-    setUsername(e.target.value.replace("@", ""));
-    setValidationMsg(validation);
-  };
-  const onChangeFullname = (e: ChangeEvent<HTMLInputElement>) => {
-    const validation = validateFullname(e.target.value);
-
-    setSubmitCreateProfileBtnDisabled(
-      validation === ValidationStates.FieldIsValid ? false : true
-    );
-
-    setFullname(e.target.value);
-    setValidationMsg(validation);
-  };
-  const onChangeDescription = (e: ChangeEvent<HTMLInputElement>) => {
-    const validation = validateDescription(e.target.value);
-
-    setSubmitCreateProfileBtnDisabled(
-      validation === ValidationStates.FieldIsValid ? false : true
-    );
-
-    setDescription(e.target.value);
-    setValidationMsg(validation);
-  };
-  const onChangeSocialPrimary = (e: ChangeEvent<HTMLInputElement>) => {
-    setSubmitCreateProfileBtnDisabled(true);
-    if (e.target.value.length > 250) {
-      setValidationMsg(
-        "Primary social link cannot be greater than 250 characters"
-      );
-    } else {
-      setSocialPrimary(e.target.value.trim());
-      setSubmitCreateProfileBtnDisabled(false);
-    }
-  };
-  const onChangeSocialSecondary = (e: ChangeEvent<HTMLInputElement>) => {
-    setSubmitCreateProfileBtnDisabled(true);
-    if (e.target.value.length > 250) {
-      setValidationMsg(
-        "Secondary social link cannot be greater than 250 characters"
-      );
-    } else {
-      setSocialSecondary(e.target.value.trim());
-      setSubmitCreateProfileBtnDisabled(false);
-    }
-  };
 
   const validateUsername = (strInput: string): ValidationStates => {
     if (strInput.length > 50) {
@@ -161,11 +156,25 @@ export function ProfileForm({
   };
 
   const validateAllFields = (): boolean => {
-    const usernameValidation = validateUsername(username);
-    const fullnameValidation = validateFullname(fullname);
-    const descValidation = validateDescription(description);
-    const socialPrimaryValidation = validatePrimarySocial(socialPrimary);
-    const socialSecondaryValidation = validateSecondarySocial(socialSecondary);
+    if (!formData) {
+      setValidationMsg("Form data is not entered");
+      return false;
+    }
+    const usernameValidation = validateUsername(
+      formData.get("userName")?.toString() || ""
+    );
+    const fullnameValidation = validateFullname(
+      formData.get("fullName")?.toString() || ""
+    );
+    const descValidation = validateDescription(
+      formData.get("description")?.toString() || ""
+    );
+    const socialPrimaryValidation = validatePrimarySocial(
+      formData.get("socialLinkPrimary")?.toString() || ""
+    );
+    const socialSecondaryValidation = validateSecondarySocial(
+      formData.get("socialLinkSecondary")?.toString() || ""
+    );
     console.log(
       "validations:",
       usernameValidation,
@@ -195,125 +204,27 @@ export function ProfileForm({
     }
   };
 
-  const createProfile = async (e: MouseEvent<HTMLButtonElement>) => {
-    console.log("enter createProfile");
-    e.preventDefault();
-
-    if (!validateAllFields()) return;
-    setValidationMsg(START_CREATE_PROFILE_MSG);
-
-    try {
-      setSubmitCreateProfileBtnDisabled(true);
-
-      const existingProfile = await api?.getOwnersProfile();
-      if (existingProfile) {
-        setValidationMsg(
-          "A wallet with that address already exists. Please use a different wallet address to create a profile"
-        );
-        return;
-      }
-      await api?.addProfile(
-        username,
-        fullname,
-        description,
-        socialPrimary,
-        socialSecondary
-      );
-
-      const profile = await api?.getOwnersProfile();
-      if (!profile) throw new Error("Profile has not been created!");
-
-      setProfile({
-        id: profile.id,
-        updatedAt: profile.updatedAt,
-        username: profile.userName,
-        fullname: profile.fullName,
-        description: profile.description,
-        socialLinkPrimary: profile.socialLinkPrimary || "",
-        socialLinkSecond: profile.socialLinkSecond || "",
-      });
-    } catch (e) {
-      console.log(e);
-    } finally {
-      profileCreatedCallback();
-      setValidationMsg("");
-      setSubmitCreateProfileBtnDisabled(false);
-    }
-  };
-
-  const editProfile = async (e: MouseEvent<HTMLButtonElement>) => {
-    console.log("enter editProfile");
-    e.preventDefault();
-
-    if (!profileId) {
-      setValidationMsg("Error profile id was not given");
-      return;
-    }
-
-    if (!validateAllFields()) return;
-    setValidationMsg(START_EDIT_PROFILE_MSG);
-
-    try {
-      setSubmitCreateProfileBtnDisabled(true);
-      const existingProfile = await api?.getOwnersProfile();
-      if (!existingProfile) {
-        setValidationMsg(`No profile with the address ${api?.Address} exists`);
-        return;
-      }
-
-      await api?.updateProfile(
-        profileId,
-        username,
-        fullname,
-        description,
-        socialPrimary,
-        socialSecondary
-      );
-      //await api.waitAndGetId(tx, "profiles");
-
-      const profile = await api?.getOwnersProfile();
-      if (!profile) throw new Error("Error profile has not been updated!");
-
-      setProfile({
-        id: profile.id,
-        updatedAt: profile.updatedAt,
-        username: profile.userName,
-        fullname: profile.fullName,
-        description: profile.description,
-        socialLinkPrimary: profile.socialLinkPrimary || "",
-        socialLinkSecond: profile.socialLinkSecond || "",
-      });
-    } catch (e) {
-      console.log(e);
-    } finally {
-      profileCreatedCallback();
-      setValidationMsg("");
-      setSubmitCreateProfileBtnDisabled(false);
-    }
-  };
-
   return (
-    <form className="profile-form-container">
+    <form className="profile-form-container" action={formAction}>
       <section className="profile-form-section">
+        {pageState === PageState.Edit ? (
+          <input type="hidden" name="profileId" />
+        ) : null}
         <label htmlFor="username">Username</label>
         <input
           type="text"
-          id="username"
-          name="username"
+          id="userName"
+          name="userName"
           className="profile-form-item"
-          value={username}
-          onChange={onChangeUsername}
         ></input>
       </section>
       <section className="profile-form-section">
         <label htmlFor="fullname">Fullname</label>
         <input
           type="text"
-          id="fullname"
-          name="fullname"
+          id="fullName"
+          name="fullName"
           className="profile-form-item"
-          value={fullname}
-          onChange={onChangeFullname}
         ></input>
       </section>
       <section className="profile-form-section">
@@ -323,30 +234,24 @@ export function ProfileForm({
           id="description"
           name="description"
           className="profile-form-item"
-          value={description}
-          onChange={onChangeDescription}
         ></input>
       </section>
       <section className="profile-form-section">
         <label htmlFor="social-link-primary">Primary Social</label>
         <input
           type="text"
-          id="social-link-primary"
-          name="social-link-primary"
+          id="socialLinkPrimary"
+          name="socialLinkPrimary"
           className="profile-form-item"
-          value={socialPrimary}
-          onChange={onChangeSocialPrimary}
         ></input>
       </section>
       <section className="profile-form-section">
         <label htmlFor="social-link-secondary">Secondary Social</label>
         <input
           type="text"
-          id="social-link-secondary"
-          name="social-link-secondary"
+          id="socialLinkSecondary"
+          name="socialLinkSecondary"
           className="profile-form-item"
-          value={socialSecondary}
-          onChange={onChangeSocialSecondary}
         ></input>
       </section>
       <section className="btn-span-align" style={{ marginBottom: "0.75em" }}>
@@ -362,16 +267,11 @@ export function ProfileForm({
         {!readOnly ? (
           <PrimaryButton
             label={pageState === PageState.Create ? "Create" : "Edit"}
-            isDisabled={submitProfileBtnDisabled}
+            isDisabled={isPending}
             style={{
               marginTop: "1em",
-              color: submitProfileBtnDisabled
-                ? "var(--tertiary-cl)"
-                : "var(--primary-cl)",
+              color: isPending ? "var(--tertiary-cl)" : "var(--primary-cl)",
             }}
-            onClick={
-              pageState === PageState.Create ? createProfile : editProfile
-            }
           />
         ) : null}
       </section>

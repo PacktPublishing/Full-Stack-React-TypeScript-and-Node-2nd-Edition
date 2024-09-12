@@ -1,11 +1,10 @@
-import { MouseEvent, ReactNode } from "react";
-import { useProfile } from "../redux/Store";
+import { ReactNode } from "react";
 import profileIcon from "../../theme/assets/profiles/mrglasses.jpg"; // todo: replace with user avatar when ready
 import { NavAnchor } from "./NavAnchor";
 import { ConnectCreateProfile } from "./ConnectCreateProfile";
-import { useNotification } from "../redux/Store";
+import { useNotification } from "../redux/notification/NotificationHooks";
 import { Link } from "react-router-dom";
-import { useWallet } from "@solana/wallet-adapter-react";
+import { useUserProfile } from "../redux/profile/ProfileHooks";
 
 export interface LayoutProps {
   children: ReactNode;
@@ -13,20 +12,11 @@ export interface LayoutProps {
 
 /** todo: add button for editable modal **/
 export function Layout({ children }: LayoutProps) {
-  const profile = useProfile((state) => state.profile);
-  const notificationIsOpen = useNotification((state) => state.isOpen);
-  const toggleNotification = useNotification(
-    (state) => state.toggleNotification
-  );
-  const wallet = useWallet();
+  const [profile] = useUserProfile();
+  const [notificationIsOpen, setNotificationIsOpen] = useNotification();
 
   const toggleNotificationState = () => {
-    toggleNotification();
-  };
-
-  const onClickConnect = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    toggleNotificationState();
+    setNotificationIsOpen(!notificationIsOpen);
   };
 
   return (
@@ -47,9 +37,6 @@ export function Layout({ children }: LayoutProps) {
             </Link>
           ) : (
             <>
-              <button onClick={onClickConnect}>
-                {wallet.connected ? "DISCONNECT" : "CONNECT"}
-              </button>
               <ConnectCreateProfile
                 notificationState={notificationIsOpen}
                 toggleNotificationState={toggleNotificationState}

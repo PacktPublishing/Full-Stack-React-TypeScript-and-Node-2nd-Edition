@@ -8,10 +8,10 @@ import { getAvatar } from "../../__test__/avatar";
 import { serializeBigInt } from "common/src/JsonUtils";
 import { ProfileModel } from "../Profile/ProfileModel";
 
-describe("POST /follow", () => {
-  it("should return status code 200", async () => {
+describe("POST /follow/new", () => {
+  it("create new follow and return 200", async () => {
     await request(app)
-      .post("/follow")
+      .post("/follow/new")
       .send({
         followedId: 1,
         followerId: 2,

@@ -1,4 +1,8 @@
-import { GET_WORK_RESPONSE_URL, NEW_WORK_RESPONSE_URL } from "../../lib/Url";
+import {
+  GET_WORK_RESPONSE_AUTHOR_URL,
+  GET_WORK_RESPONSE_URL,
+  NEW_WORK_RESPONSE_URL,
+} from "../../lib/Url";
 import { WorkResponse } from "./WorkResponseModel";
 
 export async function createWorkResponse(
@@ -28,7 +32,7 @@ export async function getWorkResponses(
   pageSize: number,
   lastCursor?: string
 ) {
-  const response = await fetch(`${GET_WORK_RESPONSE_URL}${workId}`, {
+  const response = await fetch(GET_WORK_RESPONSE_URL, {
     method: "POST",
     body: JSON.stringify({
       id: workId,
@@ -40,6 +44,29 @@ export async function getWorkResponses(
 
   if (!response.ok) {
     throw new Error("Failed to get work responses");
+  }
+
+  const workResponses: WorkResponse[] | null = await response.json();
+  return workResponses;
+}
+
+export async function getWorkResponsesByAuthor(
+  authorId: string,
+  pageSize: number,
+  lastCursor?: string
+) {
+  const response = await fetch(GET_WORK_RESPONSE_AUTHOR_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      id: authorId,
+      pageSize,
+      lastCursor,
+    }),
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get work responses by author");
   }
 
   const workResponses: WorkResponse[] | null = await response.json();

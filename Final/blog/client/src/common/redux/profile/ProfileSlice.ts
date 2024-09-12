@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ProfileModel } from "../../api/ui/UIModels";
+import { ProfileModel } from "../../api/ui/ProfileModel";
 
 const initialState: ProfileModel | null = null;
 

@@ -67,11 +67,7 @@ describe("Repository Like", () => {
       likeIds[i] = like.id;
     }
 
-    const selectedLikes = await repo.WorkLikes.selectWorkLikes(work.id);
-    assert.equal(selectedLikes.length, 3);
-    const selectedIds = selectedLikes.map((item) => item.id);
-    assert.equal(selectedIds.includes(likeIds[0]), true);
-    assert.equal(selectedIds.includes(likeIds[1]), true);
-    assert.equal(selectedIds.includes(likeIds[2]), true);
+    const selectedLikes = await repo.WorkLikes.selectWorkLikesCount(work.id);
+    assert.equal(selectedLikes, 3);
   });
 });

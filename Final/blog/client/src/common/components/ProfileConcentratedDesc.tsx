@@ -1,10 +1,17 @@
-import { CSSProperties, useEffect, useState, MouseEvent, JSX } from "react";
+import {
+  CSSProperties,
+  useEffect,
+  useState,
+  MouseEvent,
+  JSX,
+  use,
+} from "react";
 import { RandomImg } from "./RandomImage";
-import { useProfile } from "../redux/Store";
 import { PrimaryButton } from "./Buttons";
 import { Link } from "react-router-dom";
 import { TabHeaders } from "../../pages/Profile";
-import { useUiApi } from "../context/UiApiContext";
+import { useUserProfile } from "../redux/profile/ProfileHooks";
+import { UiApiContext } from "../context/ui-api/UiApiContext";
 
 interface ProfileConcentractedDescProps {
   profileId: string;
@@ -26,12 +33,12 @@ export function ProfileConcentractedDesc({
   followerCount,
   style,
 }: ProfileConcentractedDescProps) {
-  const profile = useProfile((state) => state.profile);
+  const [profile] = useUserProfile();
   const [isAlreadyFollowing, setIsAlreadyFollowing] = useState(false);
   const [followBtn, setFollowBtn] = useState<JSX.Element | null>(null);
   const [followingBtn, setFollowingBtn] = useState<JSX.Element | null>(null);
   const [followerBtn, setFollowerBtn] = useState<JSX.Element | null>(null);
-  const api = useUiApi();
+  const api = use(UiApiContext);
 
   useEffect(() => {
     if (profile) {
@@ -53,7 +60,7 @@ export function ProfileConcentractedDesc({
             e.preventDefault();
 
             if (profile) {
-              await api?.addFollow(profile.id, profileId);
+              await api?.uiApi.createFollow(profile.id, profileId);
               await confirmFollowed();
             } else {
               console.log("Cannot follow not logged in!");
@@ -91,7 +98,7 @@ export function ProfileConcentractedDesc({
   const confirmFollowed = async () => {
     if (profile) {
       // todo: consider replacing with direct check call
-      const follows = await api?.getFollowedProfiles(profile.id);
+      const follows = await api?.uiApi.getFollowed(profile.id);
 
       if (follows) {
         if (follows.find((follow) => follow.id === profileId)) {

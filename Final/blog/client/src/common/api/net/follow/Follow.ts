@@ -1,10 +1,29 @@
 import {
+  CREATE_FOLLOW_URL,
   GET_FOLLOWED_COUNT_URL,
   GET_FOLLOWED_URL,
   GET_FOLLOWER_COUNT_URL,
   GET_FOLLOWER_URL,
 } from "../../lib/Url";
 import { Follow } from "./FollowModel";
+
+export async function createFollow(followedId: string, followerId: string) {
+  const response = await fetch(CREATE_FOLLOW_URL, {
+    method: "POST",
+    body: JSON.stringify({
+      followedId,
+      followerId,
+    }),
+    headers: { "Content-Type": "application/json" },
+    cache: "no-store",
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to get followed");
+  }
+
+  return (await response.json()) as number;
+}
 
 export async function getFollowed(
   followerId: string,
@@ -18,6 +37,7 @@ export async function getFollowed(
       pageSize,
       lastCursor,
     }),
+    headers: { "Content-Type": "application/json" },
     cache: "no-store",
   });
 
@@ -40,6 +60,7 @@ export async function getFollowers(
       pageSize,
       lastCursor,
     }),
+    headers: { "Content-Type": "application/json" },
     cache: "no-store",
   });
 

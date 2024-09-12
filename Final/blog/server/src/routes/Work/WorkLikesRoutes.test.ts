@@ -38,8 +38,8 @@ describe("POST /work_like/new", () => {
       .expect("Content-Type", /json/)
       .expect(200)
       .then(async (res) => {
-        const workLikes = await repo.WorkLikes.selectWorkLikes(work.id);
-        assert.equal(workLikes.length > 0, true);
+        const workLikes = await repo.WorkLikes.selectWorkLikesCount(work.id);
+        assert.equal(workLikes > 0, true);
       });
   });
 });

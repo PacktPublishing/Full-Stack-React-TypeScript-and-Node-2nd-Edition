@@ -17,14 +17,30 @@ import {
   convertArray as convertWorkArray,
 } from "./WorkWithAuthorModel";
 import { convertArray as convertWorkResponseArray } from "./ResponseWithResponderModel";
-import { createWorkResponse, getWorkResponses } from "../net/work/WorkResponse";
+import {
+  createWorkResponse,
+  getWorkResponses,
+  getWorkResponsesByAuthor,
+} from "../net/work/WorkResponse";
 import { convertArray as convertFollowArray } from "./FollowModel";
 import {
+  convert as convertProfile,
+  convertArray as convertProfileArray,
+} from "./ProfileModel";
+import {
+  createFollow,
   getFollowed,
   getFollowedCount,
   getFollowers,
   getFollowersCount,
 } from "../net/follow/Follow";
+import { getWorkLikesCount } from "../net/work/WorkLike";
+import {
+  createProfile,
+  getMostPopularAuthors,
+  getProfile,
+  updateProfile,
+} from "../net/profile/Profile";
 
 export default class UiApi {
   createWork = async function (
@@ -140,8 +156,22 @@ export default class UiApi {
     );
   };
 
+  getWorkResponsesByAuthor = async function (
+    authorId: string,
+    pageSize: number = PAGE_SIZE,
+    lastCursor?: string
+  ) {
+    return convertWorkResponseArray(
+      await getWorkResponsesByAuthor(authorId, pageSize, lastCursor)
+    );
+  };
+
   getAllTopics = async function () {
     return await getAllTopics();
+  };
+
+  createFollow = async function (followedId: string, followerId: string) {
+    return await createFollow(followedId, followerId);
   };
 
   getFollowed = async function (
@@ -170,5 +200,25 @@ export default class UiApi {
 
   getFollowersCount = async function (followedId: string) {
     return await getFollowersCount(followedId);
+  };
+
+  getWorkLikesCount = async function (workId: string) {
+    return await getWorkLikesCount(workId);
+  };
+
+  createProfile = async function (formData: FormData) {
+    return await createProfile(formData);
+  };
+
+  updateProfile = async function (formData: FormData) {
+    return await updateProfile(formData);
+  };
+
+  getProfile = async function (profileId: string) {
+    return convertProfile(await getProfile(profileId));
+  };
+
+  getMostPopularAuthors = async function () {
+    return convertProfileArray(await getMostPopularAuthors());
   };
 }

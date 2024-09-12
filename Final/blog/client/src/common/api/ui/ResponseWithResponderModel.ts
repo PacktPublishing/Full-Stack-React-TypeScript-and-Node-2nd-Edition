@@ -6,11 +6,12 @@ export class ResponseWithResponderModel implements UiEntity {
   constructor(
     public id: string,
     public updatedAt: string,
+    public workId: string,
     public workTitle: string,
     public responseContent: string,
     public responderId: string,
     public responderUserName: string,
-    public responderfullName: string,
+    public responderFullName: string,
     public responderDesc: string,
     public cursor?: string
   ) {}
@@ -22,6 +23,7 @@ export function convert(
   return new ResponseWithResponderModel(
     workResponse.id.toString(),
     friendlyDate(workResponse.updatedAt),
+    workResponse.work.id.toString(),
     workResponse.work.title,
     workResponse.response,
     workResponse.responder.id.toString(),

@@ -1,7 +1,7 @@
 import { JSX, memo, useEffect, useState } from "react";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { ProfileModel } from "../../api/ui/UIModels";
+import { ProfileModel } from "../../api/ui/ProfileModel";
 import { ProfileConcentractedDesc } from "../ProfileConcentratedDesc";
 
 /// @works is named such do to sharing with PagedWorkElements component

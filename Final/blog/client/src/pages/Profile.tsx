@@ -1,20 +1,18 @@
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 import { PagedWorkElements } from "../common/components/display-elements/PagedWorkElements";
 import { ProfileForm } from "../common/components/ProfileForm";
 import { Layout } from "../common/components/Layout";
 import { RandomImg } from "../common/components/RandomImage";
 import { useParams } from "react-router-dom";
-import { PAGE_SIZE } from "../common/utils/StandardValues";
+import { PAGE_SIZE } from "../common/lib/utils/StandardValues";
 import { WorkElements } from "../common/components/display-elements/WorkElements";
-import { useProfile } from "../common/redux/Store";
 import { TabBar } from "../common/components/TabBar";
 import { ResponseElements } from "../common/components/display-elements/ResponseElements";
 import { FollowElements } from "../common/components/display-elements/FollowElements";
-import {
-  ResponseWithResponderModel,
-  WorkWithAuthorModel,
-} from "../common/api/ui/UIModels";
-import { useUiApi } from "../common/context/UiApiContext";
+import { useUserProfile } from "../common/redux/profile/ProfileHooks";
+import { UiApiContext } from "../common/context/ui-api/UiApiContext";
+import { WorkWithAuthorModel } from "../common/api/ui/WorkWithAuthorModel";
+import { ResponseWithResponderModel } from "../common/api/ui/ResponseWithResponderModel";
 
 /// Register by creating a profile with optional avatar/image
 export function Profile() {
@@ -24,8 +22,8 @@ export function Profile() {
     profile_id: string;
     page_sec_id: string | undefined;
   }>();
-  const profile = useProfile((state) => state.profile);
-  const api = useUiApi();
+  const [profile] = useUserProfile();
+  const api = use(UiApiContext);
 
   useEffect(() => {
     if (page_sec_id) {
@@ -50,56 +48,41 @@ export function Profile() {
     return null;
   };
 
-  const getStories = async (priorKeyset: string) => {
-    let works: WorkWithAuthorModel[] | null | undefined;
-    if (priorKeyset === "") {
-      works = await api?.getAuthorWorksTop(profile_id || "", PAGE_SIZE);
-    } else {
-      works = await api?.getAuthorWorks(
+  const getStories = async (lastCursor: string) => {
+    let works: WorkWithAuthorModel[] | null | undefined =
+      await api?.uiApi.getLatestWorkByAuthor(
         profile_id || "",
         PAGE_SIZE,
-        priorKeyset
+        lastCursor
       );
-    }
     if (!works || works.length === 0) return null;
 
-    console.log("works", works);
     return works;
   };
 
-  const getResponses = async (priorKeyset: string) => {
-    let workResponses: ResponseWithResponderModel[] | null | undefined;
-    if (priorKeyset === "") {
-      workResponses = await api?.getWorkResponsesByProfileTop(
-        profile_id || "",
-        PAGE_SIZE
-      );
-    } else {
-      workResponses = await api?.getWorkResponsesByProfile(
+  const getResponses = async (lastCursor?: string) => {
+    let workResponses: ResponseWithResponderModel[] | null | undefined =
+      await api?.uiApi.getWorkResponsesByAuthor(
         profile_id || "",
         PAGE_SIZE,
-        priorKeyset
+        lastCursor
       );
-    }
     if (!workResponses || workResponses.length === 0) return null;
 
-    console.log("responses", workResponses);
     return workResponses;
   };
 
   const getFollowing = async () => {
-    const following = await api?.getFollowedProfiles(profile_id || "");
+    const following = await api?.uiApi.getFollowed(profile_id || "");
     if (!following || following.length === 0) return null;
 
-    console.log("following", following);
     return following;
   };
 
   const getFollower = async () => {
-    const follower = await api?.getFollowerProfiles(profile_id || "");
+    const follower = await api?.uiApi.getFollowers(profile_id || "");
     if (!follower || follower.length === 0) return null;
 
-    console.log("follower", follower);
     return follower;
   };
 

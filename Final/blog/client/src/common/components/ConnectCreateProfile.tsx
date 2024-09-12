@@ -1,10 +1,9 @@
-import { useEffect, useState, useTransition, MouseEvent } from "react";
+import { useEffect, useState, useTransition, use } from "react";
 import { NotificationType } from "./modals/Notification";
 import { ProfileForm } from "./ProfileForm";
 import Notification from "./modals/Notification";
-import { useProfile } from "../redux/Store";
-import { useWallet } from "../context/SolflareContext";
-import { useUiApi } from "../context/UiApiContext";
+import { useUserProfile } from "../redux/profile/ProfileHooks";
+import { UiApiContext } from "../context/ui-api/UiApiContext";
 
 export const SMALL_NOTIFICATION_HEIGHT = "170px";
 export const LARGE_NOTIFICATION_HEIGHT = "580px";
@@ -18,74 +17,63 @@ export function ConnectCreateProfile({
   notificationState,
   toggleNotificationState,
 }: ConnectCreateProfileProps) {
-  const profile = useProfile((state) => state.profile);
-  const setProfile = useProfile((state) => state.setProfile);
+  const [profile, setProfile] = useUserProfile();
   const [notificationHeight, setNotificationHeight] = useState(
     SMALL_NOTIFICATION_HEIGHT
   );
   const [showProfileForm, setShowProfileForm] = useState(false);
   const [connectValidationMsg, setConnectValidationMsg] = useState("");
   const [_isPending, startTransition] = useTransition();
-  const walletState = useWallet();
-  const api = useUiApi();
+  const api = use(UiApiContext);
 
   useEffect(() => {
     handleConnect();
-  }, [api, walletState]);
+  }, [api]);
 
   const handleConnect = async () => {
     if (api) {
       startTransition(() => {
         if (!profile) {
-          if (!walletState?.walletObject?.isConnected) {
-            return;
-          }
-          api.getOwnersProfile().then((ownersProfile) => {
-            if (!ownersProfile) {
-              setShowProfileForm(true);
-              setNotificationHeight(LARGE_NOTIFICATION_HEIGHT);
-              setConnectValidationMsg(
-                "You must create a profile before you can create content"
-              );
-            } else {
-              // if profile already exists just allow writing
-              toggleNotificationState();
-              setProfile({
-                id: ownersProfile?.id,
-                updatedAt: ownersProfile.updatedAt,
-                username: ownersProfile.userName,
-                fullname: ownersProfile.fullName,
-                description: ownersProfile.description,
-                socialLinkPrimary: ownersProfile.socialLinkPrimary || "",
-                socialLinkSecond: ownersProfile.socialLinkSecond || "",
-              });
-              setShowProfileForm(false);
-              setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);
-              setConnectValidationMsg("");
-            }
+          setShowProfileForm(true);
+          setNotificationHeight(LARGE_NOTIFICATION_HEIGHT);
+          setConnectValidationMsg(
+            "You must create a profile before you can create content"
+          );
+        } else {
+          // if profile already exists just allow writing
+          toggleNotificationState();
+          setProfile({
+            id: profile.id,
+            updatedAt: profile.updatedAt,
+            userName: profile.userName,
+            fullName: profile.fullName,
+            description: profile.description,
+            socialLinkPrimary: profile.socialLinkPrimary || "",
+            socialLinkSecond: profile.socialLinkSecond || "",
           });
+          setShowProfileForm(false);
+          setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);
+          setConnectValidationMsg("");
         }
       });
     }
   };
 
-  const afterConnect = async (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  // const afterConnect = async (e: MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
 
-    setConnectValidationMsg("Waiting for wallet connection ...");
-    await walletState?.walletObject?.wallet.connect();
-  };
+  //   setConnectValidationMsg("Waiting for wallet connection ...");
+  // };
 
-  const afterDisconnect = (e: MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  // const afterDisconnect = (e: MouseEvent<HTMLButtonElement>) => {
+  //   e.preventDefault();
 
-    api?.disconnect();
-    toggleNotificationState();
-    setProfile(null);
-    setShowProfileForm(false);
-    setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);
-    setConnectValidationMsg("");
-  };
+  //   toggleNotificationState();
+  //   setProfile(null);
+  //   setShowProfileForm(false);
+  //   setNotificationHeight(SMALL_NOTIFICATION_HEIGHT);
+  //   setConnectValidationMsg("");
+  // };
 
   return (
     <Notification
@@ -97,24 +85,10 @@ export function ConnectCreateProfile({
       height={notificationHeight}
     >
       <div className="push-away">
-        <span className="standard-header">
-          {walletState?.walletObject?.wallet?.connected ? null : (
-            <span>Please connect your wallet</span>
-          )}
-        </span>
         <span className="btn-span-align" style={{ marginTop: "1em" }}>
           <div style={{ color: "var(--warning-cl)" }}>
             {connectValidationMsg}
           </div>
-          {walletState?.walletObject?.wallet?.connected ? (
-            <button className="primary-btn" onClick={afterDisconnect}>
-              Disconnect
-            </button>
-          ) : (
-            <button className="primary-btn" onClick={afterConnect}>
-              Connect
-            </button>
-          )}
         </span>
         {showProfileForm ? (
           <div className="profile-form-parent">

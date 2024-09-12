@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import { formatLikeCount } from "../utils/DetailInfoFormatter";
+import { use, useEffect, useState } from "react";
+import { formatLikeCount } from "../lib/utils/DetailInfoFormatter";
 import tipJar from "../../theme/assets/app-icons/save-money.png";
 import response from "../../theme/assets/app-icons/l-resend-100.png";
-import { useUiApi } from "../context/UiApiContext";
+import { UiApiContext } from "../context/ui-api/UiApiContext";
 
 interface TipsAndResponsesProps {
   workId: string;
@@ -13,20 +13,20 @@ interface TipsAndResponsesProps {
 export function TipsResponses({ workId }: TipsAndResponsesProps) {
   const [likeCount, setLikeCount] = useState(0);
   const [responseCount, setResponseCount] = useState(0);
-  const api = useUiApi();
+  const api = use(UiApiContext);
 
   useEffect(() => {
-    api
-      ?.getWorkLikeCount(workId)
+    api?.uiApi
+      .getWorkLikesCount(workId)
       .then((count) => {
         setLikeCount(count);
       })
       .catch((e) => console.log(e));
 
-    api
-      ?.getWorkResponseCount(workId)
-      .then((count) => {
-        setResponseCount(count);
+    api?.uiApi
+      .getWorkResponses(workId)
+      .then((responses) => {
+        setResponseCount(responses?.length || 0);
       })
       .catch((e) => console.log(e));
   }, [workId]);

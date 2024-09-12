@@ -140,3 +140,83 @@ describe("POST /work_resp", () => {
       });
   });
 });
+
+describe("POST /work_resp_author", () => {
+  it("get work responses by author", async () => {
+    const author = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+    const responder = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+    const topic = await repo.Topic.insertTopic(faker.company.name());
+    const title = faker.lorem.sentence(1);
+    const description = faker.lorem.sentence(2);
+    const content = faker.lorem.sentence(4);
+    const work = await repo.Work.insertWork(
+      title,
+      description,
+      content,
+      author.id,
+      [topic.id],
+      [
+        {
+          imagePlaceholder: "A",
+          image: avatars[0],
+        },
+        {
+          imagePlaceholder: "B",
+          image: avatars[1],
+        },
+      ]
+    );
+
+    const responses: string[] = new Array(10);
+    for (let i = 0; i < 10; i++) {
+      responses[i] = faker.lorem.sentence(1);
+      await repo.WorkResp.insertWorkResponse(
+        work.id,
+        responder.id,
+        responses[i]
+      );
+    }
+    const firstFive = await repo.WorkResp.selectWorkResponsesByAuthor(
+      responder.id,
+      5
+    );
+    const lastCursor = firstFive[firstFive.length - 1].id;
+
+    await request(app)
+      .post("/work_resp_author")
+      .send({
+        id: serializeBigInt(responder.id),
+        pageSize: 5,
+        lastCursor: serializeBigInt(lastCursor),
+      })
+      .expect(200)
+      .then((res) => {
+        const workResp: {
+          id: bigint;
+          createdAt: Date;
+          updatedAt: Date;
+          response: string;
+          work: {
+            title: string;
+          };
+        }[] = res.body;
+
+        const revResponses = responses.reverse();
+        assert.equal(workResp[0].response, revResponses[5]);
+      });
+  });
+});

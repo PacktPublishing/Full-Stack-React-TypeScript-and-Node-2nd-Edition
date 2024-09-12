@@ -1,6 +1,9 @@
 import { CSSProperties } from "react";
 import { MouseEvent } from "react";
-import { NON_SELECTED_COLOR, SELECTED_COLOR } from "../utils/ThemeVariables";
+import {
+  NON_SELECTED_COLOR,
+  SELECTED_COLOR,
+} from "../lib/utils/ThemeVariables";
 
 export type HeaderType = {
   id: number;

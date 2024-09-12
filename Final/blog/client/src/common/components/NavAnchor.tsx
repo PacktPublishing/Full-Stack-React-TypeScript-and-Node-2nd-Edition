@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { NON_SELECTED_COLOR, SELECTED_COLOR } from "../utils/ThemeVariables";
+import {
+  NON_SELECTED_COLOR,
+  SELECTED_COLOR,
+} from "../lib/utils/ThemeVariables";
 
 interface NavAnchorProps {
   label: string;

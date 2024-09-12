@@ -25,14 +25,14 @@ export class WorkResponseRepo {
   async selectWorkResponses(
     workId: bigint,
     pageSize: number,
-    lastCursor?: bigint
+    workResponseIdCursor?: bigint
   ) {
     return await this.#client.workResponse.findMany({
       take: pageSize,
-      skip: lastCursor ? 1 : 0,
-      cursor: lastCursor
+      skip: workResponseIdCursor ? 1 : 0,
+      cursor: workResponseIdCursor
         ? {
-            id: lastCursor,
+            id: workResponseIdCursor,
           }
         : undefined,
       select: {
@@ -41,6 +41,7 @@ export class WorkResponseRepo {
         updatedAt: true,
         work: {
           select: {
+            id: true,
             title: true,
           },
         },
@@ -56,6 +57,48 @@ export class WorkResponseRepo {
       },
       where: {
         workId,
+      },
+      orderBy: {
+        id: SortOrder.Desc,
+      },
+    });
+  }
+
+  async selectWorkResponsesByAuthor(
+    responderId: bigint,
+    pageSize: number,
+    workResponseIdCursor?: bigint
+  ) {
+    return await this.#client.workResponse.findMany({
+      take: pageSize,
+      skip: workResponseIdCursor ? 1 : 0,
+      cursor: workResponseIdCursor
+        ? {
+            id: workResponseIdCursor,
+          }
+        : undefined,
+      select: {
+        id: true,
+        createdAt: true,
+        updatedAt: true,
+        work: {
+          select: {
+            id: true,
+            title: true,
+          },
+        },
+        response: true,
+        responder: {
+          select: {
+            id: true,
+            userName: true,
+            fullName: true,
+            description: true,
+          },
+        },
+      },
+      where: {
+        responderId,
       },
       orderBy: {
         id: SortOrder.Desc,

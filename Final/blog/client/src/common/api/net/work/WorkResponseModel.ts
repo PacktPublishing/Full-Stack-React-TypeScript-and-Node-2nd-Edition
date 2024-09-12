@@ -2,6 +2,7 @@ export type WorkResponse = {
   id: bigint;
   updatedAt: Date;
   work: {
+    id: bigint;
     title: string;
   };
   response: string;

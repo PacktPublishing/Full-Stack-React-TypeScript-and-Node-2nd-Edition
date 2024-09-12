@@ -50,3 +50,26 @@ export const getWorkResponses: RequestHandler = async (
     next(e);
   }
 };
+
+export const getWorkResponsesByAuthor: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    res
+      .status(200)
+      .json(
+        serializeBigInt(
+          await repo.WorkResp.selectWorkResponsesByAuthor(
+            id,
+            pageSize,
+            lastCursor
+          )
+        )
+      );
+  } catch (e) {
+    next(e);
+  }
+};

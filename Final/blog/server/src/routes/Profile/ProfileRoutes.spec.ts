@@ -94,13 +94,45 @@ describe("POST /profile/update", () => {
   });
 });
 
-describe("GET /profile/popular", () => {
+describe("GET /profile/:profileId", () => {
+  it("get profile", async () => {
+    const profile = await repo.Profile.insertProfile(
+      faker.internet.userName(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+
+    await request(app)
+      .get(`/profile/${profile.id}`)
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then((res) => {
+        const profileResponse: {
+          id: bigint;
+          createdAt: Date;
+          updatedAt: Date;
+          userName: string;
+          fullName: string;
+          description: string | null;
+          socialLinkPrimary: string | null;
+          socialLinkSecondary: string | null;
+          avatarId: bigint | null;
+        } = res.body;
+        assert.equal(profileResponse.id, profile.id);
+      });
+  });
+});
+
+describe("GET /profile_popular", () => {
   it("get profile popular", async () => {
     await request(app)
-      .get("/profile/popular")
+      .get("/profile_popular")
       .expect(200)
       .expect("Content-Type", /json/)
-      .then((res) => {
+      .then(async (res) => {
         const popularProfiles: ProfileModel[] = res.body;
         assert.equal(popularProfiles.length > 0, true);
       });

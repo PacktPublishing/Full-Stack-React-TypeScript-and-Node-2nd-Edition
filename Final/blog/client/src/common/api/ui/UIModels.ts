@@ -4,18 +4,6 @@ export interface UiEntity {
   cursor?: string;
 }
 
-export class ProfileModel implements UiEntity {
-  constructor(
-    public id: string,
-    public updatedAt: string,
-    public userName: string,
-    public fullName: string,
-    public description: string,
-    public socialLinkPrimary: string | undefined,
-    public socialLinkSecond: string | undefined
-  ) {}
-}
-
 export class TopicModel implements UiEntity {
   constructor(
     public id: string,

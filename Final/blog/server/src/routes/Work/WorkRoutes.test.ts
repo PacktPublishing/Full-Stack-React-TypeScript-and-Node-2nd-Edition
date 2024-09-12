@@ -438,7 +438,6 @@ describe("POST /work_followed_one", () => {
       .expect(200)
       .then((res) => {
         const response: TestWorkModel[] = res.body;
-        console.log("nextFive", response);
         const reversedWorkIds = followedWorkIds.reverse();
         assert.equal(response[0].id, reversedWorkIds[5]);
       });

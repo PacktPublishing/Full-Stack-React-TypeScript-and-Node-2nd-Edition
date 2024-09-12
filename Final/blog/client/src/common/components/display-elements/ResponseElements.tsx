@@ -2,7 +2,7 @@ import { JSX, memo, useEffect, useState } from "react";
 /// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
 import { ResponseResponderDetail } from "../ResponseResponderDetail";
-import { ResponseWithResponderModel } from "../../api/ui/UIModels";
+import { ResponseWithResponderModel } from "../../api/ui/ResponseWithResponderModel";
 
 /// @works is named such do to sharing with PagedWorkElements component
 interface ResponseElementsProps {
@@ -39,7 +39,7 @@ function ResponseElementsComponent({
         >
           <ResponseResponderDetail
             showAuthor={showAuthor}
-            work={works[i]}
+            workResponse={works[i]}
             showWorkTitle={showWorkTitle}
           />
           <span>{works[i].responseContent}</span>

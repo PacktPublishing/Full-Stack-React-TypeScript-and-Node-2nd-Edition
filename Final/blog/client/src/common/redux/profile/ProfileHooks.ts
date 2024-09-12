@@ -1,4 +1,4 @@
-import { ProfileModel } from "../../api/ui/UIModels";
+import { ProfileModel } from "../../api/ui/ProfileModel";
 import { useAppDispatch, useAppSelector } from "../StoreHooks";
 import { setUserProfileSlice } from "./ProfileSlice";
 

@@ -108,6 +108,23 @@ export const updateProfile: RequestHandler = async (
   }
 };
 
+export const getProfile: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const profileId = req.params.profileId;
+    res
+      .status(200)
+      .json(
+        serializeBigInt(await repo.Profile.selectProfile(BigInt(profileId)))
+      );
+  } catch (e) {
+    next(e);
+  }
+};
+
 export const getMostPopularAuthors: RequestHandler = async (
   req: Request,
   res: Response,

@@ -10,7 +10,7 @@ import {
   useState,
 } from "react";
 import { Spinner } from "../Spinner";
-import { PAGE_SIZE } from "../../utils/StandardValues";
+import { PAGE_SIZE } from "../../lib/utils/StandardValues";
 import { UiEntity } from "../../api/ui/UIModels";
 
 export enum PagingState {

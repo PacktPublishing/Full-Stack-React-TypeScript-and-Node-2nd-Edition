@@ -16,8 +16,8 @@ export class WorkLikesRepo {
     });
   }
 
-  async selectWorkLikes(workId: bigint) {
-    return await this.#client.workLike.findMany({
+  async selectWorkLikesCount(workId: bigint) {
+    return await this.#client.workLike.count({
       where: {
         workId,
       },
