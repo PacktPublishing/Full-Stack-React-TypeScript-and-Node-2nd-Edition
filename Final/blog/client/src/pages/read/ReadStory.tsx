@@ -10,10 +10,7 @@ import { TabHeader } from "../../common/components/TabHeader";
 import { ReturnEnabledInput } from "../../common/components/ReturnEnabledInput";
 import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
 import { useUserProfile } from "../../common/redux/profile/ProfileHooks";
-import {
-  UiApiContext,
-  UiApiType,
-} from "../../common/context/ui-api/UiApiContext";
+import { UiApiContext } from "../../common/context/ui-api/UiApiContext";
 import { ResponseWithResponderModel } from "../../common/api/ui/ResponseWithResponderModel";
 
 enum ValidationStates {
@@ -35,14 +32,14 @@ export function ReadStory() {
     ValidationStates.FieldIsValid
   );
   const [profile] = useUserProfile();
-  const { uiApi } = use(UiApiContext) as UiApiType;
+  const api = use(UiApiContext);
 
   useEffect(() => {
     if (work) setRefreshWorksData(true);
   }, [work]);
 
   useEffect(() => {
-    uiApi
+    api?.uiApi
       .getWork(work_id || "")
       .then((work) => {
         if (!work) {
@@ -62,8 +59,8 @@ export function ReadStory() {
   };
 
   const getData = async (lastCursor?: string) => {
-    const responses: ResponseWithResponderModel[] | null =
-      await uiApi.getWorkResponses(work_id || "", PAGE_SIZE, lastCursor);
+    const responses: ResponseWithResponderModel[] | null | undefined =
+      await api?.uiApi.getWorkResponses(work_id || "", PAGE_SIZE, lastCursor);
 
     if (!responses || responses.length === 0) {
       return null;
@@ -97,7 +94,7 @@ export function ReadStory() {
 
     if (!work_id || !profile.id)
       throw new Error("Work id is undefined, cannot add response");
-    await uiApi.createWorkResponse(work_id || "", profile.id, value);
+    await api?.uiApi.createWorkResponse(work_id || "", profile.id, value);
     setRefreshWorksData(true);
   };
 

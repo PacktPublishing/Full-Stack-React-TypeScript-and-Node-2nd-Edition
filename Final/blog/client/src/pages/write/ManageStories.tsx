@@ -2,17 +2,14 @@ import { use, useEffect, useState } from "react";
 import { PAGE_SIZE } from "../../common/lib/utils/StandardValues";
 import { PagedWorkElements } from "../../common/components/display-elements/PagedWorkElements";
 import { WorkElements } from "../../common/components/display-elements/WorkElements";
-import {
-  UiApiContext,
-  UiApiType,
-} from "../../common/context/ui-api/UiApiContext";
+import { UiApiContext } from "../../common/context/ui-api/UiApiContext";
 import { useUserProfile } from "../../common/redux/profile/ProfileHooks";
 import { WorkWithAuthorModel } from "../../common/api/ui/WorkWithAuthorModel";
 
 export function ManageStories() {
   const [profile] = useUserProfile();
   const [refreshWorksData, setRefreshWorksData] = useState(false);
-  const { uiApi } = use(UiApiContext) as UiApiType;
+  const api = use(UiApiContext);
 
   useEffect(() => {
     if (profile) setRefreshWorksData(true);
@@ -21,8 +18,8 @@ export function ManageStories() {
   const getData = async (lastCursor?: string) => {
     if (!profile) return null;
 
-    const works: WorkWithAuthorModel[] | null =
-      await uiApi.getLatestWorkByAuthor(profile.id, PAGE_SIZE, lastCursor);
+    const works: WorkWithAuthorModel[] | null | undefined =
+      await api?.uiApi.getLatestWorkByAuthor(profile.id, PAGE_SIZE, lastCursor);
 
     if (!works) {
       return null;

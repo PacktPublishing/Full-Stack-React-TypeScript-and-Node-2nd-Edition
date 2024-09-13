@@ -13,10 +13,7 @@ import { MarkdownEditor } from "../../common/components/MarkdownEditor";
 import { ValidationAndProgressMsg } from "../../common/components/ValidationProgressMsg";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import DropDown, { OptionType } from "../../common/components/DropDown";
-import {
-  UiApiContext,
-  UiApiType,
-} from "../../common/context/ui-api/UiApiContext";
+import { UiApiContext } from "../../common/context/ui-api/UiApiContext";
 
 enum WriteValidation {
   TitleTooLong = "Title must be less than 100 characters",
@@ -52,10 +49,10 @@ export function WriteStory() {
   }>();
   const [selectedTopicId, setSelectedTopicId] = useState("");
   const [topics, setTopics] = useState<OptionType[]>([]);
-  const { uiApi } = use(UiApiContext) as UiApiType;
+  const api = use(UiApiContext);
 
   useEffect(() => {
-    uiApi
+    api?.uiApi
       .getAllTopics()
       .then((topics) => {
         if (!topics || topics.length === 0) {
@@ -86,10 +83,8 @@ export function WriteStory() {
 
   useEffect(() => {
     if (work_id) {
-      console.log("work_id", work_id);
-      uiApi.getWork(work_id).then((work) => {
+      api?.uiApi.getWork(work_id).then((work) => {
         if (!work) throw new Error("Work item cannot be found trying to edit");
-        console.log("getTopicByWork work", work);
         setTitle(work.title);
         setDescription(work.description);
         mdRef.current?.setMarkdown(work.content);
@@ -113,7 +108,7 @@ export function WriteStory() {
     try {
       setIsSubmitBtnDisabled(true);
 
-      const tx = await uiApi.createWork(
+      await api?.uiApi.createWork(
         title,
         description || "",
         mdRef.current?.getMarkdown() || "",
@@ -121,15 +116,11 @@ export function WriteStory() {
         [selectedTopicId],
         [] // todo: need to add images!!!
       );
-      // todo: remove when ready for prod
-      console.log("addWork tx", tx);
-      console.log("addWork id", id);
     } catch (e) {
       console.log(e);
     } finally {
       setValidationMsg("");
       setIsSubmitBtnDisabled(false);
-      console.log("submit complete, navigate to", `/write/edit/${id}`);
       navigate(
         `/write/edit/${id}/Story created successfully. You can continue to edit it here.`
       );
@@ -147,7 +138,7 @@ export function WriteStory() {
 
     try {
       setIsSubmitBtnDisabled(true);
-      const tx = await uiApi.updateWork(
+      await api?.uiApi.updateWork(
         work_id || "",
         title,
         description || "",
@@ -155,7 +146,6 @@ export function WriteStory() {
         [selectedTopicId],
         [] // todo: need to add images!!!
       );
-      console.log("updateWork tx", tx);
       setValidationMsg(
         "Story submitted successfully. You can continue editing it here or browse other stories."
       );
@@ -212,7 +202,6 @@ export function WriteStory() {
     const titleValidation = validateTitle(title);
     const descValidation = validateDesc(description);
     const contentValidation = validateContent();
-    console.log("selectedTopicId", selectedTopicId);
     const topicValidation = validateTopic(selectedTopicId);
 
     if (titleValidation !== WriteValidation.FieldIsValid) {
