@@ -1,5 +1,5 @@
 import { CSSProperties, ReactNode, useEffect, useRef } from "react";
-import "../theme/modal.css";
+import "../../../theme/modal.css";
 
 interface ModalProps {
   isOpen: boolean;
@@ -12,11 +12,11 @@ interface ModalProps {
 
 export default function Modal({
   isOpen,
-  toggleOpen,
-  children,
-  style,
-  overlayClickClose = false,
-}: ModalProps) {
+}: // toggleOpen,
+// children,
+// style,
+// overlayClickClose = false,
+ModalProps) {
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -32,33 +32,34 @@ export default function Modal({
     }
   }, [isOpen]);
 
-  const onClickOut = (e: React.MouseEvent<HTMLDialogElement>) => {
-    e.preventDefault();
+  // const onClickOut = (e: React.MouseEvent<HTMLDialogElement>) => {
+  //   e.preventDefault();
 
-    if (!overlayClickClose) return;
+  //   if (!overlayClickClose) return;
 
-    const dialogElement = dialogRef.current;
-    if (!dialogElement) return;
+  //   const dialogElement = dialogRef.current;
+  //   if (!dialogElement) return;
 
-    const rect = dialogElement.getBoundingClientRect();
-    const isInDialog =
-      rect.top <= e.clientY &&
-      e.clientY <= rect.top + rect.height &&
-      rect.left <= e.clientX &&
-      e.clientX <= rect.left + rect.width;
-    if (!isInDialog) {
-      toggleOpen();
-    }
-  };
+  //   const rect = dialogElement.getBoundingClientRect();
+  //   const isInDialog =
+  //     rect.top <= e.clientY &&
+  //     e.clientY <= rect.top + rect.height &&
+  //     rect.left <= e.clientX &&
+  //     e.clientX <= rect.left + rect.width;
+  //   if (!isInDialog) {
+  //     toggleOpen();
+  //   }
+  // };
 
-  return (
-    <dialog
-      ref={dialogRef}
-      style={style}
-      onClick={onClickOut}
-      className="modal-container"
-    >
-      {children}
-    </dialog>
-  );
+  return null;
+  // return (
+  //   <dialog
+  //     ref={dialogRef}
+  //     style={style}
+  //     onClick={onClickOut}
+  //     className="modal-container"
+  //   >
+  //     {children}
+  //   </dialog>
+  // );
 }

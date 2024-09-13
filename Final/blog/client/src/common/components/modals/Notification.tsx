@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import BaseModal from "./BaseModal";
+import BaseModal from "./Modal";
 
 export enum NotificationType {
   Info,
@@ -22,8 +22,8 @@ export default function Notification({
   notiType,
   isOpen,
   toggleIsOpen,
-  width,
-  height,
+  // width,
+  // _height,
   children,
 }: NotificationProps) {
   const [titleColor, setTitleColor] = useState("var(--primary-cl)");
@@ -39,12 +39,7 @@ export default function Notification({
   }, [notiType]);
 
   return (
-    <BaseModal
-      isOpen={isOpen}
-      toggleOpen={toggleIsOpen}
-      width={width}
-      height={height}
-    >
+    <BaseModal isOpen={isOpen} toggleOpen={toggleIsOpen}>
       <div className="noti-container">
         <span className="title-font" style={{ color: titleColor }}>
           {title}
