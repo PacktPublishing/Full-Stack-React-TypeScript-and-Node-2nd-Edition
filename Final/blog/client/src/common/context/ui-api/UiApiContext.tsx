@@ -14,9 +14,5 @@ interface UiApiProviderProps {
 export default function UiApiProvider({ children }: UiApiProviderProps) {
   const [uiApi, setUiApi] = useState<UiApi>(new UiApi());
 
-  return (
-    <UiApiContext.Provider value={{ uiApi, setUiApi }}>
-      {children}
-    </UiApiContext.Provider>
-  );
+  return <UiApiContext value={{ uiApi, setUiApi }}>{children}</UiApiContext>;
 }

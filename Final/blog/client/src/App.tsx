@@ -14,6 +14,8 @@ import { ReadFollowed } from "./pages/read/ReadFollowed";
 import { ReadStory } from "./pages/read/ReadStory";
 import { Profile } from "./pages/Profile";
 import UiApiProvider from "./common/context/ui-api/UiApiContext";
+import { Provider as ReduxProvider } from "react-redux";
+import { store } from "./common/redux/Store";
 
 const router = createBrowserRouter([
   {
@@ -58,9 +60,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <UiApiProvider>
-      <RouterProvider router={router} />;
-    </UiApiProvider>
+    <ReduxProvider store={store}>
+      <UiApiProvider>
+        <RouterProvider router={router} />;
+      </UiApiProvider>
+    </ReduxProvider>
   );
 }
 
