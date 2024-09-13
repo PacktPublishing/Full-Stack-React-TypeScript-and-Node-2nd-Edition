@@ -28,7 +28,7 @@ WorkElements params
 */
 
 interface PagedWorkElementsProps<T extends Object, E extends UiEntity> {
-  getNextData: (priorKeyset: string) => Promise<E[] | null>;
+  getNextData: (lastCursor: string) => Promise<E[] | null>;
   refreshWorksData: boolean;
   setRefreshWorksData: React.Dispatch<React.SetStateAction<boolean>>;
   payload: T;
@@ -46,7 +46,7 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
 }: PagedWorkElementsProps<T, E>) {
   const targetRef = useRef<HTMLDivElement>(null);
   const readWorkListRef = useRef<HTMLDivElement>(null);
-  const [priorKeyset, setPriorKeyset] = useState("");
+  const [lastCursor, setLastCursor] = useState("");
   const [currentPagingState, setCurrentPagingState] = useState(
     PagingState.Start
   );
@@ -54,7 +54,7 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
 
   useEffect(() => {
     if (refreshWorksData) {
-      setPriorKeyset("");
+      setLastCursor("");
       setCurrentPagingState(PagingState.Start);
       setData("", PagingState.Start);
     }
@@ -72,12 +72,11 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
   }, [
     readWorkListRef.current,
     targetRef.current,
-    priorKeyset,
+    lastCursor,
     currentPagingState,
   ]);
 
   const scrollEventHandler = async () => {
-    console.log("Scroll, current PagingState", currentPagingState);
     if (currentPagingState === PagingState.Finish) return;
 
     const targetBounds = targetRef.current?.getBoundingClientRect();
@@ -88,22 +87,19 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
       Math.floor(readWorkListBounds?.bottom || 0) - 1;
 
     if (inView) {
-      console.log("scrolling");
-      setData(priorKeyset, currentPagingState);
+      setData(lastCursor, currentPagingState);
     }
   };
 
   /// sets paged data and next paging cursor
-  const setData = async (priorKeyset: string, pagingState: PagingState) => {
-    const works = await getNextData(priorKeyset);
-    console.log("getNextData works", works);
+  const setData = async (lastCursor: string, pagingState: PagingState) => {
+    const works = await getNextData(lastCursor);
     // use current paging state to determine whether to append or start fresh
     if (pagingState === PagingState.Start) {
       const worksNotNull = works || [];
 
       setPagedWorks(worksNotNull);
     } else {
-      console.log("append");
       const pagedWorksNotNull = pagedWorks || [];
       const worksNotNull = works || [];
       setPagedWorks([...pagedWorksNotNull, ...worksNotNull]);
@@ -111,19 +107,15 @@ function PagedWorkElementsComponent<T extends Object, E extends UiEntity>({
 
     // once data is set, reset the paging state to correct new value
     if (!works || works.length === 0) {
-      console.log("no more works data, state Finished");
       setCurrentPagingState(PagingState.Finish);
     } else if (works.length < PAGE_SIZE) {
-      console.log("works length less than page size, state Finished");
       setCurrentPagingState(PagingState.Finish);
     } else {
-      console.log("more works found, state Continue");
       setCurrentPagingState(PagingState.Continue);
     }
 
     if (works && works.length > 0) {
-      console.log("cursor", works[works.length - 1].cursor);
-      setPriorKeyset(works[works.length - 1].cursor || "");
+      setLastCursor(works[works.length - 1].cursor || "");
     }
 
     setRefreshWorksData(false);

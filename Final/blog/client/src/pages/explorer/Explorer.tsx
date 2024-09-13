@@ -93,7 +93,6 @@ export function Explorer() {
   }, [topic_id, topics]);
 
   const getNextData = async (lastCursor?: string) => {
-    console.log("searchTxt:", searchTxt);
     if (searchTxt && searchTxt.length > 0) {
       if (validateSearchTxt(searchTxt) !== ValidationStates.FieldIsValid) {
         setValidationMsg(validateSearchTxt(searchTxt));
@@ -109,9 +108,9 @@ export function Explorer() {
 
       return works;
     } else {
-      console.log("priorKeyset:", lastCursor);
-      const works: WorkWithAuthorModel[] | null | undefined =
-        await api?.uiApi.getWorksByTopic(topic_id || "", PAGE_SIZE, lastCursor);
+      const works: WorkWithAuthorModel[] | null | undefined = topic_id
+        ? await api?.uiApi.getWorksByTopic(topic_id, PAGE_SIZE, lastCursor)
+        : null;
 
       if (!works || works.length === 0) {
         return null;
