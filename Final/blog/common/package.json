@@ -1,0 +1,19 @@
+{
+  "name": "common",
+  "version": "1.0.0",
+  "main": "lib/index.js",
+  "private": true,
+  "types": "lib/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "David Choi",
+  "license": "Apache-2.0",
+  "description": "This package is from the book Full-Stack React, TypeScript and Node",
+  "dependencies": {
+    "typescript": "^5.5.4",
+    "@types/node": "22.2.0"
+  }
+}

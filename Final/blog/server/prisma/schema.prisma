@@ -1,0 +1,126 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Work {
+  id            BigInt            @id @default(autoincrement()) @db.BigInt
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  title         String            @db.VarChar(100)
+  content       String            @db.Text()
+  description   String            @db.VarChar(400)
+  author        Profile           @relation(fields: [authorId], references: [id])
+  authorId      BigInt            @db.BigInt
+  workImages    WorkImage[]       @relation("Work")
+  workTopics    WorkTopic[]       @relation("Work")
+  workLikes     WorkLike[]        @relation("LikedWork")
+  workResponses WorkResponse[]    @relation("RespondedWork")  
+}
+
+model WorkImage {
+  id                BigInt        @id @default(autoincrement()) @db.BigInt
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  imagePlaceholder  String        @db.VarChar(50)       
+  image             Bytes         @db.ByteA
+  work              Work          @relation("Work", fields: [workId], references: [id])
+  workId            BigInt
+}
+
+model Profile {
+  id                    BigInt              @id @default(autoincrement()) @db.BigInt
+  createdAt             DateTime            @default(now())
+  updatedAt             DateTime            @updatedAt
+  userName              String              @unique @db.VarChar(50)
+  fullName              String              @db.VarChar(100)
+  description           String?             @db.VarChar(250)
+  socialLinkPrimary     String?             @db.VarChar(250)
+  socialLinkSecondary   String?             @db.VarChar(250)
+  avatar                ProfileAvatar?      @relation(fields: [avatarId], references: [id])
+  avatarId              BigInt?             @unique
+  works                 Work[]
+  followers             Follow[]            @relation("Followed")
+  following             Follow[]            @relation("Follower")
+  workLikes             WorkLike[]          @relation("WorkLiker")
+  workResponses         WorkResponse[]      @relation("Responder")
+  workResponseLikes     WorkResponseLike[]  @relation("ResponseLiker")
+}
+
+model ProfileAvatar {
+  id          BigInt        @id @default(autoincrement()) @db.BigInt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  avatar      Bytes         @db.ByteA
+  profile     Profile?
+}
+
+model Follow {
+  id                    BigInt      @id @default(autoincrement()) @db.BigInt
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+  follower              Profile     @relation("Follower", fields: [followerId], references: [id])
+  followerId            BigInt
+  followed              Profile     @relation("Followed", fields: [followedId], references: [id])
+  followedId            BigInt
+}
+
+model Topic {
+  id                BigInt      @id @default(autoincrement()) @db.BigInt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  name              String
+  workTopics        WorkTopic[] @relation("Topic")
+}
+
+model WorkTopic {
+  id                BigInt      @id @default(autoincrement()) @db.BigInt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  work              Work        @relation("Work", fields: [workId], references: [id])
+  workId            BigInt
+  topic             Topic       @relation("Topic", fields: [topicId], references: [id])
+  topicId           BigInt
+}
+
+model WorkLike {
+  id                BigInt      @id @default(autoincrement()) @db.BigInt
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  work              Work        @relation("LikedWork", fields: [workId], references: [id])
+  workId            BigInt
+  liker             Profile     @relation("WorkLiker", fields: [likerId], references: [id])
+  likerId           BigInt
+}
+
+model WorkResponse {
+  id                  BigInt              @id @default(autoincrement()) @db.BigInt
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+  response            String              @db.Text()
+  responder           Profile             @relation("Responder", fields: [responderId], references: [id])
+  responderId         BigInt
+  work                Work                @relation("RespondedWork", fields: [workId], references: [id])
+  workId              BigInt
+  workResponseLikes   WorkResponseLike[]  @relation("WorkResponse")
+}
+
+model WorkResponseLike {
+  id                BigInt        @id @default(autoincrement()) @db.BigInt
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  workResponse      WorkResponse  @relation("WorkResponse", fields: [workResponseId], references: [id])
+  workResponseId    BigInt
+  liker             Profile       @relation("ResponseLiker", fields: [likerId], references: [id])
+  likerId           BigInt
+}

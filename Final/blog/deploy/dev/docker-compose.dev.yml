@@ -1,0 +1,20 @@
+version: "3.8"
+
+services:
+  fsrtn-api:
+    image: fsrtn
+    build:
+      context: ../../../blog
+      dockerfile: ./deploy/dev/Dockerfile
+    depends_on:
+      - fsrtn-db
+    env_file: ../../server/.env.dev
+    ports:
+      - 4001:4001
+  fsrtn-db:
+    image: postgres:14-alpine
+    ports:
+      - 5432:5432
+    env_file: ../../server/.env.dev
+    volumes:
+      - ../../server/dbdata:/var/lib/postgresql/data
