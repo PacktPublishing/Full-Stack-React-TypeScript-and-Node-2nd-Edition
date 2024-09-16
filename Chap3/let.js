@@ -3,7 +3,7 @@ val1 = 2;
 
 if (true) {
   let val2 = 3;
-  val2 = 3;
+  val2 = 4;
 }
 
 console.log(val1);
