@@ -1,23 +1,33 @@
 class Wheels {
-  count = 0;
+  count;
+
+  constructor(count) {
+    this.count = count;
+  }
+
+  wheelsCount = function () {
+    return this.count;
+  };
 }
 
 class Vehicle {
   wheels;
-}
 
-class Automobile extends Vehicle {
-  wheels;
-  constructor(wheels) {
-    super();
-    this.wheels = wheels;
+  constructor(count) {
+    if (count > 0) {
+      this.wheels = new Wheels(count);
+    }
   }
 }
 
-const car = new Automobile({
-  count: undefined,
-});
+class Automobile extends Vehicle {
+  constructor(count) {
+    super(count);
+  }
+}
 
-console.log("car ", car);
+let car = undefined;
 console.log("wheels ", car?.wheels);
-console.log("count ", car?.wheels?.count);
+
+car = new Automobile(undefined);
+console.log("wheel count ", car.wheels?.wheelsCount());
