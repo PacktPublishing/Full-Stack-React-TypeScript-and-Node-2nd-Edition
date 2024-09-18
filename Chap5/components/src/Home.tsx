@@ -1,5 +1,3 @@
-import { useId } from "react";
-
 export type UserType = {
   userId: number;
   id: number;
@@ -12,20 +10,24 @@ interface HomeProps {
 }
 
 export default function Home({ users }: HomeProps) {
-  return users?.map((user) => {
-    return (
-      <div
-        key={useId()}
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-start",
-          marginBottom: "10px",
-        }}
-      >
-        <div>id: {user?.id}</div>
-        <div>title: {user?.title}</div>
-      </div>
-    );
-  });
+  return (
+    <>
+      {users?.map((user) => {
+        return (
+          <div
+            key={user?.id}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              marginBottom: "10px",
+            }}
+          >
+            <div>id: {user?.id}</div>
+            <div>title: {user?.title}</div>
+          </div>
+        );
+      })}
+    </>
+  );
 }
