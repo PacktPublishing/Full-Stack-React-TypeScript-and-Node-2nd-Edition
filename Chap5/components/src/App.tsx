@@ -3,6 +3,7 @@ import "./App.css";
 import Home, { UserType } from "./Home";
 import DeferredValue from "./DeferredValue";
 import Transitioner from "./Transitioner";
+import UserForm from "./UserForm";
 
 async function fetchData(url: string) {
   const response = await fetch(url);
@@ -25,7 +26,7 @@ function App() {
 
   return (
     <>
-      <Transitioner />
+      <UserForm />
     </>
   );
 }
