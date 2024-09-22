@@ -1,6 +1,7 @@
 import { useActionState } from "react";
 import { UserType } from "./Home";
 import { users } from "./UserData";
+import SubmitButton from "./SubmitButton";
 
 export default function UserForm() {
   const [_formState, action, isPending] = useActionState(
@@ -83,9 +84,7 @@ export default function UserForm() {
         </label>
         <input id="body" name="body" />
       </div>
-      <button type="submit" disabled={isPending}>
-        submit
-      </button>
+      <SubmitButton />
       {JSON.stringify(users)}
     </form>
   );
