@@ -31,7 +31,6 @@ export function OptimisticMessages() {
   }, []);
 
   const addMessage = async (message: string) => {
-    addOptimisticMessage(message);
     await new Promise((res) =>
       setTimeout(() => {
         messagesOnApi.push({
@@ -55,8 +54,9 @@ export function OptimisticMessages() {
   const onClick = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
 
-    startTransition(() => {
-      addMessage(message);
+    startTransition(async () => {
+      addOptimisticMessage(message);
+      await addMessage(message);
     });
   };
 

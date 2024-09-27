@@ -1,6 +1,6 @@
 import { UserType } from "./Home";
 
-export const users: UserType[] = [
+export const usersData: UserType[] = [
   {
     userId: 1,
     id: 1,

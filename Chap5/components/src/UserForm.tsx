@@ -1,10 +1,11 @@
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { UserType } from "./Home";
-import { users } from "./UserData";
+import { usersData } from "./UserData";
 import SubmitButton from "./SubmitButton";
 
 export default function UserForm() {
-  const [_formState, action, isPending] = useActionState(
+  const [users, setUsers] = useState(usersData);
+  const [_formState, action, _isPending] = useActionState(
     async (_previousArgs: UserType, formData: FormData) => {
       const user: UserType = {
         userId: Number(formData.get("userId")?.toString() || 0),
@@ -13,9 +14,13 @@ export default function UserForm() {
         body: formData.get("body")?.toString() || "",
       };
 
-      const start = Date.now();
-      while (Date.now() - start < 1000) {}
-      users.push(user);
+      await new Promise((res) => {
+        setTimeout(() => {
+          usersData.push(user);
+          setUsers(usersData);
+          res(null);
+        }, 1000);
+      });
 
       return user;
     },
