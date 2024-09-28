@@ -14,12 +14,9 @@ async function fetchData(url: string) {
 
 function App() {
   const [id, setId] = useState("");
-  const [usersPromise, setUsersPromise] = useState<Promise<UserType[]>>();
 
-  useEffect(() => {
-    const idToGet = `https://jsonplaceholder.typicode.com/posts/${id}`;
-    setUsersPromise(fetchData(idToGet));
-  }, [id]);
+  const idToGet = `https://jsonplaceholder.typicode.com/posts/${id}`;
+  const usersPromise = fetchData(idToGet);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     setId(e.target.value);
@@ -27,7 +24,7 @@ function App() {
 
   return (
     <>
-      <UserForm />
+      <OptimisticMessages />
     </>
   );
 }

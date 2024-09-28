@@ -9,10 +9,11 @@ import {
 import { Message, messagesOnApi } from "./MessagesData";
 
 export function OptimisticMessages() {
+  const [message, setMessage] = useState("");
   const [messagesRetrievedFromApi, setMessagesRetrievedFromApi] = useState<
     Message[]
   >([]);
-  const [message, setMessage] = useState("");
+
   const [optimisticMessages, addOptimisticMessage] = useOptimistic<
     Message[],
     string
