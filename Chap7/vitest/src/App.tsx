@@ -1,11 +1,8 @@
 import "./App.css";
+import DisplayTodos from "./DisplayTodos";
 
 function App() {
-  return (
-    <>
-      <a href="https://react.dev/learn">Learn React</a>
-    </>
-  );
+  return <DisplayTodos />;
 }
 
 export default App;
