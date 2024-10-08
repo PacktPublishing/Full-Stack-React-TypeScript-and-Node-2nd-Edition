@@ -1,24 +1,6 @@
 import { ChangeEvent, MouseEvent, Suspense, useState } from "react";
 import UserTodos from "./UserTodos";
-import { getTodos, getUsers, Todo, User } from "./Api";
-
-export const getUsersTodos = async (username: string) => {
-  const users = await getUsers();
-
-  const userByUserName = users.find((usr: User) => {
-    return usr.username.toLowerCase() === username;
-  });
-
-  if (userByUserName) {
-    const todos = await getTodos();
-    const usersTodos = todos.filter((todo: Todo) => {
-      return todo.userId === userByUserName.id;
-    });
-
-    return usersTodos;
-  }
-  return [];
-};
+import { getUsersTodos } from "./Api";
 
 const DisplayTodos = () => {
   const [txt, setTxt] = useState("");

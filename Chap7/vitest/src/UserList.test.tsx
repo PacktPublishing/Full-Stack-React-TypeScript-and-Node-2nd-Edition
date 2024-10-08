@@ -81,35 +81,35 @@ describe("Testing UserList", () => {
     expect(getUsers).toHaveReturned();
   });
 
-  //   it("use a partial mock", async () => {
-  //     vi.doMock("./UserList", async () => {
-  //       const actual = await vi.importActual("./UserList");
+  it("use a partial mock", async () => {
+    vi.doMock("./UserList", async () => {
+      const actual = await vi.importActual("./UserList");
 
-  //       return {
-  //         ...actual,
-  //         UserList: ({ users }: UserListProps) => {
-  //           return (
-  //             <ul>
-  //               <li>John Right</li>
-  //             </ul>
-  //           );
-  //         },
-  //       };
-  //     });
-  //     const mod = await import("./UserList");
+      return {
+        ...actual,
+        UserList: ({ users }: UserListProps) => {
+          return (
+            <ul>
+              <li>John Right</li>
+            </ul>
+          );
+        },
+      };
+    });
+    const mod = await import("./UserList");
 
-  //     const getUsers = vi.fn<() => Promise<User[]>>(async () => [
-  //       {
-  //         id: 1,
-  //         name: "David Choi",
-  //         username: "dave",
-  //         email: "dave@test.com",
-  //       },
-  //     ]);
-  //     const users = await getUsers();
+    const getUsers = vi.fn<() => Promise<User[]>>(async () => [
+      {
+        id: 1,
+        name: "David Choi",
+        username: "dave",
+        email: "dave@test.com",
+      },
+    ]);
+    const users = await getUsers();
 
-  //     const { getByText } = render(<mod.UserList users={users} />);
-  //     const li = getByText("John Right");
-  //     expect(li).toBeInTheDocument();
-  //   });
+    const { getByText } = render(<mod.UserList users={users} />);
+    const li = getByText("John Right");
+    expect(li).toBeInTheDocument();
+  });
 });
