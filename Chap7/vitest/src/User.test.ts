@@ -39,7 +39,7 @@ describe("Check User", () => {
     expect(user.fullName).toBe(fullName);
   });
 
-  it("newUser function creates a new User object with a valid fields", async () => {
+  it("newUser function creates a new User object with valid fields", async () => {
     const lastId = Math.max(...allUsers.map((usr) => usr.id));
     const id = getLatestId();
     const userName = "will";
