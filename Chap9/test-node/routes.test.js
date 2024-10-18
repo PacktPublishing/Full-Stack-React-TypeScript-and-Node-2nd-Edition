@@ -2,6 +2,7 @@ import { describe, it, after } from "node:test";
 import assert from "node:assert";
 import request from "supertest";
 import app, { server } from "./app.js";
+import { maxId } from "./routes.js";
 
 after(() => server.close());
 
@@ -19,7 +20,7 @@ describe("route tests", () => {
     const res = await request(app)
       .post("/api/v1/newuser")
       .send({
-        id: 4,
+        id: maxId() + 1,
         username: "sam",
         age: 44,
       })
@@ -27,5 +28,18 @@ describe("route tests", () => {
       .expect(200);
 
     assert.equal(res.body.id, 4);
+  });
+
+  it("insert new user same id fails", async () => {
+    const res = await request(app)
+      .post("/api/v1/newuser")
+      .send({
+        id: 3,
+        username: "yam",
+        age: 33,
+      })
+      .expect("Content-Type", /json/);
+
+    assert.notEqual(res.status, 200);
   });
 });

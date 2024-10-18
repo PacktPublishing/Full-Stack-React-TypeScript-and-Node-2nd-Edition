@@ -25,9 +25,10 @@ router.get("/api/v1/users", async (req, res, next) => {
 
 router.post("/api/v1/newuser", async (req, res, next) => {
   try {
-    console.log("body", req.body);
-    if (req.body.id > maxId()) {
-      throw new Error("id is invalid", id);
+    console.log("body:", req.body);
+    if (req.body.id <= maxId()) {
+      res.status(500).json({ message: "id is invalid" });
+      return;
     }
 
     users.push(req.body);
@@ -39,6 +40,6 @@ router.post("/api/v1/newuser", async (req, res, next) => {
 });
 export default router;
 
-function maxId() {
-  Math.max(...users.map((usr) => usr.id));
+export function maxId() {
+  return Math.max(...users.map((usr) => usr.id));
 }
