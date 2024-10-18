@@ -20,18 +20,19 @@ const users = [
 
 const router = Router();
 router.get("/api/v1/users", async (req, res, next) => {
-  res.status(200).contentType("application/json").json(users);
+  res.status(200).json(users);
 });
 
 router.post("/api/v1/newuser", async (req, res, next) => {
   try {
+    console.log("body", req.body);
     if (req.body.id > maxId()) {
       throw new Error("id is invalid", id);
     }
 
     users.push(req.body);
 
-    res.status(200).send(req.body.id);
+    res.status(200).json({ id: req.body.id });
   } catch (e) {
     next(e);
   }
