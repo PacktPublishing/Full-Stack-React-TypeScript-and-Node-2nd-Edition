@@ -25,7 +25,6 @@ router.get("/api/v1/users", async (req, res, next) => {
 
 router.post("/api/v1/newuser", async (req, res, next) => {
   try {
-    console.log("body:", req.body);
     if (req.body.id <= maxId()) {
       res.status(500).json({ message: "id is invalid" });
       return;
