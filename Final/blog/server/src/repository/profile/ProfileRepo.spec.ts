@@ -10,15 +10,17 @@ const repo = new Repository();
 
 describe("Repository Profile", () => {
   it("Create a profile and confirm its fields", async () => {
-    let avatar: Buffer | undefined = getAvatar();
-    let userName = faker.internet.userName();
-    let fullName = faker.internet.displayName();
-    let desc = faker.lorem.sentence(5);
-    let primaryUrl = faker.internet.url();
-    let secondaryUrl = faker.internet.url();
+    const avatar: Buffer | undefined = getAvatar();
+    const userName = faker.internet.userName();
+    const password = faker.internet.password();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(5);
+    const primaryUrl = faker.internet.url();
+    const secondaryUrl = faker.internet.url();
 
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       primaryUrl,
@@ -42,6 +44,7 @@ describe("Repository Profile", () => {
     for (let i = 0; i < count; i++) {
       authors[i] = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -82,6 +85,7 @@ describe("Repository Profile", () => {
     const avatar = getAvatar();
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),

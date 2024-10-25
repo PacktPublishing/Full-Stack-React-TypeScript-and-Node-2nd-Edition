@@ -28,6 +28,7 @@ describe("POST /follow/followers", () => {
   it("should return list of followers", async () => {
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -39,6 +40,7 @@ describe("POST /follow/followers", () => {
     for (let i = 0; i < followersCount; i++) {
       const followerProfile = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -67,6 +69,7 @@ describe("POST /follow/followers", () => {
   it("should return next page of followers", async () => {
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -78,6 +81,7 @@ describe("POST /follow/followers", () => {
     for (let i = 0; i < followersCount; i++) {
       const followerProfile = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -112,6 +116,7 @@ describe("POST /follow/followed", () => {
   it("should return list of followed", async () => {
     const follower = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -124,6 +129,7 @@ describe("POST /follow/followed", () => {
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -152,6 +158,7 @@ describe("POST /follow/followed", () => {
   it("should return next page of followed", async () => {
     const follower = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -164,6 +171,7 @@ describe("POST /follow/followed", () => {
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -198,6 +206,7 @@ describe("GET /follow/follower/count", () => {
   it("get follower count", async () => {
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -210,6 +219,7 @@ describe("GET /follow/follower/count", () => {
     for (let i = 0; i < followerCount; i++) {
       const follower = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -234,6 +244,7 @@ describe("GET /follow/followed/count", () => {
   it("get followed count", async () => {
     const follower = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -246,6 +257,7 @@ describe("GET /follow/followed/count", () => {
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),

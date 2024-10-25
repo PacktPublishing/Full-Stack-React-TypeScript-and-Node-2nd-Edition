@@ -11,6 +11,7 @@ describe("POST /work_resp/new", () => {
   it("create response to a work", async () => {
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -19,6 +20,7 @@ describe("POST /work_resp/new", () => {
     );
     const responder = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -68,6 +70,7 @@ describe("POST /work_resp", () => {
   it("get response to a work", async () => {
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -76,6 +79,7 @@ describe("POST /work_resp", () => {
     );
     const responder = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -145,6 +149,7 @@ describe("POST /work_resp_author", () => {
   it("get work responses by author", async () => {
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -153,6 +158,7 @@ describe("POST /work_resp_author", () => {
     );
     const responder = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),

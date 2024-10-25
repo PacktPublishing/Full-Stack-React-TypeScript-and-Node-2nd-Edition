@@ -11,6 +11,7 @@ describe("GET /work_image/:workId/:placeholder", () => {
   it("get work image", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),

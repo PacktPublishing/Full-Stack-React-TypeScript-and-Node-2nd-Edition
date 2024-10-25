@@ -8,6 +8,7 @@ describe("Repository Follow", () => {
   it("Create new follower and followed, and confirm creation", async () => {
     const follower = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -16,6 +17,7 @@ describe("Repository Follow", () => {
     );
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -32,6 +34,7 @@ describe("Repository Follow", () => {
   it("Create new followers and do a paged retrieval", async () => {
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -44,6 +47,7 @@ describe("Repository Follow", () => {
     for (let i = 0; i < followersCount; i++) {
       const followerProfile = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -73,6 +77,7 @@ describe("Repository Follow", () => {
   it("Create new following and get them all back", async () => {
     const follower = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -85,6 +90,7 @@ describe("Repository Follow", () => {
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -114,6 +120,7 @@ describe("Repository Follow", () => {
   it("Get follower count", async () => {
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -126,6 +133,7 @@ describe("Repository Follow", () => {
     for (let i = 0; i < followerCount; i++) {
       const follower = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -143,6 +151,7 @@ describe("Repository Follow", () => {
   it("Get followed count", async () => {
     const follower = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -155,6 +164,7 @@ describe("Repository Follow", () => {
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),

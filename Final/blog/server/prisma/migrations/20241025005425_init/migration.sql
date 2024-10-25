@@ -29,6 +29,7 @@ CREATE TABLE "Profile" (
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "userName" VARCHAR(50) NOT NULL,
+    "password" VARCHAR(72) NOT NULL,
     "fullName" VARCHAR(100) NOT NULL,
     "description" VARCHAR(250),
     "socialLinkPrimary" VARCHAR(250),

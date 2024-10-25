@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
+import bcrypt from "bcryptjs";
 
 export class ProfileRepo {
   #client: PrismaClient;
@@ -10,6 +11,7 @@ export class ProfileRepo {
 
   async insertProfile(
     userName: string,
+    password: string,
     fullName: string,
     description: string,
     socialLinkPrimary: string | undefined,
@@ -27,9 +29,12 @@ export class ProfileRepo {
         avatarId = avatarResult.id;
       }
 
+      const hashedPassword = await bcrypt.hash(password, 10);
+
       return await tx.profile.create({
         data: {
           userName,
+          password: hashedPassword,
           fullName,
           description,
           socialLinkPrimary,

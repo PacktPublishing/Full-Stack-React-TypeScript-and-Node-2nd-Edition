@@ -90,6 +90,7 @@ for (let i = 0; i < 10; i++) {
   authors[i] = await client.profile.create({
     data: {
       userName: faker.internet.userName(),
+      password: faker.internet.password(),
       fullName: faker.internet.displayName(),
       description: faker.lorem.sentences(2),
       socialLinkPrimary: faker.internet.url(),

@@ -11,6 +11,7 @@ describe("Repository WorkResponseLike", () => {
     const content = faker.lorem.sentences(2);
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -19,6 +20,7 @@ describe("Repository WorkResponseLike", () => {
     );
     const responder = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -43,6 +45,7 @@ describe("Repository WorkResponseLike", () => {
 
     const responseLiker = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),

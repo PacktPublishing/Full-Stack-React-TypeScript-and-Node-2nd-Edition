@@ -11,8 +11,8 @@ export const createProfileAvatar: RequestHandler = async (
 ) => {
   try {
     if (!req.file) {
-      //logger.error(Error("No file provided"));
-      return res.status(400).send(Error("No file provided"));
+      res.status(400).send(Error("No file provided"));
+      return;
     }
 
     const file = await repo.ProfileAvatar.insertProfileAvatar(req.file.buffer);
@@ -46,12 +46,14 @@ export const createProfile: RequestHandler = async (
   try {
     const {
       userName,
+      password,
       fullName,
       description,
       socialLinkPrimary,
       socialLinkSecondary,
     }: {
       userName: string;
+      password: string;
       fullName: string;
       description: string;
       socialLinkPrimary: string | undefined;
@@ -60,6 +62,7 @@ export const createProfile: RequestHandler = async (
 
     const profile = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       description,
       socialLinkPrimary,

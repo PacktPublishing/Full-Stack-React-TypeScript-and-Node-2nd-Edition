@@ -8,6 +8,7 @@ describe("Repository Like", () => {
   it("Create like and verify", async () => {
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -24,6 +25,7 @@ describe("Repository Like", () => {
     );
     const liker = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -38,6 +40,7 @@ describe("Repository Like", () => {
   it("Create likes for a work and retrieve all of them", async () => {
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -57,6 +60,7 @@ describe("Repository Like", () => {
     for (let i = 0; i < 3; i++) {
       const liker = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),

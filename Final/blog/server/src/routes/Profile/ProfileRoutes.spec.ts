@@ -47,6 +47,7 @@ describe("POST /profile/new", () => {
         contentType: octetType,
       })
       .field("userName", faker.internet.userName())
+      .field("password", faker.internet.password())
       .field("fullName", faker.internet.displayName())
       .field("description", faker.lorem.sentence(3))
       .field("socialLinkPrimary", faker.internet.url())
@@ -62,6 +63,7 @@ describe("POST /profile/update", () => {
   it("update profile", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -98,6 +100,7 @@ describe("GET /profile/:profileId", () => {
   it("get profile", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),

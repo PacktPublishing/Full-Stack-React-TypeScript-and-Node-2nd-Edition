@@ -4,6 +4,7 @@ import { Repository } from "../Repository.js";
 import { faker } from "@faker-js/faker";
 import { getAvatar } from "../../__test__/avatar.js";
 import { SortOrder } from "../lib/Constants.js";
+import bcrypt from "bcryptjs";
 
 const repo = new Repository();
 
@@ -16,6 +17,7 @@ describe("Work tests", () => {
 
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -51,6 +53,7 @@ describe("Work tests", () => {
 
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -106,6 +109,7 @@ describe("Work tests", () => {
 
     const author = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -151,10 +155,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -185,10 +191,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -236,10 +244,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -295,10 +305,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -336,10 +348,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const follower = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -352,6 +366,7 @@ describe("Work tests", () => {
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
         faker.internet.url(),
@@ -391,10 +406,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const follower = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -405,6 +422,7 @@ describe("Work tests", () => {
     const followedWorkIds: bigint[] = [];
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
       faker.internet.url(),
@@ -443,10 +461,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -485,10 +505,12 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = await bcrypt.hash(faker.internet.password(), 10);
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),

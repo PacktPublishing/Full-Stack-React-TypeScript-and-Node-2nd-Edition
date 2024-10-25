@@ -23,6 +23,7 @@ describe("POST /work/new", () => {
   it("create work", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -61,6 +62,7 @@ describe("POST /work/update", () => {
   it("update work", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -124,6 +126,7 @@ describe("GET /work/:id", () => {
   it("get work", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -184,6 +187,7 @@ describe("POST /work_popular", () => {
   it("get popular work by topic", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -255,6 +259,7 @@ describe("POST /work_latest", () => {
   it("get latest work", async () => {
     const profile = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -327,10 +332,12 @@ describe("POST /work_followed", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(3);
     const follower = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -343,6 +350,7 @@ describe("POST /work_followed", () => {
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.userName(),
+        faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(3),
         faker.internet.url(),
@@ -391,10 +399,12 @@ describe("POST /work_followed_one", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(3);
     const follower = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -405,6 +415,7 @@ describe("POST /work_followed_one", () => {
     const followedWorkIds: bigint[] = [];
     const followed = await repo.Profile.insertProfile(
       faker.internet.userName(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(3),
       faker.internet.url(),
@@ -452,10 +463,12 @@ describe("POST /work_topic", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
@@ -503,10 +516,12 @@ describe("POST /work_search", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.userName();
+    const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
     const author = await repo.Profile.insertProfile(
       userName,
+      password,
       fullName,
       desc,
       faker.internet.url(),
