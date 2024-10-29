@@ -30,7 +30,7 @@
     "pino-http": "^10.2.0"
   },
   "devDependencies": {
-    "@faker-js/faker": "^8.4.1",
+    "@faker-js/faker": "9.1.0",
     "@types/bcryptjs": "^2.4.6",
     "@types/body-parser": "1.19.5",
     "@types/cors": "^2.8.17",
