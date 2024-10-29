@@ -11,7 +11,7 @@ import assert from "node:assert";
 describe("POST /work_like/new", () => {
   it("create work like", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),

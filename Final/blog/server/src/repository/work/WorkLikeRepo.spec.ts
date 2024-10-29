@@ -7,7 +7,7 @@ import assert from "node:assert";
 describe("Repository Like", () => {
   it("Create like and verify", async () => {
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -24,7 +24,7 @@ describe("Repository Like", () => {
       [topic.id]
     );
     const liker = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -39,7 +39,7 @@ describe("Repository Like", () => {
 
   it("Create likes for a work and retrieve all of them", async () => {
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -59,7 +59,7 @@ describe("Repository Like", () => {
     const likeIds: bigint[] = new Array(3);
     for (let i = 0; i < 3; i++) {
       const liker = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),

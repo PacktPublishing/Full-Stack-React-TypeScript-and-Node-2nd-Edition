@@ -46,7 +46,7 @@ describe("POST /profile/new", () => {
         filename: "test.jpg",
         contentType: octetType,
       })
-      .field("userName", faker.internet.userName())
+      .field("userName", faker.internet.username())
       .field("password", faker.internet.password())
       .field("fullName", faker.internet.displayName())
       .field("description", faker.lorem.sentence(3))
@@ -62,7 +62,7 @@ describe("POST /profile/new", () => {
 describe("POST /profile/update", () => {
   it("update profile", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -99,7 +99,7 @@ describe("POST /profile/update", () => {
 describe("GET /profile/:profileId", () => {
   it("get profile", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),

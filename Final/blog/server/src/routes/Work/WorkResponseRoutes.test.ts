@@ -10,7 +10,7 @@ import { serializeBigInt } from "common";
 describe("POST /work_resp/new", () => {
   it("create response to a work", async () => {
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -19,7 +19,7 @@ describe("POST /work_resp/new", () => {
       avatars[0]
     );
     const responder = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -69,7 +69,7 @@ describe("POST /work_resp/new", () => {
 describe("POST /work_resp", () => {
   it("get response to a work", async () => {
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -78,7 +78,7 @@ describe("POST /work_resp", () => {
       avatars[0]
     );
     const responder = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -148,7 +148,7 @@ describe("POST /work_resp", () => {
 describe("POST /work_resp_author", () => {
   it("get work responses by author", async () => {
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -157,7 +157,7 @@ describe("POST /work_resp_author", () => {
       avatars[0]
     );
     const responder = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),

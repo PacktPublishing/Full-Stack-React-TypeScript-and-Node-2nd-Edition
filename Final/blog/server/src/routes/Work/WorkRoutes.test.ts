@@ -22,7 +22,7 @@ type TestWorkModel = {
 describe("POST /work/new", () => {
   it("create work", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -61,7 +61,7 @@ describe("POST /work/new", () => {
 describe("POST /work/update", () => {
   it("update work", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -125,7 +125,7 @@ describe("POST /work/update", () => {
 describe("GET /work/:id", () => {
   it("get work", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -186,7 +186,7 @@ describe("GET /work/:id", () => {
 describe("POST /work_popular", () => {
   it("get popular work by topic", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -258,7 +258,7 @@ describe("POST /work_popular", () => {
 describe("POST /work_latest", () => {
   it("get latest work", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
@@ -331,7 +331,7 @@ describe("POST /work_followed", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(3);
@@ -349,7 +349,7 @@ describe("POST /work_followed", () => {
     const followedWorkIds: bigint[] = [];
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(3),
@@ -398,7 +398,7 @@ describe("POST /work_followed_one", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(3);
@@ -414,7 +414,7 @@ describe("POST /work_followed_one", () => {
 
     const followedWorkIds: bigint[] = [];
     const followed = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(3),
@@ -462,7 +462,7 @@ describe("POST /work_topic", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -515,7 +515,7 @@ describe("POST /work_search", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);

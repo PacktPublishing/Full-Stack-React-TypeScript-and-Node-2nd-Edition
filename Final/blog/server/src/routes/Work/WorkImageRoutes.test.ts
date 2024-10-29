@@ -10,7 +10,7 @@ import { faker } from "@faker-js/faker";
 describe("GET /work_image/:workId/:placeholder", () => {
   it("get work image", async () => {
     const profile = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),

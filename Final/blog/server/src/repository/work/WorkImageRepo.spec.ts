@@ -12,7 +12,7 @@ describe("Repository WorkImage", () => {
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),

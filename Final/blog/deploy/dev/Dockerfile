@@ -24,7 +24,7 @@ COPY server/src ./src
 
 # execute
 CMD npm i && \
-    npm i -g prisma@5.18.0 && \
+    npm i -g prisma && \
     prisma generate && \
     prisma migrate deploy && \
     npm run start ./src/server.ts

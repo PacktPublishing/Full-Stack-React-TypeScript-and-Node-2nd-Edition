@@ -8,6 +8,7 @@
     "testonly": "tsx --test --test-only",
     "start": "tsx",
     "dev": "tsx watch src/server.ts",
+    "salt": "tsx src/lib/utils/GetSalt",
     "build": "tsc"
   },
   "keywords": [],
@@ -44,7 +45,7 @@
     "@types/supertest": "^6.0.2",
     "prisma": "^5.21.1",
     "supertest": "^7.0.0",
-    "tsx": "^4.17.0",
+    "tsx": "^4.19.2",
     "typescript": "5.5.4"
   }
 }

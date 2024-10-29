@@ -16,7 +16,7 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -52,7 +52,7 @@ describe("Work tests", () => {
     let avatar: Buffer | undefined = getAvatar();
 
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -108,7 +108,7 @@ describe("Work tests", () => {
     let image: Buffer | undefined = getAvatar();
 
     const author = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -154,7 +154,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -190,7 +190,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -243,7 +243,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -304,7 +304,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -347,7 +347,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -365,7 +365,7 @@ describe("Work tests", () => {
     const followedWorkIds: bigint[] = [];
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
@@ -405,7 +405,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -421,7 +421,7 @@ describe("Work tests", () => {
 
     const followedWorkIds: bigint[] = [];
     const followed = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -460,7 +460,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);
@@ -504,7 +504,7 @@ describe("Work tests", () => {
     const content = faker.lorem.sentences(2);
     let avatar: Buffer | undefined = getAvatar();
 
-    const userName = faker.internet.userName();
+    const userName = faker.internet.username();
     const password = await bcrypt.hash(faker.internet.password(), 10);
     const fullName = faker.internet.displayName();
     const desc = faker.lorem.sentence(5);

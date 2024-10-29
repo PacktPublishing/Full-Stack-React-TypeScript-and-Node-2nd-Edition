@@ -27,7 +27,7 @@ describe("POST /follow/new", () => {
 describe("POST /follow/followers", () => {
   it("should return list of followers", async () => {
     const followed = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -39,7 +39,7 @@ describe("POST /follow/followers", () => {
     const followerProfileIds: bigint[] = new Array(followersCount);
     for (let i = 0; i < followersCount; i++) {
       const followerProfile = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
@@ -68,7 +68,7 @@ describe("POST /follow/followers", () => {
 
   it("should return next page of followers", async () => {
     const followed = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -80,7 +80,7 @@ describe("POST /follow/followers", () => {
     const followerProfileIds: bigint[] = new Array(followersCount);
     for (let i = 0; i < followersCount; i++) {
       const followerProfile = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
@@ -115,7 +115,7 @@ describe("POST /follow/followers", () => {
 describe("POST /follow/followed", () => {
   it("should return list of followed", async () => {
     const follower = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -128,7 +128,7 @@ describe("POST /follow/followed", () => {
     const followedIds: bigint[] = new Array(followedCount);
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
@@ -157,7 +157,7 @@ describe("POST /follow/followed", () => {
 
   it("should return next page of followed", async () => {
     const follower = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -170,7 +170,7 @@ describe("POST /follow/followed", () => {
     const followedIds: bigint[] = new Array(followedCount);
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
@@ -205,7 +205,7 @@ describe("POST /follow/followed", () => {
 describe("GET /follow/follower/count", () => {
   it("get follower count", async () => {
     const followed = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -218,7 +218,7 @@ describe("GET /follow/follower/count", () => {
     const followerIds: bigint[] = new Array(followerCount);
     for (let i = 0; i < followerCount; i++) {
       const follower = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),
@@ -243,7 +243,7 @@ describe("GET /follow/follower/count", () => {
 describe("GET /follow/followed/count", () => {
   it("get followed count", async () => {
     const follower = await repo.Profile.insertProfile(
-      faker.internet.userName(),
+      faker.internet.username(),
       faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(5),
@@ -256,7 +256,7 @@ describe("GET /follow/followed/count", () => {
     const followedIds: bigint[] = new Array(followedCount);
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
-        faker.internet.userName(),
+        faker.internet.username(),
         faker.internet.password(),
         faker.internet.displayName(),
         faker.lorem.sentence(5),

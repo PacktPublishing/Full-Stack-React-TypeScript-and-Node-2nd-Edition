@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, it } from "node:test";
+import assert from "node:assert";
 import { createSalt, hashPassword, verifyPassword } from "./PasswordHash";
 import { faker } from "@faker-js/faker";
 
@@ -8,13 +9,13 @@ describe("PasswordHash", () => {
 
     const password = faker.internet.password();
     const storedPassword = await hashPassword(password, salt);
-    expect(storedPassword).not.toBeInstanceOf(Error);
+    assert.equal(storedPassword instanceof Error, false);
 
     const result = await verifyPassword(
       password,
       storedPassword as string,
       salt
     );
-    expect(result).toBe(true);
+    assert.equal(result, true);
   });
 });
