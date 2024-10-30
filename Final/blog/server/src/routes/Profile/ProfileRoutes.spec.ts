@@ -8,6 +8,7 @@ import assert from "node:assert";
 import { faker } from "@faker-js/faker";
 import { ProfileModel } from "./ProfileModel";
 import { serializeBigInt } from "common";
+import { getRandomizedUserName } from "../../__test__/lib/TestData";
 
 describe("POST /profile/avatar/new", () => {
   it("create profile avatar", async () => {
@@ -34,6 +35,40 @@ describe("GET /profile/avatar/:avatarId", () => {
       .expect("Content-Type", "application/octet-stream")
       .then((res) => {
         assert.deepStrictEqual(res.body, Buffer.from(avatar.avatar));
+      });
+  });
+});
+
+describe("POST /profile/login", () => {
+  it("login profile", async () => {
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+    await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(3))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200)
+      .then((res) => {
+        assert.equal(res.statusCode, 200);
+      });
+
+    await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200)
+      .then((res) => {
+        assert.equal(res.statusCode, 200);
       });
   });
 });

@@ -9,7 +9,7 @@ import { SortOrder } from "../lib/Constants.js";
 const repo = new Repository();
 
 describe("Repository Profile", () => {
-  it.only("Create a profile and login successfully with it", async () => {
+  it("Create a profile and login successfully with it", async () => {
     const avatar: Buffer | undefined = getAvatar();
     const userName = faker.internet.username();
     const password = faker.internet.password();
@@ -28,8 +28,9 @@ describe("Repository Profile", () => {
       avatar
     );
 
-    const loginStatus = await repo.Profile.login(userName, password);
-    assert.equal(loginStatus, true);
+    const loginResult = await repo.Profile.login(userName, password);
+    assert.equal(loginResult.status, true);
+    assert.equal(loginResult.profileId != undefined, true);
   });
 
   it("Create a profile and confirm its fields", async () => {

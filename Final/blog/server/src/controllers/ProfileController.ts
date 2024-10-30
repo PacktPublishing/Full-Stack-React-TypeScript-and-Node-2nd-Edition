@@ -3,6 +3,8 @@ import { repo } from "../routes/RepoInstance";
 import { serializeBigInt } from "common";
 import { octetType } from "./lib/Constants";
 import { logger } from "../lib/utils/Logger";
+import jwt from "jsonwebtoken";
+import { getJwtSecret } from "./lib/AuthenticationUtils";
 
 export const createProfileAvatar: RequestHandler = async (
   req: Request,
@@ -34,6 +36,37 @@ export const getProfileAvatar: RequestHandler = async (
 
     res.status(200).contentType(octetType).send(file?.avatar);
   } catch (e) {
+    next(e);
+  }
+};
+
+export const login: RequestHandler = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userName, password }: { userName: string; password: string } =
+      req.body;
+    const result = await repo.Profile.login(userName, password);
+
+    if (!result.status && !result.profileId) {
+      res.status(401).json({ message: "Failed to authenticate" });
+      return;
+    }
+
+    const userId = result.profileId!.toString();
+    const accessToken = jwt.sign({ userId }, getJwtSecret(), {
+      subject: "authenticate",
+      expiresIn: "1h",
+    });
+
+    res.status(200).json({
+      userId,
+      accessToken,
+    });
+  } catch (e) {
+    console.log("login error:", e);
     next(e);
   }
 };

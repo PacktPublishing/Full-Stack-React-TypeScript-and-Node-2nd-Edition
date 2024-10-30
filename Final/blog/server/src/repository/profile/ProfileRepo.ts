@@ -13,7 +13,10 @@ export class ProfileRepo {
     this.#client = client;
   }
 
-  async login(userName: string, password: string) {
+  async login(
+    userName: string,
+    password: string
+  ): Promise<{ status: boolean; profileId?: bigint }> {
     const profile = await this.#client.profile.findFirst({
       select: {
         id: true,
@@ -23,7 +26,7 @@ export class ProfileRepo {
         userName,
       },
     });
-    if (!profile) return false;
+    if (!profile) return { status: false };
 
     if (
       await verifyPassword(
@@ -32,9 +35,9 @@ export class ProfileRepo {
         process.env.PASSWORDHASH_SALT || ""
       )
     ) {
-      return true;
+      return { status: true, profileId: profile.id };
     }
-    return false;
+    return { status: false };
   }
 
   async insertProfile(
