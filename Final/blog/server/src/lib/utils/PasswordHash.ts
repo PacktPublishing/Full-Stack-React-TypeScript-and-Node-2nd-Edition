@@ -1,7 +1,4 @@
 import { scrypt, randomBytes, timingSafeEqual } from "node:crypto";
-import dotenv from "dotenv";
-
-dotenv.config();
 
 export function createSalt() {
   return randomBytes(32).toString("hex");

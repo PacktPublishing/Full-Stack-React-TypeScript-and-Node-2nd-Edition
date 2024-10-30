@@ -70,7 +70,7 @@ export const createProfile: RequestHandler = async (
       req.file?.buffer
     );
 
-    res.status(200).json(serializeBigInt(profile));
+    res.status(200).json(serializeBigInt(profile.id));
   } catch (e) {
     next(e);
   }

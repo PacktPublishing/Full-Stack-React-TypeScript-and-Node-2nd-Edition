@@ -1,12 +1,40 @@
 import { PrismaClient } from "@prisma/client";
 import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
-import { getEnvSalt, hashPassword } from "../../lib/utils/PasswordHash.js";
+import {
+  getEnvSalt,
+  hashPassword,
+  verifyPassword,
+} from "../../lib/utils/PasswordHash.js";
 
 export class ProfileRepo {
   #client: PrismaClient;
 
   constructor(client: PrismaClient) {
     this.#client = client;
+  }
+
+  async login(userName: string, password: string) {
+    const profile = await this.#client.profile.findFirst({
+      select: {
+        id: true,
+        password: true,
+      },
+      where: {
+        userName,
+      },
+    });
+    if (!profile) return false;
+
+    if (
+      await verifyPassword(
+        password,
+        profile.password,
+        process.env.PASSWORDHASH_SALT || ""
+      )
+    ) {
+      return true;
+    }
+    return false;
   }
 
   async insertProfile(

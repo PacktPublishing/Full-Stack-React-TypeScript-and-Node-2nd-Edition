@@ -9,6 +9,29 @@ import { SortOrder } from "../lib/Constants.js";
 const repo = new Repository();
 
 describe("Repository Profile", () => {
+  it.only("Create a profile and login successfully with it", async () => {
+    const avatar: Buffer | undefined = getAvatar();
+    const userName = faker.internet.username();
+    const password = faker.internet.password();
+    const fullName = faker.internet.displayName();
+    const desc = faker.lorem.sentence(5);
+    const primaryUrl = faker.internet.url();
+    const secondaryUrl = faker.internet.url();
+
+    await repo.Profile.insertProfile(
+      userName,
+      password,
+      fullName,
+      desc,
+      primaryUrl,
+      secondaryUrl,
+      avatar
+    );
+
+    const loginStatus = await repo.Profile.login(userName, password);
+    assert.equal(loginStatus, true);
+  });
+
   it("Create a profile and confirm its fields", async () => {
     const avatar: Buffer | undefined = getAvatar();
     const userName = faker.internet.username();
