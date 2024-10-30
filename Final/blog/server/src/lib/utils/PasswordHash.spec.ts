@@ -8,14 +8,13 @@ describe("PasswordHash", () => {
     const salt = createSalt();
 
     const password = faker.internet.password();
-    const storedPassword = await hashPassword(password, salt);
-    assert.equal(storedPassword instanceof Error, false);
+    try {
+      const storedPassword = await hashPassword(password, salt);
 
-    const result = await verifyPassword(
-      password,
-      storedPassword as string,
-      salt
-    );
-    assert.equal(result, true);
+      const result = await verifyPassword(password, storedPassword, salt);
+      assert.equal(result, true);
+    } catch (e) {
+      throw e;
+    }
   });
 });

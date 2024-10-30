@@ -1,6 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
-import bcrypt from "bcryptjs";
+import { getEnvSalt, hashPassword } from "../../lib/utils/PasswordHash.js";
 
 export class ProfileRepo {
   #client: PrismaClient;
@@ -29,7 +29,7 @@ export class ProfileRepo {
         avatarId = avatarResult.id;
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await hashPassword(password, getEnvSalt());
 
       return await tx.profile.create({
         data: {
