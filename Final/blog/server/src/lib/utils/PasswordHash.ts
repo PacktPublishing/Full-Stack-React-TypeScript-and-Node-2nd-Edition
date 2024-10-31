@@ -4,12 +4,14 @@ export function createSalt() {
   return randomBytes(32).toString("hex");
 }
 
-export function getEnvSalt() {
+function getEnvSalt() {
   if (!process.env.PASSWORDHASH_SALT)
     throw new Error("PASSWORDHASH_SALT not found! Cannot create password hash");
 
   return process.env.PASSWORDHASH_SALT;
 }
+
+export const PASSWORDHASH_SALT = getEnvSalt();
 
 export async function hashPassword(
   password: string,

@@ -107,6 +107,7 @@ describe("POST /profile/update", () => {
     );
 
     const fullName = faker.internet.displayName();
+    const password = faker.internet.password();
     const description = faker.lorem.sentence(3);
     const socialLinkPrimary = faker.internet.url();
     const socialLinkSecondary = faker.internet.url();
@@ -118,6 +119,7 @@ describe("POST /profile/update", () => {
       })
       .field("profileId", serializeBigInt(profile.id))
       .field("fullName", fullName)
+      .field("password", password)
       .field("description", description)
       .field("socialLinkPrimary", socialLinkPrimary)
       .field("socialLinkSecondary", socialLinkSecondary)

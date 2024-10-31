@@ -118,12 +118,14 @@ export const updateProfile: RequestHandler = async (
     const {
       profileId,
       fullName,
+      password,
       description,
       socialLinkPrimary,
       socialLinkSecondary,
     }: {
       profileId: bigint;
       fullName: string;
+      password: string;
       description: string;
       socialLinkPrimary: string | undefined;
       socialLinkSecondary: string | undefined;
@@ -132,6 +134,7 @@ export const updateProfile: RequestHandler = async (
     await repo.Profile.updateProfile(
       profileId,
       fullName,
+      password,
       description,
       socialLinkPrimary,
       socialLinkSecondary,

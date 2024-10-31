@@ -4,7 +4,7 @@
   "type": "module",
   "main": "dist/server.js",
   "scripts": {
-    "test": "sh ../deploy/dev/deploydevdata.sh && tsx --test src/**/*.spec.ts src/**/*.test.ts",
+    "test": "sh ../deploy/dev/deploydevdata.sh && tsx --test --env-file=.env src/**/*.spec.ts src/**/*.test.ts",
     "test:only": "tsx --test --test-only",
     "start": "tsx",
     "dev": "tsx watch src/server.ts",

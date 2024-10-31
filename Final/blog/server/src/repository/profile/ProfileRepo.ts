@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
 import {
-  getEnvSalt,
+  PASSWORDHASH_SALT,
   hashPassword,
   verifyPassword,
 } from "../../lib/utils/PasswordHash.js";
@@ -60,9 +60,12 @@ export class ProfileRepo {
         avatarId = avatarResult.id;
       }
 
-      const hashedPassword = await hashPassword(password, getEnvSalt());
+      const hashedPassword = await hashPassword(password, PASSWORDHASH_SALT);
 
       return await tx.profile.create({
+        select: {
+          id: true,
+        },
         data: {
           userName,
           password: hashedPassword,
@@ -79,6 +82,7 @@ export class ProfileRepo {
   async updateProfile(
     profileId: bigint,
     fullName: string,
+    password: string,
     description: string,
     socialLinkPrimary: string | undefined,
     socialLinkSecondary: string | undefined,
@@ -117,12 +121,18 @@ export class ProfileRepo {
         }
       }
 
+      const hashedPassword = await hashPassword(password, PASSWORDHASH_SALT);
+
       return await tx.profile.update({
+        select: {
+          id: true,
+        },
         where: {
           id: profileId,
         },
         data: {
           fullName,
+          password: hashedPassword,
           description,
           socialLinkPrimary,
           socialLinkSecondary,
@@ -134,6 +144,9 @@ export class ProfileRepo {
 
   async selectProfile(profileId: bigint) {
     return await this.#client.profile.findFirst({
+      omit: {
+        password: true,
+      },
       where: {
         id: profileId,
       },
@@ -161,6 +174,17 @@ export class ProfileRepo {
       take: size,
     });
 
-    return authors.map((a) => a.author);
+    return authors.map((a) => ({
+      id: a.author.id,
+      createdAt: a.author.createdAt,
+      updatedAt: a.author.updatedAt,
+      userName: a.author.userName,
+      fullName: a.author.fullName,
+      description: a.author.description,
+      socialLinkPrimary: a.author.socialLinkPrimary,
+      socialLinkSecondary: a.author.socialLinkSecondary,
+      avatarId: a.author.avatarId,
+      works: a.author.works,
+    }));
   }
 }
