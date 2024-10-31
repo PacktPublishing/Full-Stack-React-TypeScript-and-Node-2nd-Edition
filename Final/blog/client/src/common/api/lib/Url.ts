@@ -19,6 +19,7 @@ export const GET_FOLLOWED_COUNT_URL = `${EXTERNAL_API_URL}/follow/followed/count
 export const GET_FOLLOWER_COUNT_URL = `${EXTERNAL_API_URL}/follow/followers/count/`;
 export const GET_WORK_LIKE_URL = `${EXTERNAL_API_URL}/work_like/`;
 export const NEW_PROFILE_URL = `${EXTERNAL_API_URL}/profile/new`;
+export const PROFILE_LOGIN_URL = `${EXTERNAL_API_URL}/profile/login`;
 export const UPDATE_PROFILE_URL = `${EXTERNAL_API_URL}/profile/update`;
 export const GET_MOST_POP_AUTHORS_URL = `${EXTERNAL_API_URL}/profile_popular`;
 export const GET_PROFILE_URL = `${EXTERNAL_API_URL}/profile/`;

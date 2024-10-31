@@ -4,7 +4,7 @@ import { serializeBigInt } from "common";
 import { octetType } from "./lib/Constants";
 import { logger } from "../lib/utils/Logger";
 import jwt from "jsonwebtoken";
-import { getJwtSecret } from "./lib/AuthenticationUtils";
+import { JWT_SECRET } from "./lib/AuthenticationUtils";
 
 export const createProfileAvatar: RequestHandler = async (
   req: Request,
@@ -56,7 +56,7 @@ export const login: RequestHandler = async (
     }
 
     const userId = result.profileId!.toString();
-    const accessToken = jwt.sign({ userId }, getJwtSecret(), {
+    const accessToken = jwt.sign({ userId }, JWT_SECRET, {
       subject: "authenticate",
       expiresIn: "1h",
     });

@@ -2,9 +2,23 @@ import {
   GET_MOST_POP_AUTHORS_URL,
   GET_PROFILE_URL,
   NEW_PROFILE_URL,
+  PROFILE_LOGIN_URL,
   UPDATE_PROFILE_URL,
 } from "../../lib/Url";
 import { Profile } from "./ProfileModels";
+
+export async function login(formData: FormData) {
+  const response = await fetch(PROFILE_LOGIN_URL, {
+    method: "POST",
+    body: formData,
+  });
+  if (!response.ok) {
+    throw new Error("Failed to login");
+  }
+  const loginResult: { userId: string; accessToken: string } =
+    await response.json();
+  return loginResult;
+}
 
 export async function createProfile(formData: FormData) {
   const response = await fetch(NEW_PROFILE_URL, {

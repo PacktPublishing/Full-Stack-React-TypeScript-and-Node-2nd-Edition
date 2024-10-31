@@ -39,6 +39,7 @@ import {
   createProfile,
   getMostPopularAuthors,
   getProfile,
+  login,
   updateProfile,
 } from "../net/profile/Profile";
 
@@ -204,6 +205,10 @@ export default class UiApi {
 
   getWorkLikesCount = async function (workId: string) {
     return await getWorkLikesCount(workId);
+  };
+
+  login = async function (formData: FormData) {
+    return await login(formData);
   };
 
   createProfile = async function (formData: FormData) {
