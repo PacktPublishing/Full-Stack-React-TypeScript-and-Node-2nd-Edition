@@ -12,8 +12,37 @@ import { getRandomizedUserName } from "../../__test__/lib/TestData";
 
 describe("POST /profile/avatar/new", () => {
   it("create profile avatar", async () => {
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+    await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(3))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200)
+      .then((res) => {
+        assert.equal(res.statusCode, 200);
+      });
+
+    const loginResponse = await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    const { _userId, accessToken } = loginResponse.body;
+
     await request(app)
       .post("/profile/avatar/new")
+      .auth(accessToken, { type: "bearer" })
       .attach("file", getAvatar(), {
         filename: "test.jpg",
         contentType: octetType,

@@ -6,6 +6,8 @@ import { repo } from "../RepoInstance";
 import { avatars, getAvatar } from "../../__test__/avatar";
 import { serializeBigInt } from "common";
 import assert from "node:assert";
+import { octetType } from "../../controllers/lib/Constants";
+import { getRandomizedUserName } from "../../__test__/lib/TestData";
 
 type TestWorkModel = {
   id: bigint;
@@ -21,24 +23,48 @@ type TestWorkModel = {
 
 describe("POST /work/new", () => {
   it("create work", async () => {
-    const profile = await repo.Profile.insertProfile(
-      faker.internet.username(),
-      faker.internet.password(),
-      faker.internet.displayName(),
-      faker.lorem.sentence(2),
-      faker.internet.url(),
-      faker.internet.url(),
-      avatars[0]
-    );
-    const topic = await repo.Topic.insertTopic(faker.company.name());
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+    const profile = await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(2))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200);
+    const authorId = profile.body;
+
+    const loginResponse = await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    const { _userId, accessToken } = loginResponse.body;
+
+    const topicResp = await request(app)
+      .post("/topic/new")
+      .auth(accessToken, { type: "bearer" })
+      .send({
+        name: faker.company.name(),
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
+    const topicId = topicResp.body;
 
     const title = faker.lorem.sentence(1);
     const description = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    const authorId = serializeBigInt(profile.id);
-    const topicId = serializeBigInt(topic.id);
     await request(app)
       .post("/work/new")
+      .auth(accessToken, { type: "bearer" })
       .attach("images[0][image]", avatars[0])
       .field("images[0][imagesPlaceholder]", "A")
       .field("title", title)
@@ -60,62 +86,96 @@ describe("POST /work/new", () => {
 
 describe("POST /work/update", () => {
   it("update work", async () => {
-    const profile = await repo.Profile.insertProfile(
-      faker.internet.username(),
-      faker.internet.password(),
-      faker.internet.displayName(),
-      faker.lorem.sentence(2),
-      faker.internet.url(),
-      faker.internet.url(),
-      avatars[0]
-    );
-    const topica = await repo.Topic.insertTopic(faker.company.name());
-    const topicb = await repo.Topic.insertTopic(faker.company.name());
-    const work = await repo.Work.insertWork(
-      faker.lorem.sentence(1),
-      faker.lorem.sentence(2),
-      faker.lorem.sentence(4),
-      profile.id,
-      [topica.id],
-      [
-        {
-          imagePlaceholder: "A",
-          image: avatars[0],
-        },
-      ]
-    );
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+    const profile = await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(2))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200);
+    const authorId = profile.body;
+
+    const loginResponse = await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    const { _userId, accessToken } = loginResponse.body;
+
+    const topicaResp = await request(app)
+      .post("/topic/new")
+      .auth(accessToken, { type: "bearer" })
+      .send({
+        name: faker.company.name(),
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
+    const topicaId = topicaResp.body;
+    const topicbResp = await request(app)
+      .post("/topic/new")
+      .auth(accessToken, { type: "bearer" })
+      .send({
+        name: faker.company.name(),
+      })
+      .expect("Content-Type", /json/)
+      .expect(200);
+    const topicbId = topicbResp.body;
 
     const title = faker.lorem.sentence(1);
     const description = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    const authorId = serializeBigInt(profile.id);
-    const topicId = serializeBigInt(topicb.id);
-    await request(app)
-      .post("/work/update")
-      .attach("images[0][image]", avatars[1])
-      .field("images[0][imagesPlaceholder]", "B")
-      .field("workId", serializeBigInt(work.id))
+    const work = await request(app)
+      .post("/work/new")
+      .auth(accessToken, { type: "bearer" })
+      .attach("images[0][image]", avatars[0])
+      .field("images[0][imagesPlaceholder]", "A")
       .field("title", title)
       .field("description", description)
       .field("content", content)
-      .field("topicIds[0]", topicId)
+      .field("authorId", authorId)
+      .field("topicIds[0]", topicaId)
+      .expect("Content-Type", /json/)
+      .expect(200);
+    const workId = work.body;
+
+    await request(app)
+      .post("/work/update")
+      .auth(accessToken, { type: "bearer" })
+      .attach("images[0][image]", avatars[1])
+      .field("images[0][imagesPlaceholder]", "B")
+      .field("workId", serializeBigInt(workId))
+      .field("title", title)
+      .field("description", description)
+      .field("content", content)
+      .field("topicIds[0]", topicbId)
       .expect(204)
       .then(async () => {
-        const comparisonWork = await repo.Work.selectWork(work.id);
+        const comparisonWork = await repo.Work.selectWork(workId);
         assert.equal(comparisonWork?.title, title);
         assert.equal(comparisonWork?.description, description);
         assert.equal(comparisonWork?.content, content);
-        assert.equal(comparisonWork?.author.id, profile.id);
+        assert.equal(comparisonWork?.author.id, authorId);
         assert.equal(
           comparisonWork?.workTopics
-            .map((wt) => wt.topic.id)
-            .includes(topica.id),
+            .map((wt) => serializeBigInt(wt.topic.id))
+            .includes(topicaId),
           false
         );
+
         assert.equal(
           comparisonWork?.workTopics
-            .map((wt) => wt.topic.id)
-            .includes(topicb.id),
+            .map((wt) => serializeBigInt(wt.topic.id))
+            .includes(topicbId),
           true
         );
       });

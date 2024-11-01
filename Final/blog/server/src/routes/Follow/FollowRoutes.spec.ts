@@ -11,7 +11,7 @@ import { getRandomizedUserName } from "../../__test__/lib/TestData";
 import { octetType } from "../../controllers/lib/Constants";
 
 describe("POST /follow/new", () => {
-  it.only("create new follow and return 200", async () => {
+  it("create new follow and return 200", async () => {
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
 
