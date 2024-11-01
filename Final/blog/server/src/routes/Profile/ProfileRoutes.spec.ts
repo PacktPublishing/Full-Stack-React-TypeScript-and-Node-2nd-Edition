@@ -95,7 +95,7 @@ describe("POST /profile/new", () => {
 });
 
 describe("POST /profile/update", () => {
-  it.only("update profile", async () => {
+  it("update profile", async () => {
     const userName = getRandomizedUserName();
     const fullName = faker.internet.displayName();
     const password = faker.internet.password();

@@ -7,14 +7,58 @@ import { faker } from "@faker-js/faker";
 import { getAvatar } from "../../__test__/avatar";
 import { serializeBigInt } from "common/src/JsonUtils";
 import { ProfileModel } from "../Profile/ProfileModel";
+import { getRandomizedUserName } from "../../__test__/lib/TestData";
+import { octetType } from "../../controllers/lib/Constants";
 
 describe("POST /follow/new", () => {
-  it("create new follow and return 200", async () => {
+  it.only("create new follow and return 200", async () => {
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+
+    const profilea = await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(3))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200);
+    const profileaId = profilea.body;
+    const profileb = await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("userName", getRandomizedUserName())
+      .field("password", faker.internet.password())
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(3))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200);
+    const profilebId = profilea.body;
+
+    const loginResponse = await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    const { _userId, accessToken } = loginResponse.body;
+
     await request(app)
       .post("/follow/new")
+      .auth(accessToken, { type: "bearer" })
       .send({
-        followedId: 1,
-        followerId: 2,
+        followedId: profileaId,
+        followerId: profilebId,
       })
       .expect("Content-Type", /json/)
       .expect(200)

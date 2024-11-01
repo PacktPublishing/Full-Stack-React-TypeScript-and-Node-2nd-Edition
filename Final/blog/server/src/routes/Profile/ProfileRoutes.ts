@@ -16,7 +16,12 @@ const upload = multer({ storage });
 
 const router = Router();
 
-router.post("/profile/avatar/new", upload.single("file"), createProfileAvatar);
+router.post(
+  "/profile/avatar/new",
+  authenticationHandler,
+  upload.single("file"),
+  createProfileAvatar
+);
 router.get("/profile/avatar/:avatarId", getProfileAvatar);
 router.post("/profile/login", login);
 router.post("/profile/new", upload.single("file"), createProfile);
