@@ -95,40 +95,54 @@ describe("POST /profile/new", () => {
 });
 
 describe("POST /profile/update", () => {
-  it("update profile", async () => {
-    const profile = await repo.Profile.insertProfile(
-      faker.internet.username(),
-      faker.internet.password(),
-      faker.internet.displayName(),
-      faker.lorem.sentence(2),
-      faker.internet.url(),
-      faker.internet.url(),
-      avatars[0]
-    );
-
+  it.only("update profile", async () => {
+    const userName = getRandomizedUserName();
     const fullName = faker.internet.displayName();
     const password = faker.internet.password();
     const description = faker.lorem.sentence(3);
     const socialLinkPrimary = faker.internet.url();
     const socialLinkSecondary = faker.internet.url();
-    await request(app)
-      .post("/profile/update")
+
+    const profileResp = await request(app)
+      .post("/profile/new")
       .attach("file", getAvatar(), {
         filename: "test.jpg",
         contentType: octetType,
       })
-      .field("profileId", serializeBigInt(profile.id))
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", fullName)
+      .field("description", description)
+      .field("socialLinkPrimary", socialLinkPrimary)
+      .field("socialLinkSecondary", socialLinkSecondary)
+      .expect(200);
+    const profileId = profileResp.body;
+
+    const loginResponse = await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    const { _userId, accessToken } = loginResponse.body;
+
+    await request(app)
+      .post("/profile/update")
+      .auth(accessToken, { type: "bearer" })
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: octetType,
+      })
+      .field("profileId", serializeBigInt(profileId))
       .field("fullName", fullName)
       .field("password", password)
       .field("description", description)
       .field("socialLinkPrimary", socialLinkPrimary)
       .field("socialLinkSecondary", socialLinkSecondary)
-      .expect(204)
-      .then((res) => {
-        assert.equal(res.statusCode, 204);
-      });
+      .expect(204);
 
-    const updatedProfile = await repo.Profile.selectProfile(profile.id);
+    const updatedProfile = await repo.Profile.selectProfile(profileId);
     assert.equal(fullName, updatedProfile?.fullName);
   });
 });

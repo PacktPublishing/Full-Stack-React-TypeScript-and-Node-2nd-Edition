@@ -1,11 +1,11 @@
 import { NextFunction, Request, Response } from "express";
 import { logger } from "../lib/utils/Logger";
 
-export const errorHandler = (
+export const errorHandler = async (
   err: any,
-  _req: Request,
+  req: Request,
   res: Response,
-  _next: NextFunction
+  next: NextFunction
 ) => {
   logger.error(err.stack);
   res.status(500).send({ error: "Internal Server Error" });

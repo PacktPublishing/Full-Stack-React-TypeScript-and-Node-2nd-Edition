@@ -5,7 +5,7 @@
   "main": "dist/server.js",
   "scripts": {
     "test": "sh ../deploy/dev/deploydevdata.sh && tsx --test --env-file=.env src/**/*.spec.ts src/**/*.test.ts",
-    "test:only": "tsx --test --test-only",
+    "test:only": "sh ../deploy/dev/deploydevdata.sh && tsx --test --test-only --env-file=.env src/**/*.spec.ts src/**/*.test.ts",
     "start": "tsx",
     "dev": "tsx watch src/server.ts",
     "salt": "tsx src/lib/utils/GetSalt",
