@@ -8,7 +8,6 @@ import workImageRoutes from "./routes/Work/WorkImageRoutes";
 import workLikesRoutes from "./routes/Work/WorkLikesRoutes";
 import workResponseRoutes from "./routes/Work/WorkResponseRoutes";
 import cors from "cors";
-import dotenv from "dotenv";
 
 const app: Express = express();
 
