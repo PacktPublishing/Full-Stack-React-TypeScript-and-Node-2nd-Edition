@@ -2,7 +2,7 @@ class Vehicle {
   constructor(protected wheelCount: number) {}
 
   showNumberOfWheels() {
-    console.log(`moved ${this.wheelCount} miles`);
+    console.log(`wheels: ${this.wheelCount}`);
   }
 }
 

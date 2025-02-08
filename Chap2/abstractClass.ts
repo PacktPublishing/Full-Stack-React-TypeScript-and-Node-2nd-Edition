@@ -5,7 +5,7 @@ namespace AbstractNamespace {
     abstract updateWheelCount(newWheelCount: number): void;
 
     showNumberOfWheels() {
-      console.log(`moved ${this.wheelCount} miles`);
+      console.log(`wheels: ${this.wheelCount}`);
     }
   }
 
@@ -33,7 +33,7 @@ namespace AbstractNamespace {
     }
 
     showNumberOfWheels() {
-      console.log(`moved ${this.wheelCount} miles`);
+      console.log(`wheels: ${this.wheelCount}`);
     }
   }
 
