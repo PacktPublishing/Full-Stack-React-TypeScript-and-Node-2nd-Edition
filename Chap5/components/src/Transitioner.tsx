@@ -13,14 +13,14 @@ export default function Transitioner() {
 
   const onClickUsers = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    startTransition(() => {
+    startTransition(async () => {
       setSelectedItem(SelectedItem.Users);
     });
   };
 
   const onClickMessage = (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
-    startTransition(() => {
+    startTransition(async () => {
       setSelectedItem(SelectedItem.Message);
     });
   };
@@ -56,8 +56,8 @@ export function UsersLoader() {
       users.push({
         userId: i,
         id: i,
-        title: "Title A",
-        body: "Body A",
+        title: "Title" + i,
+        body: "Body" + i,
       });
     }
     setUsers(users);
@@ -79,5 +79,5 @@ export function UserItem({ user }: { user: UserType }) {
 }
 
 export function ShowMessage() {
-  return <div>Hello World!</div>;
+  return <div>Interrupt!</div>;
 }

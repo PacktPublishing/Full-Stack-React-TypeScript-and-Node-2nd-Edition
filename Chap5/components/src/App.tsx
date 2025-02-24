@@ -25,8 +25,7 @@ function App() {
 
   return (
     <>
-      id: <input type="text" value={id} onChange={onChange} />
-      <Awaitable fetchPromise={usersPromise} />
+      <Transitioner />
     </>
   );
 }
