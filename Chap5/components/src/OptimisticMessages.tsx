@@ -4,9 +4,9 @@ import {
   MouseEvent,
   ChangeEvent,
   useTransition,
-  useEffect,
 } from "react";
-import { Message, messagesOnApi } from "./MessagesData";
+
+type Message = { id: number; message: string };
 
 export function OptimisticMessages() {
   const [message, setMessage] = useState("");
@@ -18,33 +18,28 @@ export function OptimisticMessages() {
     Message[],
     string
   >(messagesRetrievedFromApi, (currentMessages, message) => {
-    const finalMessages = [
-      ...currentMessages,
-      { id: getNextId(currentMessages), message },
-    ];
-    return finalMessages;
+    return [...currentMessages, { id: currentMessages.length + 1, message }];
   });
+
   const [_isPending, startTransition] = useTransition();
 
-  useEffect(() => {
-    const data = JSON.parse(JSON.stringify(messagesOnApi));
-    setMessagesRetrievedFromApi(data);
-  }, []);
-
-  const addMessage = async (message: string) => {
+  const addNonOptimisticMessage = async (message: string) => {
     await new Promise((res) =>
       setTimeout(() => {
-        messagesOnApi.push({
-          id: getNextId(messagesOnApi),
-          message,
-        });
+        const id = messagesRetrievedFromApi.length + 1;
+        console.log("updating messagesRetrievedFromApi with id!", id);
+        setMessagesRetrievedFromApi([
+          ...messagesRetrievedFromApi,
+          {
+            id,
+            message,
+          },
+        ]);
+        setMessage("");
+
         res(null);
       }, 2000)
     );
-
-    const data = JSON.parse(JSON.stringify(messagesOnApi));
-    setMessagesRetrievedFromApi(data);
-    setMessage("");
   };
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -57,7 +52,7 @@ export function OptimisticMessages() {
 
     startTransition(async () => {
       addOptimisticMessage(message);
-      await addMessage(message);
+      await addNonOptimisticMessage(message);
     });
   };
 
@@ -72,13 +67,4 @@ export function OptimisticMessages() {
       </ul>
     </div>
   );
-}
-
-function getNextId(currentMessages: Message[]) {
-  let id = 0;
-  for (let i = 0; i < currentMessages.length; i++) {
-    if (currentMessages[i].id > id) id = currentMessages[i].id;
-  }
-  id += 1;
-  return id;
 }
