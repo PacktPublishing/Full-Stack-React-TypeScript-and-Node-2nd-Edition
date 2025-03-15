@@ -12,7 +12,7 @@ type Login = {
 function App() {
   const [profile, setProfile] = useProfile();
   const [_formState, action, isPending] = useActionState(
-    (_prevArgs: Login, formData: FormData) => {
+    async (_prevArgs: Login, formData: FormData) => {
       const loginUser = {
         email: formData.get("email")?.toString() || "",
         password: formData.get("password")?.toString() || "",
