@@ -1,32 +1,22 @@
-import { RouterProvider, createBrowserRouter } from "react-router-dom";
-import "./App.css";
-import { HomeB } from "./HomeB";
+import { Route, Routes } from "react-router";
+import { BrowserRouter } from "react-router";
 import { HomeA } from "./HomeA";
+import { HomeB } from "./HomeB";
 import { HomeC } from "./HomeC";
-
-const router = createBrowserRouter([
-  {
-    path: "/a",
-    element: <HomeA />,
-    children: [
-      {
-        path: "c",
-        element: <HomeC />,
-      },
-      {
-        path: "c/:id",
-        element: <HomeC />,
-      },
-    ],
-  },
-  {
-    path: "/b",
-    element: <HomeB />,
-  },
-]);
+import "./App.css";
 
 function App() {
-  return <RouterProvider router={router} />;
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route index element={<div>Home</div>} />
+        <Route path="/a" element={<HomeA />}>
+          <Route path="c/:id?" element={<HomeC />} />
+        </Route>
+        <Route path="/b" element={<HomeB />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
