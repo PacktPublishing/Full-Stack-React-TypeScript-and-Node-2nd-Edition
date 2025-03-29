@@ -1,8 +1,7 @@
-import { Link, useLocation } from "react-router";
+import { Link, useLocation } from "react-router-dom";
 
 export function HomeB() {
   const { state } = useLocation();
-
   return (
     <div>
       <Link to="/a">HomeB</Link>

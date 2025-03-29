@@ -1,4 +1,4 @@
-import { Link, useParams } from "react-router";
+import { Link, useParams } from "react-router-dom";
 
 export function HomeC() {
   const { id } = useParams<{ id: string | undefined }>();
