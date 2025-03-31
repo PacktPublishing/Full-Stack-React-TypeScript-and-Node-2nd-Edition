@@ -1,4 +1,10 @@
-import { ChangeEvent, MouseEvent, Suspense, useState } from "react";
+import {
+  ChangeEvent,
+  MouseEvent,
+  Suspense,
+  useState,
+  useTransition,
+} from "react";
 import UserTodos from "./UserTodos";
 import { getUsersTodos } from "./Api";
 
@@ -7,6 +13,7 @@ const DisplayTodos = () => {
   const [msg, setMsg] = useState("");
   const [todoControl, setTodoControl] =
     useState<ReturnType<typeof UserTodos>>();
+  const [_isPending, startTransition] = useTransition();
 
   const onChangeTxt = (e: ChangeEvent<HTMLInputElement>) => {
     setTxt(e.target.value);
@@ -16,7 +23,9 @@ const DisplayTodos = () => {
     e.preventDefault();
 
     setMsg(`Welcome to React testing, ${txt}`);
-    setTodoControl(<UserTodos todosPromise={getUsersTodos(txt)} />);
+    startTransition(async () => {
+      setTodoControl(<UserTodos todosPromise={getUsersTodos(txt)} />);
+    });
   };
 
   return (

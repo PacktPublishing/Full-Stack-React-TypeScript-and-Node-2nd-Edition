@@ -13,7 +13,6 @@ const UserTodos = ({ todosPromise }: UserTodosProps) => {
       <div>{todos && todos[0].username}</div>
       <ul style={{ marginTop: "1rem", listStyleType: "none" }}>
         {todos?.map((todo: UserTodo) => {
-          console.log("todo:", todo);
           return (
             <li key={todo.id}>
               <div>{todo.title}</div>
