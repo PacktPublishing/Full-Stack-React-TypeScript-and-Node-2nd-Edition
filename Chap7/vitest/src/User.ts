@@ -20,10 +20,6 @@ export function getUser(id: number) {
   return allUsers.find((usr) => usr.id === id);
 }
 
-export function updateUser(id: number, userName: string) {
-  allUsers.find((usr) => usr.id === id)?.userName == userName;
-}
-
 export function getLatestId() {
   return Math.max(...allUsers.map((usr) => usr.id)) + 1;
 }
