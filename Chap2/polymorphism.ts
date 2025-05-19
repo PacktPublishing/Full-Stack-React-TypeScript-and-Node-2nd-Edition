@@ -26,7 +26,7 @@ function pickTheBestAnimalToRun(hours: number): number {
     animal.name = "wolfie";
   } else {
     animal = new Cheetah();
-    animal.name = "cheetose";
+    animal.name = "cheetos";
   }
 
   if (animal instanceof Wolf) {
