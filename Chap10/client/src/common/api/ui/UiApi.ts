@@ -11,7 +11,7 @@ import {
   searchWorks,
   updateWork,
 } from "../net/work/Work";
-import { WorkImageItem } from "../net/work/WorkModels";
+import { type WorkImageItem } from "../net/work/WorkModels";
 import {
   convert as convertWork,
   convertArray as convertWorkArray,

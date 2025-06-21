@@ -6,6 +6,8 @@ import ErrorBoundary from "./common/components/ErrorBoundary.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
-    <ErrorBoundary>{<App />}</ErrorBoundary>
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
   </StrictMode>
 );

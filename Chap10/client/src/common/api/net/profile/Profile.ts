@@ -4,7 +4,7 @@ import {
   NEW_PROFILE_URL,
   UPDATE_PROFILE_URL,
 } from "../../lib/Url";
-import { Profile } from "./ProfileModels";
+import { type Profile } from "./ProfileModels";
 
 export async function createProfile(formData: FormData) {
   const response = await fetch(NEW_PROFILE_URL, {

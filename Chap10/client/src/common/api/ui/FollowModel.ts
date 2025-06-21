@@ -1,18 +1,36 @@
 import { friendlyDate } from "../../lib/utils/DateTimeUtils";
-import { Follow } from "../net/follow/FollowModel";
-import { UiEntity } from "./UIModels";
+import { type Follow } from "../net/follow/FollowModel";
+import { type UiEntity } from "./UIModels";
 
 export class FollowModel implements UiEntity {
+  public id: string;
+  public updatedAt: string;
+  public userName: string;
+  public fullName: string;
+  public description: string | null;
+  public socialLinkPrimary: string | null;
+  public socialLinkSecondary: string | null;
+  public followId: string;
+
   constructor(
-    public id: string,
-    public updatedAt: string,
-    public userName: string,
-    public fullName: string,
-    public description: string | null,
-    public socialLinkPrimary: string | null,
-    public socialLinkSecondary: string | null,
-    public followId: string
-  ) {}
+    id: string,
+    updatedAt: string,
+    userName: string,
+    fullName: string,
+    description: string | null,
+    socialLinkPrimary: string | null,
+    socialLinkSecondary: string | null,
+    followId: string
+  ) {
+    this.id = id;
+    this.updatedAt = updatedAt;
+    this.userName = userName;
+    this.fullName = fullName;
+    this.description = description;
+    this.socialLinkPrimary = socialLinkPrimary;
+    this.socialLinkSecondary = socialLinkSecondary;
+    this.followId = followId;
+  }
 }
 
 export function convert(follow: Follow): FollowModel {

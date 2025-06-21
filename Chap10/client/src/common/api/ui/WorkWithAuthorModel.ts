@@ -1,22 +1,53 @@
 import { friendlyDate } from "../../lib/utils/DateTimeUtils";
-import { Work } from "../net/work/WorkModels";
-import { UiEntity } from "./UIModels";
+import { type Work } from "../net/work/WorkModels";
+import { type UiEntity } from "./UIModels";
+
+export interface WorkTopic {
+  id: string;
+  name: string;
+}
 
 export class WorkWithAuthorModel implements UiEntity {
+  public id: string;
+  public updatedAt: string;
+  public title: string;
+  public content: string;
+  public description: string | undefined;
+  public authorId: string;
+  public fullName: string;
+  public userName: string;
+  public profileDesc: string;
+  public workTopics: WorkTopic[];
+  public likeCount: number;
+  public cursor?: string;
+
   constructor(
-    public id: string,
-    public updatedAt: string,
-    public title: string,
-    public content: string,
-    public description: string | undefined,
-    public authorId: string,
-    public fullName: string,
-    public userName: string,
-    public profileDesc: string,
-    public workTopics: { id: string; name: string }[],
-    public likeCount: number,
-    public cursor?: string
-  ) {}
+    id: string,
+    updatedAt: string,
+    title: string,
+    content: string,
+    description: string | undefined,
+    authorId: string,
+    fullName: string,
+    userName: string,
+    profileDesc: string,
+    workTopics: WorkTopic[],
+    likeCount: number,
+    cursor?: string
+  ) {
+    this.id = id;
+    this.updatedAt = updatedAt;
+    this.title = title;
+    this.content = content;
+    this.description = description;
+    this.authorId = authorId;
+    this.fullName = fullName;
+    this.userName = userName;
+    this.profileDesc = profileDesc;
+    this.workTopics = workTopics;
+    this.likeCount = likeCount;
+    this.cursor = cursor;
+  }
 }
 
 export function convert(work: Work): WorkWithAuthorModel {
