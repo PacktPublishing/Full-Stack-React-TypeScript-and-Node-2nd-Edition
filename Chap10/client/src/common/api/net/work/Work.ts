@@ -1,5 +1,5 @@
 import { PAGE_SIZE } from "../../../lib/utils/StandardValues";
-import { Work, WorkImageItem } from "./WorkModels";
+import type { Work, WorkImageItem } from "./WorkModels";
 import {
   GET_LATEST_WORK_URL,
   GET_MOST_POP_WORK_URL,

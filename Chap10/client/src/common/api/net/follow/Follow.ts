@@ -5,7 +5,7 @@ import {
   GET_FOLLOWER_COUNT_URL,
   GET_FOLLOWER_URL,
 } from "../../lib/Url";
-import { Follow } from "./FollowModel";
+import { type Follow } from "./FollowModel";
 
 export async function createFollow(followedId: string, followerId: string) {
   const response = await fetch(CREATE_FOLLOW_URL, {

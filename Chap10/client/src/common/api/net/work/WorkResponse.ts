@@ -3,7 +3,7 @@ import {
   GET_WORK_RESPONSE_URL,
   NEW_WORK_RESPONSE_URL,
 } from "../../lib/Url";
-import { WorkResponse } from "./WorkResponseModel";
+import { type WorkResponse } from "./WorkResponseModel";
 
 export async function createWorkResponse(
   workId: string,
