@@ -1,0 +1,16 @@
+{
+  "name": "blog",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:lib": "npm --workspace lib run build"
+  },
+  "author": "David Choi",
+  "license": "Apache-2.0",
+  "description": "Source code for book 'Fullstack React TypeScript and Node 2nd Edition'",
+  "workspaces": [
+    "client",
+    "lib"
+  ]
+}

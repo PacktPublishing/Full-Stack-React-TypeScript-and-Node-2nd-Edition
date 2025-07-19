@@ -1,0 +1,34 @@
+.modal-container {
+  outline: 0;
+  top: 5em;
+  max-width: 450px;
+  padding: 2em;
+  border: solid 1px var(--border-cl);
+  border-radius: 5px;
+  margin: auto;
+  margin-top: 5em;
+  opacity: 1;
+  background-color: var(--bg-cl);
+}
+
+.popup-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5em;
+  border-bottom: solid 1px var(--border-cl);
+}
+
+.popup-body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1em;
+  height: 120px;
+}
+
+dialog[open] {
+  display: block; /* Show when open */
+}
