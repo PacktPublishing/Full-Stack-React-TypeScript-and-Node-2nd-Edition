@@ -5,3 +5,5 @@ node_modules
 /src/generated/prisma
 
 dbdata
+
+dist
