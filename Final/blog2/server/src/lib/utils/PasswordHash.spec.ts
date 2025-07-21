@@ -12,6 +12,7 @@ describe("PasswordHash", () => {
       const storedPassword = await hashPassword(password, salt);
 
       const result = await verifyPassword(password, storedPassword, salt);
+      console.log("Stored Password:", result);
       assert.equal(result, true);
     } catch (e) {
       throw e;

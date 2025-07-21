@@ -32,7 +32,7 @@ describe("Repository Follow", () => {
     assert.equal(follow.followerId, follower.id);
     assert.equal(follow.followedId, followed.id);
 
-    await cleanup();
+    cleanup();
   });
 
   it("Create new followers and do a paged retrieval", async () => {
@@ -79,7 +79,7 @@ describe("Repository Follow", () => {
       all[all.length - 1].followId
     );
 
-    await cleanup();
+    cleanup();
   });
 
   it("Create new following and get them all back", async () => {
@@ -126,7 +126,7 @@ describe("Repository Follow", () => {
       all[all.length - 1].followId
     );
 
-    await cleanup();
+    cleanup();
   });
 
   it("Get follower count", async () => {
@@ -161,7 +161,7 @@ describe("Repository Follow", () => {
     const count = await repo.Follow.selectFollowersCount(followed.id);
     assert.equal(count, followerIds.length);
 
-    await cleanup();
+    cleanup();
   });
 
   it("Get followed count", async () => {
@@ -196,6 +196,6 @@ describe("Repository Follow", () => {
     const count = await repo.Follow.selectFollowedCount(follower.id);
     assert.equal(count, followedIds.length);
 
-    await cleanup();
+    cleanup();
   });
 });

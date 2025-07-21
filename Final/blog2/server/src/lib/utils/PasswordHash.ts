@@ -5,8 +5,7 @@ export function createSalt() {
 }
 
 function getEnvSalt() {
-  if (!process.env.PASSWORDHASH_SALT)
-    throw new Error("PASSWORDHASH_SALT not found! Cannot create password hash");
+  if (!process.env.PASSWORDHASH_SALT) return createSalt();
 
   return process.env.PASSWORDHASH_SALT;
 }

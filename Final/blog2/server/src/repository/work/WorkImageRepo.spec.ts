@@ -51,6 +51,6 @@ describe("Repository WorkImage", () => {
       assert.equal(selectedWorkImage?.imagePlaceholder, `Item ${y + 1}`);
     }
 
-    await cleanup();
+    cleanup();
   });
 });

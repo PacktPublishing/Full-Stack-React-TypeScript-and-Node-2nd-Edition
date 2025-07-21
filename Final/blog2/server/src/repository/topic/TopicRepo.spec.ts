@@ -14,6 +14,6 @@ describe("Repository Topic", () => {
       true
     );
 
-    await cleanup();
+    cleanup();
   });
 });

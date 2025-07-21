@@ -19,15 +19,15 @@ export class WorkImageRepo {
     >
   ) {
     if (images) {
-      const workImagesTask = images.map((image) => {
+      const workImagesTask = images.map((image) =>
         tx.workImage.create({
           data: {
             imagePlaceholder: image.imagePlaceholder,
             image: image.image,
             workId: workId,
           },
-        });
-      });
+        })
+      );
       await Promise.all(workImagesTask);
     }
   }

@@ -15,6 +15,6 @@ describe("Repository Profile Avatar", () => {
 
     assert.equal(selectedAvatar?.id, avatar.id);
 
-    await cleanup();
+    cleanup();
   });
 });

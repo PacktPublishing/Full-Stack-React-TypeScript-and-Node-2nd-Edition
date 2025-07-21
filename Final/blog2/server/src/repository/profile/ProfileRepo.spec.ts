@@ -31,7 +31,7 @@ describe("Repository Profile", () => {
     assert.equal(loginResult.status, true);
     assert.equal(loginResult.profileId != undefined, true);
 
-    await cleanup();
+    cleanup();
   });
 
   it("Create a profile and confirm its fields", async () => {
@@ -63,7 +63,7 @@ describe("Repository Profile", () => {
     assert.equal(author?.socialLinkSecondary, secondaryUrl);
     assert.notEqual(author?.avatarId, null);
 
-    await cleanup();
+    cleanup();
   });
 
   it("Create 10 Profiles with likes", async () => {
@@ -112,7 +112,7 @@ describe("Repository Profile", () => {
 
     assert.equal(popAuthors.length === count, true);
 
-    await cleanup();
+    cleanup();
   });
 
   it("Create Profile; Update Profile; and confirm its updated fields", async () => {
@@ -160,7 +160,7 @@ describe("Repository Profile", () => {
     assert.equal(updatedAuthor?.socialLinkSecondary, secondaryUrl);
     assert.notEqual(updatedAuthor?.avatarId, null);
 
-    await cleanup();
+    cleanup();
   });
 
   it("Create Profile; get it back; and confirm its avatar", async () => {
@@ -185,6 +185,6 @@ describe("Repository Profile", () => {
 
     assert.equal(avatarResult?.avatar.byteLength, avatar.byteLength);
 
-    await cleanup();
+    cleanup();
   });
 });
