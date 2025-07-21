@@ -1,8 +1,7 @@
-import { Request, Response, NextFunction, RequestHandler } from "express";
-import { repo } from "../routes/RepoInstance";
-import { serializeBigInt } from "common";
+import type { Request, Response, NextFunction, RequestHandler } from "express";
+import { repo } from "../repository/Repository";
+import { serializeBigInt } from "lib";
 import { octetType } from "./lib/Constants";
-import { logger } from "../lib/utils/Logger";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./lib/AuthenticationUtils";
 
@@ -165,7 +164,7 @@ export const getProfile: RequestHandler = async (
 };
 
 export const getMostPopularAuthors: RequestHandler = async (
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {

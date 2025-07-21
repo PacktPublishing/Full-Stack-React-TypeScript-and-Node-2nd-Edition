@@ -17,7 +17,7 @@ export async function hashPassword(
   password: string,
   salt: string
 ): Promise<string> {
-  return new Promise((res, rej) => {
+  return new Promise((res) => {
     scrypt(password, salt, 64, (err, derivedKey) => {
       if (err) throw err;
 

@@ -1,11 +1,12 @@
 import { faker } from "@faker-js/faker";
 import { describe, it } from "node:test";
 import { avatars, getAvatar } from "../../__test__/avatar";
-import { repo } from "../../routes/RepoInstance";
 import assert from "node:assert";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 
 describe("Repository WorkResponseLike", () => {
   it("Create WorkResponseLike and verify it", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -58,5 +59,12 @@ describe("Repository WorkResponseLike", () => {
     );
 
     assert.equal(responseLike.workResponseId, workResponse.id);
+
+    const workResponses = await repo.WorkRespLike.selectedWorkRespLikes(
+      workResponse.id
+    );
+    assert.equal(workResponses.length, 1);
+    assert.equal(workResponses[0].workResponseId, workResponse.id);
+    cleanup();
   });
 });

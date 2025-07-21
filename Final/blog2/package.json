@@ -4,7 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build:lib": "npm --workspace lib run build"
+    "build:lib": "npm --workspace lib run build",
+    "build:api": "npm --workspace lib run build && npm --workspace server run build"
   },
   "author": "David Choi",
   "license": "Apache-2.0",

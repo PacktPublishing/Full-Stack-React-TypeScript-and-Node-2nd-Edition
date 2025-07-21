@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { SortOrder } from "../lib/Constants";
+import { PrismaClient } from "../../generated/prisma";
 
 export class FollowRepo {
   #client: PrismaClient;
@@ -49,7 +48,7 @@ export class FollowRepo {
           followedId,
         },
         orderBy: {
-          id: SortOrder.Desc,
+          id: "desc",
         },
       })
     ).map((item) => {
@@ -100,7 +99,7 @@ export class FollowRepo {
           followerId,
         },
         orderBy: {
-          id: SortOrder.Desc,
+          id: "desc",
         },
       })
     ).map((item) => {

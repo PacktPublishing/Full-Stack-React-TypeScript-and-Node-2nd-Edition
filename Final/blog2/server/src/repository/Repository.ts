@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../generated/prisma";
 import { WorkRepo } from "./work/WorkRepo.js";
 import { ProfileRepo } from "./profile/ProfileRepo.js";
 import { TopicRepo } from "./topic/TopicRepo.js";
@@ -76,8 +76,8 @@ export class Repository {
     return this.#workImage;
   }
 
-  constructor() {
-    this.#client = new PrismaClient();
+  constructor(client: PrismaClient = new PrismaClient()) {
+    this.#client = client;
     this.#workImage = new WorkImageRepo(this.#client);
     this.#work = new WorkRepo(this.#client, this.#workImage);
     this.#workResp = new WorkResponseRepo(this.#client);
@@ -94,3 +94,5 @@ export class Repository {
     await this.#client.$disconnect();
   }
 }
+
+export const repo = new Repository();

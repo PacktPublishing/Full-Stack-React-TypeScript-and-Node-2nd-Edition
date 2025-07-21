@@ -1,6 +1,6 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { repo } from "../routes/RepoInstance";
-import { serializeBigInt } from "common";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { repo } from "../repository/Repository";
+import { serializeBigInt } from "lib";
 
 export const createTopic: RequestHandler = async (
   req: Request,
@@ -18,7 +18,7 @@ export const createTopic: RequestHandler = async (
 };
 
 export const getAllTopics: RequestHandler = async (
-  req: Request,
+  _req: Request,
   res: Response,
   next: NextFunction
 ) => {

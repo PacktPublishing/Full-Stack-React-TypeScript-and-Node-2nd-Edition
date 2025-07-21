@@ -1,10 +1,9 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { serializeBigInt } from "common";
-import { repo } from "../../routes/RepoInstance";
-import { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
-import { logger } from "../../lib/utils/Logger";
-import { WorkImageItem } from "../../repository/work/WorkImage";
-import { PagingParams, PopularWorkParams } from "../PagingParams";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { serializeBigInt } from "lib";
+import { repo } from "../../repository/Repository";
+import type { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
+import type { WorkImageItem } from "../../repository/work/WorkImage";
+import type { PagingParams, PopularWorkParams } from "../PagingParams";
 
 export const createWork: RequestHandler = async (
   req: Request,

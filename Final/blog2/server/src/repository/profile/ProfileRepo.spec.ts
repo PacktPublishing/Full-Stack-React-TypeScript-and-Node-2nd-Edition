@@ -1,16 +1,14 @@
 import { faker } from "@faker-js/faker";
 import { describe, it } from "node:test";
 import { getAvatar } from "../../__test__/avatar.js";
-import { Repository } from "../Repository.js";
 import assert from "node:assert";
-import { Profile, Work } from "@prisma/client";
-import { SortOrder } from "../lib/Constants.js";
-import { getRandomizedUserName } from "../../__test__/lib/TestData.js";
-
-const repo = new Repository();
+import { type Work } from "../../generated/prisma";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils.js";
 
 describe("Repository Profile", () => {
   it("Create a profile and login successfully with it", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const avatar: Buffer | undefined = getAvatar();
     const userName = faker.internet.username();
     const password = faker.internet.password();
@@ -32,9 +30,13 @@ describe("Repository Profile", () => {
     const loginResult = await repo.Profile.login(userName, password);
     assert.equal(loginResult.status, true);
     assert.equal(loginResult.profileId != undefined, true);
+
+    await cleanup();
   });
 
   it("Create a profile and confirm its fields", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const avatar: Buffer | undefined = getAvatar();
     const userName = faker.internet.username();
     const password = faker.internet.password();
@@ -60,9 +62,13 @@ describe("Repository Profile", () => {
     assert.equal(author?.socialLinkPrimary, primaryUrl);
     assert.equal(author?.socialLinkSecondary, secondaryUrl);
     assert.notEqual(author?.avatarId, null);
+
+    await cleanup();
   });
 
   it("Create 10 Profiles with likes", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const count = 10;
     const authors: { id: bigint }[] = new Array(count);
     const works: Work[] = new Array(count);
@@ -104,10 +110,14 @@ describe("Repository Profile", () => {
 
     const popAuthors = await repo.Profile.selectMostPopularAuthors(count);
 
-    assert.equal(popAuthors.length >= count, true); // because other tests might also be creating works by any author
+    assert.equal(popAuthors.length === count, true);
+
+    await cleanup();
   });
 
   it("Create Profile; Update Profile; and confirm its updated fields", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     let avatar: Buffer | undefined = getAvatar();
     let userName = faker.internet.username();
     let password = faker.internet.password();
@@ -149,9 +159,13 @@ describe("Repository Profile", () => {
     assert.equal(updatedAuthor?.socialLinkPrimary, primaryUrl);
     assert.equal(updatedAuthor?.socialLinkSecondary, secondaryUrl);
     assert.notEqual(updatedAuthor?.avatarId, null);
+
+    await cleanup();
   });
 
   it("Create Profile; get it back; and confirm its avatar", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const avatar = getAvatar();
     const profile = await repo.Profile.insertProfile(
       faker.internet.username(),
@@ -170,5 +184,7 @@ describe("Repository Profile", () => {
     );
 
     assert.equal(avatarResult?.avatar.byteLength, avatar.byteLength);
+
+    await cleanup();
   });
 });

@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { SortOrder } from "../lib/Constants";
+import { PrismaClient } from "../../generated/prisma";
 
 export class WorkResponseRepo {
   #client: PrismaClient;
@@ -59,7 +58,7 @@ export class WorkResponseRepo {
         workId,
       },
       orderBy: {
-        id: SortOrder.Desc,
+        id: "desc",
       },
     });
   }
@@ -101,7 +100,7 @@ export class WorkResponseRepo {
         responderId,
       },
       orderBy: {
-        id: SortOrder.Desc,
+        id: "desc",
       },
     });
   }

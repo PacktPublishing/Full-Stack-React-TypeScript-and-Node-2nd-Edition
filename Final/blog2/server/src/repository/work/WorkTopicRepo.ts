@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { SortOrder } from "../lib/Constants.js";
+import { PrismaClient } from "../../generated/prisma";
 
 export class WorkTopicRepo {
   #client: PrismaClient;
@@ -23,7 +22,7 @@ export class WorkTopicRepo {
         workId,
       },
       orderBy: {
-        updatedAt: SortOrder.Desc,
+        updatedAt: "desc",
       },
     });
   }

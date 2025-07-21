@@ -1,5 +1,5 @@
-import { NextFunction, RequestHandler, Request, Response } from "express";
-import { repo } from "../../routes/RepoInstance";
+import type { NextFunction, RequestHandler, Request, Response } from "express";
+import { repo } from "../../repository/Repository";
 
 export const getWorkImage: RequestHandler = async (
   req: Request,

@@ -1,7 +1,7 @@
-import { NextFunction, Request, RequestHandler, Response } from "express";
-import { repo } from "../../routes/RepoInstance";
-import { serializeBigInt } from "common";
-import { PagingParams } from "../PagingParams";
+import type { NextFunction, Request, RequestHandler, Response } from "express";
+import { repo } from "../../repository/Repository";
+import { serializeBigInt } from "lib";
+import type { PagingParams } from "../PagingParams";
 
 export const createWorkResponse: RequestHandler = async (
   req: Request,

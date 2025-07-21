@@ -1,5 +1,5 @@
-import { PrismaClient } from "@prisma/client";
-import { PAGE_SIZE, SortOrder } from "../lib/Constants.js";
+import { PrismaClient } from "../../generated/prisma";
+import { PAGE_SIZE } from "../lib/Constants.js";
 import {
   PASSWORDHASH_SALT,
   hashPassword,
@@ -29,11 +29,7 @@ export class ProfileRepo {
     if (!profile) return { status: false };
 
     if (
-      await verifyPassword(
-        password,
-        profile.password,
-        process.env.PASSWORDHASH_SALT || ""
-      )
+      await verifyPassword(password, profile.password, PASSWORDHASH_SALT || "")
     ) {
       return { status: true, profileId: profile.id };
     }
@@ -153,6 +149,7 @@ export class ProfileRepo {
     });
   }
 
+  /// todo: query may need pairing down for works
   async selectMostPopularAuthors(size: number = PAGE_SIZE) {
     const authors = await this.#client.work.findMany({
       select: {
@@ -168,7 +165,7 @@ export class ProfileRepo {
       },
       orderBy: {
         workLikes: {
-          _count: SortOrder.Desc,
+          _count: "desc",
         },
       },
       take: size,

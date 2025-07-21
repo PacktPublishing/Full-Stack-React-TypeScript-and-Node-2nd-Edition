@@ -1,5 +1,4 @@
-import { PrismaClient } from "@prisma/client";
-import { SortOrder } from "../lib/Constants.js";
+import { PrismaClient } from "../../generated/prisma";
 
 export class TopicRepo {
   #client: PrismaClient;
@@ -19,7 +18,7 @@ export class TopicRepo {
   async selectAllTopics() {
     return await this.#client.topic.findMany({
       orderBy: {
-        name: SortOrder.Desc,
+        name: "desc",
       },
     });
   }

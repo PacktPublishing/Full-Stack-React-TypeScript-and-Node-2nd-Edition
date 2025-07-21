@@ -1,11 +1,13 @@
 import { describe, it } from "node:test";
-import { repo } from "../../routes/RepoInstance";
 import { faker } from "@faker-js/faker";
 import { getAvatar } from "../../__test__/avatar";
 import assert from "node:assert";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 
 describe("Repository Follow", () => {
   it("Create new follower and followed, and confirm creation", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const follower = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -29,9 +31,13 @@ describe("Repository Follow", () => {
 
     assert.equal(follow.followerId, follower.id);
     assert.equal(follow.followedId, followed.id);
+
+    await cleanup();
   });
 
   it("Create new followers and do a paged retrieval", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const followed = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -72,9 +78,13 @@ describe("Repository Follow", () => {
       nextFive[nextFive.length - 1].followId,
       all[all.length - 1].followId
     );
+
+    await cleanup();
   });
 
   it("Create new following and get them all back", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const follower = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -115,9 +125,13 @@ describe("Repository Follow", () => {
       nextFive[nextFive.length - 1].followId,
       all[all.length - 1].followId
     );
+
+    await cleanup();
   });
 
   it("Get follower count", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const followed = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -146,9 +160,13 @@ describe("Repository Follow", () => {
 
     const count = await repo.Follow.selectFollowersCount(followed.id);
     assert.equal(count, followerIds.length);
+
+    await cleanup();
   });
 
   it("Get followed count", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const follower = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -177,5 +195,7 @@ describe("Repository Follow", () => {
 
     const count = await repo.Follow.selectFollowedCount(follower.id);
     assert.equal(count, followedIds.length);
+
+    await cleanup();
   });
 });

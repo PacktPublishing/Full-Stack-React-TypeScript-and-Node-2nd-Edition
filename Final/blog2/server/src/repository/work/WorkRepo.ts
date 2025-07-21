@@ -1,8 +1,8 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient } from "../../generated/prisma";
+import { selectWorksOfOneFollowed } from "../../generated/prisma/sql";
 import { WorkImageRepo } from "./WorkImageRepo.js";
-import { WorkImageItem } from "./WorkImage.js";
-import { CaseSensitivity, PAGE_SIZE, SortOrder } from "../lib/Constants.js";
-import { DefaultArgs } from "@prisma/client/runtime/library";
+import { type WorkImageItem } from "./WorkImage.js";
+import { PAGE_SIZE } from "../lib/Constants.js";
 
 export class WorkRepo {
   #client: PrismaClient;
@@ -230,10 +230,10 @@ export class WorkRepo {
       orderBy: [
         {
           workLikes: {
-            _count: SortOrder.Desc,
+            _count: "desc",
           },
         },
-        { id: SortOrder.Desc },
+        { id: "desc" },
       ],
     });
 
@@ -303,7 +303,7 @@ export class WorkRepo {
         authorId,
       },
       orderBy: {
-        id: SortOrder.Desc,
+        id: "desc",
       },
     });
 
@@ -322,93 +322,9 @@ export class WorkRepo {
     }));
   }
 
+  /// todo: needs review
   async selectWorksOfFollowed(
     followerId: bigint,
-    pageSize: number,
-    lastCursor?: bigint
-  ) {
-    const works = await this.#client.follow.findMany({
-      select: {
-        followed: {
-          select: {
-            works: {
-              take: pageSize,
-              orderBy: {
-                id: SortOrder.Desc,
-              },
-              select: {
-                id: true,
-                updatedAt: true,
-                title: true,
-                description: true,
-                content: true,
-                authorId: true,
-                author: {
-                  select: {
-                    userName: true,
-                    fullName: true,
-                    description: true,
-                  },
-                },
-                workTopics: {
-                  select: {
-                    topic: {
-                      select: {
-                        id: true,
-                        name: true,
-                      },
-                    },
-                  },
-                },
-                workLikes: {
-                  select: {
-                    id: true,
-                  },
-                },
-              },
-              where: lastCursor
-                ? {
-                    id: {
-                      lt: lastCursor,
-                    },
-                  }
-                : undefined,
-            },
-          },
-        },
-      },
-      where: {
-        followerId,
-      },
-    });
-
-    return works
-      .flatMap((ws) => {
-        return ws.followed.works.map((w) => ({
-          id: w.id,
-          updatedAt: w.updatedAt,
-          title: w.title,
-          description: w.description,
-          content: w.content,
-          authorId: w.authorId,
-          userName: w.author.userName,
-          fullName: w.author.fullName,
-          authorDesc: w.author.description,
-          workTopics: w.workTopics,
-          workLikes: w.workLikes,
-        }));
-      })
-      .sort((a, b) => {
-        if (a.id > b.id) return -1;
-        if (a.id < b.id) return 1;
-        return 0;
-      })
-      .slice(0, pageSize);
-  }
-
-  /// todo: switch to using TypedSql
-  async selectWorksOfOneFollowed(
-    followedId: bigint,
     pageSize: number,
     workIdCursor?: bigint
   ) {
@@ -419,7 +335,7 @@ export class WorkRepo {
             works: {
               take: pageSize,
               orderBy: {
-                id: SortOrder.Desc,
+                id: "desc",
               },
               select: {
                 id: true,
@@ -463,7 +379,7 @@ export class WorkRepo {
         },
       },
       where: {
-        followedId,
+        followerId,
       },
     });
 
@@ -489,6 +405,32 @@ export class WorkRepo {
         return 0;
       })
       .slice(0, pageSize);
+  }
+
+  /// note: TypedSql calls require running npx prisma generate --sql first
+  async selectWorksOfOneFollowed(
+    followedId: bigint,
+    pageSize: number,
+    /// cursor is work id
+    lastCursor?: bigint
+  ) {
+    const works = await this.#client.$queryRawTyped(
+      selectWorksOfOneFollowed(followedId, pageSize, lastCursor ?? -1n)
+    );
+
+    return works.map((w) => ({
+      id: w.id,
+      updatedAt: w.updatedAt,
+      title: w.title,
+      description: w.description,
+      content: w.content,
+      authorId: w.authorId,
+      userName: w.userName,
+      fullName: w.fullName,
+      authorDesc: w.authorDesc,
+      workTopics: w.workTopics,
+      workLikes: w.workLikes,
+    }));
   }
 
   async selectWorksByTopic(
@@ -542,7 +484,7 @@ export class WorkRepo {
         },
       },
       orderBy: {
-        id: SortOrder.Desc,
+        id: "desc",
       },
     });
 
@@ -609,19 +551,19 @@ export class WorkRepo {
           {
             title: {
               contains: searchTxt,
-              mode: CaseSensitivity.Insensitive,
+              mode: "insensitive",
             },
           },
           {
             description: {
               contains: searchTxt,
-              mode: CaseSensitivity.Insensitive,
+              mode: "insensitive",
             },
           },
         ],
       },
       orderBy: {
-        id: SortOrder.Desc,
+        id: "desc",
       },
     });
 

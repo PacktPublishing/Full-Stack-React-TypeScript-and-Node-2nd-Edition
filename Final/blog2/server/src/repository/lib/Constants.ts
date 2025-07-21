@@ -1,11 +1,5 @@
-export enum SortOrder {
-  Asc = "asc",
-  Desc = "desc",
-}
+export type SortOrder = "asc" | "desc";
 
-export enum CaseSensitivity {
-  Default = "default",
-  Insensitive = "insensitive",
-}
+export type CaseSensitivity = "default" | "insensitive";
 
 export const PAGE_SIZE = 20;

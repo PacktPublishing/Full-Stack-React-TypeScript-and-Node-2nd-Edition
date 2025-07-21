@@ -1,14 +1,13 @@
 import { describe, it } from "node:test";
 import assert from "node:assert";
-import { Repository } from "../Repository.js";
 import { faker } from "@faker-js/faker";
 import { getAvatar } from "../../__test__/avatar.js";
-import { SortOrder } from "../lib/Constants.js";
-
-const repo = new Repository();
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils.js";
 
 describe("Work tests", () => {
   it("insertWork creates a new work", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -42,9 +41,13 @@ describe("Work tests", () => {
     assert.equal(work.authorId, author.id);
     assert.equal(workTopics[0].workId, work.id);
     assert.equal(workTopics[0].topicId, topic.id);
+
+    cleanup();
   });
 
   it("updateWork updates an existing work", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -97,9 +100,12 @@ describe("Work tests", () => {
       workTopics.filter((wt) => wt.topicId === topicb.id)?.length,
       1
     );
+
+    cleanup();
   });
 
   it("insertWork creates a new work with one image", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -145,9 +151,11 @@ describe("Work tests", () => {
     assert.equal(workImage?.workId, work.id);
     assert.equal(workImage?.image.byteLength, image.byteLength);
     assert.equal(workImage?.imagePlaceholder, imagePlaceholder);
+    cleanup();
   });
 
   it("selectWork, gets work with author and correct likes", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -181,9 +189,11 @@ describe("Work tests", () => {
     assert.equal(work?.author.fullName, fullName);
     assert.equal(work?.author.description, desc);
     assert.equal(work?.workLikes.length, 1);
+    cleanup();
   });
 
   it("selectMostPopularWorks, gets all works by most likes", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -226,7 +236,7 @@ describe("Work tests", () => {
     const rawWorks = await repo.Client.work.findMany({
       orderBy: {
         workLikes: {
-          _count: SortOrder.Desc,
+          _count: "desc",
         },
       },
       take: 10,
@@ -234,9 +244,11 @@ describe("Work tests", () => {
 
     assert.equal(works.length, 10);
     assert.equal(works.length, rawWorks.length);
+    cleanup();
   });
 
   it("selectMostPopularWorks, gets works with most likes by topic", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -295,9 +307,11 @@ describe("Work tests", () => {
       works.every((w) => w.workTopics.every((wt) => wt.id === testingTopicId)),
       true
     );
+    cleanup();
   });
 
   it("selectLatestWorksByAuthor, gets works by author desc", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -318,13 +332,7 @@ describe("Work tests", () => {
     );
 
     for (let i = 0; i < 10; i++) {
-      const newWork = await repo.Work.insertWork(
-        title,
-        description,
-        content,
-        author.id,
-        []
-      );
+      await repo.Work.insertWork(title, description, content, author.id, []);
     }
 
     let works = await repo.Work.selectLatestWorksByAuthor(author.id, 5);
@@ -338,9 +346,11 @@ describe("Work tests", () => {
     );
     assert.equal(works.length, 4); // because query skips one when using cursor
     assert.equal(works[0].updatedAt > works[3].updatedAt, true);
+    cleanup();
   });
 
   it("selectWorksOfFollowed, gets works by follower's followed users desc", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -396,9 +406,11 @@ describe("Work tests", () => {
     const reversedWorkIds = followedWorkIds.reverse();
     assert.equal(nextFive[0].id, reversedWorkIds[5]);
     assert.equal(nextFive[nextFive.length - 1].id, reversedWorkIds[9]);
+    cleanup();
   });
 
   it("selectWorksOfOneFollowed, gets works of followed profile", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -451,9 +463,11 @@ describe("Work tests", () => {
     const reversedWorkIds = followedWorkIds.reverse();
     assert.equal(nextFive[0].id, reversedWorkIds[5]);
     assert.equal(nextFive[nextFive.length - 1].id, reversedWorkIds[9]);
+    cleanup();
   });
 
   it("selectWorksByTopic, gets works by topic", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -494,9 +508,11 @@ describe("Work tests", () => {
     );
     const reversedTopicWorkIds = topicWorkIds.reverse();
     assert.equal(reversedTopicWorkIds.includes(nextFive[0].id), true);
+    cleanup();
   });
 
   it("searchWorks, gets works by search text", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -550,5 +566,6 @@ describe("Work tests", () => {
     assert.equal(searchedWorks.length, 3);
     assert.equal(searchedWorks[0].title, title);
     assert.equal(searchedWorks[0].description, title + description);
+    cleanup();
   });
 });

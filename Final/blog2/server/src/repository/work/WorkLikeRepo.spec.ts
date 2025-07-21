@@ -1,11 +1,13 @@
 import { describe, it } from "node:test";
-import { repo } from "../../routes/RepoInstance";
 import { faker } from "@faker-js/faker";
 import { getAvatar } from "../../__test__/avatar";
 import assert from "node:assert";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 
 describe("Repository Like", () => {
   it("Create like and verify", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -35,9 +37,13 @@ describe("Repository Like", () => {
 
     const like = await repo.WorkLikes.insertWorkLike(work.id, liker.id);
     assert.equal(like.likerId, liker.id);
+
+    cleanup();
   });
 
   it("Create likes for a work and retrieve all of them", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -73,5 +79,7 @@ describe("Repository Like", () => {
 
     const selectedLikes = await repo.WorkLikes.selectWorkLikesCount(work.id);
     assert.equal(selectedLikes, 3);
+
+    cleanup();
   });
 });
