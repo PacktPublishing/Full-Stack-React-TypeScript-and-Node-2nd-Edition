@@ -1,5 +1,8 @@
 import { PrismaClient } from "../../generated/prisma";
-import { selectWorksOfOneFollowed } from "../../generated/prisma/sql";
+import {
+  selectWorksOfOneFollowed,
+  selectWorksOfFollowed,
+} from "../../generated/prisma/sql";
 import { WorkImageRepo } from "./WorkImageRepo.js";
 import { type WorkImageItem } from "./WorkImage.js";
 import { PAGE_SIZE } from "../lib/Constants.js";
@@ -328,83 +331,23 @@ export class WorkRepo {
     pageSize: number,
     workIdCursor?: bigint
   ) {
-    const works = await this.#client.follow.findMany({
-      select: {
-        followed: {
-          select: {
-            works: {
-              take: pageSize,
-              orderBy: {
-                id: "desc",
-              },
-              select: {
-                id: true,
-                updatedAt: true,
-                title: true,
-                description: true,
-                content: true,
-                authorId: true,
-                author: {
-                  select: {
-                    userName: true,
-                    fullName: true,
-                    description: true,
-                  },
-                },
-                workTopics: {
-                  select: {
-                    topic: {
-                      select: {
-                        id: true,
-                        name: true,
-                      },
-                    },
-                  },
-                },
-                workLikes: {
-                  select: {
-                    id: true,
-                  },
-                },
-              },
-              where: workIdCursor
-                ? {
-                    id: {
-                      lt: workIdCursor,
-                    },
-                  }
-                : undefined,
-            },
-          },
-        },
-      },
-      where: {
-        followerId,
-      },
-    });
+    const works = await this.#client.$queryRawTyped(
+      selectWorksOfFollowed(followerId, pageSize, workIdCursor ?? -1n)
+    );
 
-    return works
-      .flatMap((ws) => {
-        return ws.followed.works.map((w) => ({
-          id: w.id,
-          updatedAt: w.updatedAt,
-          title: w.title,
-          description: w.description,
-          content: w.content,
-          authorId: w.authorId,
-          userName: w.author.userName,
-          fullName: w.author.fullName,
-          authorDesc: w.author.description,
-          workTopics: w.workTopics,
-          workLikes: w.workLikes,
-        }));
-      })
-      .sort((a, b) => {
-        if (a.id > b.id) return -1;
-        if (a.id < b.id) return 1;
-        return 0;
-      })
-      .slice(0, pageSize);
+    return works.map((w) => ({
+      id: w.id,
+      updatedAt: w.updatedAt,
+      title: w.title,
+      description: w.description,
+      content: w.content,
+      authorId: w.authorId,
+      userName: w.userName,
+      fullName: w.fullName,
+      authorDesc: w.description,
+      workTopics: w.workTopics,
+      workLikes: w.workLikes,
+    }));
   }
 
   /// note: TypedSql calls require running npx prisma generate --sql first
