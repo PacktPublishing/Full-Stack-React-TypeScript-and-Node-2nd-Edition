@@ -1,16 +1,49 @@
 import { describe, it } from "node:test";
-import app from "../../app";
 import request from "supertest";
-import { repo } from "../RepoInstance";
+import express, { Router } from "express";
 import { faker } from "@faker-js/faker";
 import { avatars, getAvatar } from "../../__test__/avatar";
-import { serializeBigInt } from "common";
+import { serializeBigInt } from "lib";
 import assert from "node:assert";
 import { getRandomizedUserName } from "../../__test__/lib/TestData";
 import { OctetType } from "../../controllers/lib/Constants";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
+import { createProfile, login } from "../../controllers/ProfileController";
+import { createTopic } from "../../controllers/TopicController";
+import { createWork } from "../../controllers/work/WorkController";
+import multer from "multer";
+import { createWorkLike } from "../../controllers/work/WorkLikesController";
+import { authenticationHandler } from "../../middleware/Authenticate";
 
 describe("POST /work_like/new", () => {
   it("create work like", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
+    router.post("/topic/new", (req, res, next) =>
+      createTopic(req, res, next, repo)
+    );
+    router.post(
+      "/work/new",
+      authenticationHandler,
+      upload.array("images", 10),
+      (req, res, next) => createWork(req, res, next, repo)
+    );
+    router.post("/work_like/new", authenticationHandler, (req, res, next) =>
+      createWorkLike(req, res, next, repo)
+    );
+    app.use(router);
+
     const userName = getRandomizedUserName();
     const fullName = faker.internet.displayName();
     const password = faker.internet.password();
@@ -40,7 +73,7 @@ describe("POST /work_like/new", () => {
         password,
       })
       .expect(200);
-    const { _userId, accessToken } = loginResponse.body;
+    const { accessToken } = loginResponse.body;
 
     const topicName = faker.company.name();
     const topicResp = await request(app)
@@ -80,9 +113,11 @@ describe("POST /work_like/new", () => {
       })
       .expect("Content-Type", /json/)
       .expect(200)
-      .then(async (res) => {
+      .then(async () => {
         const workLikes = await repo.WorkLikes.selectWorkLikesCount(workId);
         assert.equal(workLikes > 0, true);
       });
+
+    cleanup();
   });
 });

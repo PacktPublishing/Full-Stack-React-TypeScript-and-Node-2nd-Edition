@@ -1,11 +1,12 @@
-import type { NextFunction, Request, RequestHandler, Response } from "express";
-import { repo } from "../../repository/Repository";
+import type { NextFunction, Request, Response } from "express";
+import { Repository } from "../../repository/Repository";
 import { serializeBigInt } from "lib";
 
-export const createWorkLike: RequestHandler = async (
+export const createWorkLike = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const { workId, likerId }: { workId: bigint; likerId: bigint } = req.body;
@@ -21,10 +22,11 @@ export const createWorkLike: RequestHandler = async (
   }
 };
 
-export const getWorkLikesCount: RequestHandler = async (
+export const getWorkLikesCount = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const { workId }: { workId: bigint } = req.body;

@@ -1,14 +1,15 @@
 import type { NextFunction, Request, RequestHandler, Response } from "express";
 import { serializeBigInt } from "lib";
-import { repo } from "../../repository/Repository";
+import { repo, Repository } from "../../repository/Repository";
 import type { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
 import type { WorkImageItem } from "../../repository/work/WorkImage";
 import type { PagingParams, PopularWorkParams } from "../PagingParams";
 
-export const createWork: RequestHandler = async (
+export const createWork = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     let {
