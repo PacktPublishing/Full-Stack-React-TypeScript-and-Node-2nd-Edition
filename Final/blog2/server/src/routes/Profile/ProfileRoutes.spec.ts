@@ -25,7 +25,7 @@ describe("POST /profile/avatar/new", () => {
   it("create profile avatar", async () => {
     const storage = multer.memoryStorage();
     const upload = multer({ storage });
-    let app = express();
+    const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const { repo, cleanup } = await createClientAndTestDb();
@@ -89,7 +89,7 @@ describe("POST /profile/avatar/new", () => {
 
 describe("GET /profile/avatar/:avatarId", () => {
   it("get profile avatar", async () => {
-    let app = express();
+    const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const { repo, cleanup } = await createClientAndTestDb();
@@ -117,7 +117,7 @@ describe("POST /profile/login", () => {
   it("login profile", async () => {
     const storage = multer.memoryStorage();
     const upload = multer({ storage });
-    let app = express();
+    const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const { repo, cleanup } = await createClientAndTestDb();
@@ -168,7 +168,7 @@ describe("POST /profile/new", () => {
   it("create new profile", async () => {
     const storage = multer.memoryStorage();
     const upload = multer({ storage });
-    let app = express();
+    const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const { repo, cleanup } = await createClientAndTestDb();
@@ -203,7 +203,7 @@ describe("POST /profile/update", () => {
   it("update profile", async () => {
     const storage = multer.memoryStorage();
     const upload = multer({ storage });
-    let app = express();
+    const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const { repo, cleanup } = await createClientAndTestDb();
@@ -277,7 +277,7 @@ describe("POST /profile/update", () => {
 
 describe("GET /profile/:profileId", () => {
   it("get profile", async () => {
-    let app = express();
+    const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const { repo, cleanup } = await createClientAndTestDb();
@@ -321,7 +321,7 @@ describe("GET /profile/:profileId", () => {
 
 describe("GET /profile_popular", () => {
   it("get profile popular", async () => {
-    let app = express();
+    const app = express();
     app.use(express.json());
     app.use(express.urlencoded({ extended: true }));
     const { repo, cleanup } = await createClientAndTestDb();

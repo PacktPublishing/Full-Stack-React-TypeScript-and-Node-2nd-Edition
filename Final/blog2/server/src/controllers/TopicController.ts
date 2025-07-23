@@ -1,11 +1,12 @@
-import type { NextFunction, Request, RequestHandler, Response } from "express";
-import { repo } from "../repository/Repository";
+import type { NextFunction, Request, Response } from "express";
+import { Repository } from "../repository/Repository";
 import { serializeBigInt } from "lib";
 
-export const createTopic: RequestHandler = async (
+export const createTopic = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const { name }: { name: string } = req.body;
@@ -17,10 +18,11 @@ export const createTopic: RequestHandler = async (
   }
 };
 
-export const getAllTopics: RequestHandler = async (
+export const getAllTopics = async (
   _req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     res.status(200).json(serializeBigInt(await repo.Topic.selectAllTopics()));
