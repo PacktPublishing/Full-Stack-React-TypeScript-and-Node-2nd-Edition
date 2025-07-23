@@ -1,10 +1,11 @@
-import type { NextFunction, RequestHandler, Request, Response } from "express";
-import { repo } from "../../repository/Repository";
+import type { NextFunction, Request, Response } from "express";
+import { Repository } from "../../repository/Repository";
 
-export const getWorkImage: RequestHandler = async (
+export const getWorkImage = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const workId = req.params.workId;
