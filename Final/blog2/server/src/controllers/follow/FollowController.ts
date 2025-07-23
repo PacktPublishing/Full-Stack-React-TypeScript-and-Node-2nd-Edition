@@ -1,5 +1,5 @@
 import type { NextFunction, Request, Response } from "express";
-import { repo } from "../../repository/Repository";
+import { Repository } from "../../repository/Repository";
 import { type FollowParams } from "./FollowModels";
 import { serializeBigInt } from "lib/src/JsonUtils";
 import { type PagingParams } from "../PagingParams";
@@ -7,7 +7,8 @@ import { type PagingParams } from "../PagingParams";
 export async function createFollow(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) {
   try {
     const { followedId, followerId }: FollowParams = req.body;
@@ -26,7 +27,8 @@ export async function createFollow(
 export async function getFollowers(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) {
   try {
     const { id, pageSize, lastCursor }: PagingParams = req.body;
@@ -45,7 +47,8 @@ export async function getFollowers(
 export async function getFollowersCount(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) {
   try {
     const followedId = req.params.followedId;
@@ -60,7 +63,8 @@ export async function getFollowersCount(
 export async function getFollowed(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) {
   try {
     const { id, pageSize, lastCursor }: PagingParams = req.body;
@@ -79,7 +83,8 @@ export async function getFollowed(
 export async function getFollowedCount(
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) {
   try {
     const followerId = req.params.followerId;
@@ -87,6 +92,7 @@ export async function getFollowedCount(
       .status(200)
       .json(await repo.Follow.selectFollowedCount(BigInt(followerId)));
   } catch (e) {
+    console.error("Error in getFollowedCount:", e);
     next(e);
   }
 }

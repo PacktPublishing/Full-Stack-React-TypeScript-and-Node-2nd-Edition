@@ -1,1 +1,1 @@
-export const octetType = "application/octet-stream";
+export const OctetType = "application/octet-stream";

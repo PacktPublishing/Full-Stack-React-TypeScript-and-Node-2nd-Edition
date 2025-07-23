@@ -26,6 +26,7 @@ export async function createClientAndTestDb() {
 
   return {
     repo: new Repository(testClient),
+    url,
     cleanup: async () => {
       await testClient.$disconnect();
       await dbContainer.stop();

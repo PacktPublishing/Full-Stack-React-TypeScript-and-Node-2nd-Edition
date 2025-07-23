@@ -1,14 +1,15 @@
-import type { Request, Response, NextFunction, RequestHandler } from "express";
-import { repo } from "../repository/Repository";
+import type { Request, Response, NextFunction } from "express";
+import { Repository } from "../repository/Repository";
 import { serializeBigInt } from "lib";
-import { octetType } from "./lib/Constants";
+import { OctetType } from "./lib/Constants";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "./lib/AuthenticationUtils";
 
-export const createProfileAvatar: RequestHandler = async (
+export const createProfileAvatar = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     if (!req.file) {
@@ -23,26 +24,28 @@ export const createProfileAvatar: RequestHandler = async (
   }
 };
 
-export const getProfileAvatar: RequestHandler = async (
+export const getProfileAvatar = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const file = await repo.ProfileAvatar.selectProfileAvatar(
       BigInt(req.params.avatarId)
     );
 
-    res.status(200).contentType(octetType).send(file?.avatar);
+    res.status(200).contentType(OctetType).send(file?.avatar);
   } catch (e) {
     next(e);
   }
 };
 
-export const login: RequestHandler = async (
+export const login = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const { userName, password }: { userName: string; password: string } =
@@ -70,10 +73,11 @@ export const login: RequestHandler = async (
   }
 };
 
-export const createProfile: RequestHandler = async (
+export const createProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const {
@@ -108,10 +112,11 @@ export const createProfile: RequestHandler = async (
   }
 };
 
-export const updateProfile: RequestHandler = async (
+export const updateProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const {
@@ -146,10 +151,11 @@ export const updateProfile: RequestHandler = async (
   }
 };
 
-export const getProfile: RequestHandler = async (
+export const getProfile = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const profileId = req.params.profileId;
@@ -163,10 +169,11 @@ export const getProfile: RequestHandler = async (
   }
 };
 
-export const getMostPopularAuthors: RequestHandler = async (
+export const getMostPopularAuthors = async (
   _req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const authors = await repo.Profile.selectMostPopularAuthors();
