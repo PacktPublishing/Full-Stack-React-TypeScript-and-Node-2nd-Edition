@@ -33,14 +33,12 @@ describe("POST /follow/new", () => {
   it("create new follow and return 200", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const router = Router();
-    router.post("/profile/new", upload.single("file"), (req, res, next) => {
-      console.log("Profile creation request received", req.body);
-      return createProfile(req, res, next, repo);
-    });
-    router.post("/profile/login", (req, res, next) => {
-      console.log("Login request received", req.body);
-      return login(req, res, next, repo);
-    });
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
     router.post("/follow/new", (req, res, next) =>
       createFollow(req, res, next, repo)
     );

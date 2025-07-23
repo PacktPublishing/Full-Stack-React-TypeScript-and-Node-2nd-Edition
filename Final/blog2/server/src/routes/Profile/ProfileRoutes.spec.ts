@@ -1,17 +1,49 @@
 import { describe, it } from "node:test";
 import request from "supertest";
-import app from "../../app";
+import express, { Router } from "express";
 import { avatars, getAvatar } from "../../__test__/avatar";
 import { OctetType } from "../../controllers/lib/Constants";
-import { repo } from "../RepoInstance";
 import assert from "node:assert";
 import { faker } from "@faker-js/faker";
-import { ProfileModel } from "./ProfileModel";
-import { serializeBigInt } from "common";
+import type { ProfileModel } from "./ProfileModel";
+import { serializeBigInt } from "lib";
 import { getRandomizedUserName } from "../../__test__/lib/TestData";
+import multer from "multer";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
+import {
+  createProfile,
+  createProfileAvatar,
+  getMostPopularAuthors,
+  getProfile,
+  getProfileAvatar,
+  login,
+  updateProfile,
+} from "../../controllers/ProfileController";
+import { authenticationHandler } from "../../middleware/Authenticate";
 
 describe("POST /profile/avatar/new", () => {
   it("create profile avatar", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    let app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
+    router.post(
+      "/profile/avatar/new",
+      authenticationHandler,
+      upload.single("file"),
+      (req, res, next) => createProfileAvatar(req, res, next, repo)
+    );
+    app.use(router);
+
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
     await request(app)
@@ -38,7 +70,7 @@ describe("POST /profile/avatar/new", () => {
         password,
       })
       .expect(200);
-    const { _userId, accessToken } = loginResponse.body;
+    const { accessToken } = loginResponse.body;
 
     await request(app)
       .post("/profile/avatar/new")
@@ -51,11 +83,22 @@ describe("POST /profile/avatar/new", () => {
       .then((res) => {
         assert.equal(res.statusCode, 200);
       });
+    cleanup();
   });
 });
 
 describe("GET /profile/avatar/:avatarId", () => {
   it("get profile avatar", async () => {
+    let app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.get("/profile/avatar/:avatarId", (req, res, next) =>
+      getProfileAvatar(req, res, next, repo)
+    );
+    app.use(router);
+
     const avatar = await repo.ProfileAvatar.insertProfileAvatar(avatars[0]);
 
     await request(app)
@@ -65,11 +108,28 @@ describe("GET /profile/avatar/:avatarId", () => {
       .then((res) => {
         assert.deepStrictEqual(res.body, Buffer.from(avatar.avatar));
       });
+
+    cleanup();
   });
 });
 
 describe("POST /profile/login", () => {
   it("login profile", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    let app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
+    app.use(router);
+
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
     await request(app)
@@ -99,11 +159,25 @@ describe("POST /profile/login", () => {
       .then((res) => {
         assert.equal(res.statusCode, 200);
       });
+
+    cleanup();
   });
 });
 
 describe("POST /profile/new", () => {
   it("create new profile", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    let app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    app.use(router);
+
     await request(app)
       .post("/profile/new")
       .attach("file", getAvatar(), {
@@ -120,11 +194,34 @@ describe("POST /profile/new", () => {
       .then((res) => {
         assert.equal(res.statusCode, 200);
       });
+
+    cleanup();
   });
 });
 
 describe("POST /profile/update", () => {
   it("update profile", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    let app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
+    router.post(
+      "/profile/update",
+      authenticationHandler,
+      upload.single("file"),
+      (req, res, next) => updateProfile(req, res, next, repo)
+    );
+    app.use(router);
+
     const userName = getRandomizedUserName();
     const fullName = faker.internet.displayName();
     const password = faker.internet.password();
@@ -154,7 +251,7 @@ describe("POST /profile/update", () => {
         password,
       })
       .expect(200);
-    const { _userId, accessToken } = loginResponse.body;
+    const { accessToken } = loginResponse.body;
 
     await request(app)
       .post("/profile/update")
@@ -173,11 +270,23 @@ describe("POST /profile/update", () => {
 
     const updatedProfile = await repo.Profile.selectProfile(profileId);
     assert.equal(fullName, updatedProfile?.fullName);
+
+    cleanup();
   });
 });
 
 describe("GET /profile/:profileId", () => {
   it("get profile", async () => {
+    let app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.get("/profile/:profileId", (req, res, next) =>
+      getProfile(req, res, next, repo)
+    );
+    app.use(router);
+
     const profile = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -206,11 +315,40 @@ describe("GET /profile/:profileId", () => {
         } = res.body;
         assert.equal(profileResponse.id, profile.id);
       });
+    cleanup();
   });
 });
 
 describe("GET /profile_popular", () => {
   it("get profile popular", async () => {
+    let app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.get("/profile_popular", (req, res, next) =>
+      getMostPopularAuthors(req, res, next, repo)
+    );
+    app.use(router);
+
+    const author = await repo.Profile.insertProfile(
+      faker.internet.username(),
+      faker.internet.password(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+    await repo.Work.insertWork(
+      faker.lorem.sentence(1),
+      faker.lorem.paragraph(1),
+      faker.lorem.paragraph(3),
+      author.id,
+      [],
+      []
+    );
+
     await request(app)
       .get("/profile_popular")
       .expect(200)
@@ -219,5 +357,6 @@ describe("GET /profile_popular", () => {
         const popularProfiles: ProfileModel[] = res.body;
         assert.equal(popularProfiles.length > 0, true);
       });
+    cleanup();
   });
 });
