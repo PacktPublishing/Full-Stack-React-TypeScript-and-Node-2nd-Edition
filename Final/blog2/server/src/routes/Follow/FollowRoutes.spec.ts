@@ -348,7 +348,7 @@ describe("GET /follow/follower/count", () => {
   });
 });
 
-describe.only("GET /follow/followed/count", () => {
+describe("GET /follow/followed/count", () => {
   it("get followed count", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const router = Router();

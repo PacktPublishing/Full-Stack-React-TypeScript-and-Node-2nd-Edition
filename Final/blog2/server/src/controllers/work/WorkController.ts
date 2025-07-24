@@ -159,7 +159,9 @@ export const getLatestWork = async (
   repo: Repository
 ) => {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
     const works = await repo.Work.selectLatestWorksByAuthor(
       id,
       pageSize,
@@ -224,7 +226,9 @@ export const getWorksByTopic = async (
   repo: Repository
 ) => {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
     const works = await repo.Work.selectWorksByTopic(id, pageSize, lastCursor);
 
     res.status(200).json(serializeBigInt(works));

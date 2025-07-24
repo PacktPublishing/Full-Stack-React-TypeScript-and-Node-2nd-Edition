@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { Repository } from "../../repository/Repository";
 import { type FollowParams } from "./FollowModels";
-import { serializeBigInt } from "lib/src/JsonUtils";
+import { deserializeBigInt, serializeBigInt } from "lib/src/JsonUtils";
 import { type PagingParams } from "../PagingParams";
 
 export async function createFollow(
@@ -31,7 +31,9 @@ export async function getFollowers(
   repo: Repository
 ) {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
     res
       .status(200)
       .json(
@@ -67,7 +69,9 @@ export async function getFollowed(
   repo: Repository
 ) {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
     res
       .status(200)
       .json(
