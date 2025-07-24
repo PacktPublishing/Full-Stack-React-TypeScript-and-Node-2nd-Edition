@@ -11,7 +11,7 @@ import {
   updateWork,
 } from "../../controllers/work/WorkController.js";
 import multer from "multer";
-import { authenticationHandler } from "../../middleware/Authenticate";
+import { authorizeHandler } from "../../middleware/AuthorizeHandler.js";
 import { repo } from "../../repository/Repository.js";
 
 const storage = multer.memoryStorage();
@@ -21,13 +21,13 @@ const router = Router();
 
 router.post(
   "/work/new",
-  authenticationHandler,
+  authorizeHandler,
   upload.array("images", 10),
   (req, res, next) => createWork(req, res, next, repo)
 );
 router.post(
   "/work/update",
-  authenticationHandler,
+  authorizeHandler,
   upload.array("images", 10),
   (req, res, next) => updateWork(req, res, next, repo)
 );

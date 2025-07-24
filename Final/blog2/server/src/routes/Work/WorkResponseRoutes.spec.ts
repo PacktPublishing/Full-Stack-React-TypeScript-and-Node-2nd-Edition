@@ -11,7 +11,7 @@ import multer from "multer";
 import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 import { createProfile, login } from "../../controllers/ProfileController";
 import { createTopic } from "../../controllers/TopicController";
-import { authenticationHandler } from "../../middleware/Authenticate";
+import { authorizeHandler } from "../../middleware/AuthorizeHandler";
 import { createWork } from "../../controllers/work/WorkController";
 import {
   createWorkResponse,
@@ -39,11 +39,11 @@ describe("POST /work_resp/new", () => {
     );
     router.post(
       "/work/new",
-      authenticationHandler,
+      authorizeHandler,
       upload.array("images", 10),
       (req, res, next) => createWork(req, res, next, repo)
     );
-    router.post("/work_resp/new", authenticationHandler, (req, res, next) =>
+    router.post("/work_resp/new", authorizeHandler, (req, res, next) =>
       createWorkResponse(req, res, next, repo)
     );
     app.use(router);

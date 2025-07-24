@@ -19,7 +19,7 @@ import {
   login,
   updateProfile,
 } from "../../controllers/ProfileController";
-import { authenticationHandler } from "../../middleware/Authenticate";
+import { authorizeHandler } from "../../middleware/AuthorizeHandler";
 
 describe("POST /profile/avatar/new", () => {
   it("create profile avatar", async () => {
@@ -38,7 +38,7 @@ describe("POST /profile/avatar/new", () => {
     );
     router.post(
       "/profile/avatar/new",
-      authenticationHandler,
+      authorizeHandler,
       upload.single("file"),
       (req, res, next) => createProfileAvatar(req, res, next, repo)
     );
@@ -216,7 +216,7 @@ describe("POST /profile/update", () => {
     );
     router.post(
       "/profile/update",
-      authenticationHandler,
+      authorizeHandler,
       upload.single("file"),
       (req, res, next) => updateProfile(req, res, next, repo)
     );

@@ -13,7 +13,7 @@ import { createTopic } from "../../controllers/TopicController";
 import { createWork } from "../../controllers/work/WorkController";
 import multer from "multer";
 import { createWorkLike } from "../../controllers/work/WorkLikesController";
-import { authenticationHandler } from "../../middleware/Authenticate";
+import { authorizeHandler } from "../../middleware/AuthorizeHandler";
 
 describe("POST /work_like/new", () => {
   it("create work like", async () => {
@@ -35,11 +35,11 @@ describe("POST /work_like/new", () => {
     );
     router.post(
       "/work/new",
-      authenticationHandler,
+      authorizeHandler,
       upload.array("images", 10),
       (req, res, next) => createWork(req, res, next, repo)
     );
-    router.post("/work_like/new", authenticationHandler, (req, res, next) =>
+    router.post("/work_like/new", authorizeHandler, (req, res, next) =>
       createWorkLike(req, res, next, repo)
     );
     app.use(router);

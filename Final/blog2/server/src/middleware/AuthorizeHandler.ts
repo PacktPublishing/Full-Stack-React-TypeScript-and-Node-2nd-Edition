@@ -2,7 +2,7 @@ import type { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET } from "../controllers/lib/AuthenticationUtils";
 
-export const authenticationHandler = async (
+export const authorizeHandler = async (
   req: Request,
   res: Response,
   next: NextFunction

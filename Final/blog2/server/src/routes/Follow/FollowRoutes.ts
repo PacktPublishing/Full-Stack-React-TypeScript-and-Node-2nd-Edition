@@ -6,12 +6,12 @@ import {
   getFollowers,
   getFollowersCount,
 } from "../../controllers/follow/FollowController";
-import { authenticationHandler } from "../../middleware/Authenticate";
+import { authorizeHandler } from "../../middleware/AuthorizeHandler";
 import { repo } from "../../repository/Repository";
 
 const router = Router();
 
-router.post("/follow/new", authenticationHandler, (req, res, next) =>
+router.post("/follow/new", authorizeHandler, (req, res, next) =>
   createFollow(req, res, next, repo)
 );
 router.post("/follow/followers", (req, res, next) =>

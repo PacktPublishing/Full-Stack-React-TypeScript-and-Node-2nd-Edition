@@ -9,7 +9,7 @@ import {
   updateProfile,
 } from "../../controllers/ProfileController";
 import multer from "multer";
-import { authenticationHandler } from "../../middleware/Authenticate";
+import { authorizeHandler } from "../../middleware/AuthorizeHandler";
 import { repo } from "../../repository/Repository";
 
 const storage = multer.memoryStorage();
@@ -19,7 +19,7 @@ const router = Router();
 
 router.post(
   "/profile/avatar/new",
-  authenticationHandler,
+  authorizeHandler,
   upload.single("file"),
   (req, res, next) => createProfileAvatar(req, res, next, repo)
 );
@@ -35,7 +35,7 @@ router.get("/profile/:profileId", (req, res, next) =>
 );
 router.post(
   "/profile/update",
-  authenticationHandler,
+  authorizeHandler,
   upload.single("file"),
   (req, res, next) => updateProfile(req, res, next, repo)
 );
