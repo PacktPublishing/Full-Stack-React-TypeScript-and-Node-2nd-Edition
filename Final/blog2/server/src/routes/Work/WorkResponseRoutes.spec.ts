@@ -1,16 +1,53 @@
 import { describe, it } from "node:test";
 import { avatars, getAvatar } from "../../__test__/avatar";
 import { faker } from "@faker-js/faker";
-import { repo } from "../RepoInstance";
 import request from "supertest";
-import app from "../../app";
+import express, { Router } from "express";
 import assert from "node:assert";
-import { serializeBigInt } from "common";
+import { serializeBigInt } from "lib";
 import { getRandomizedUserName } from "../../__test__/lib/TestData";
 import { OctetType } from "../../controllers/lib/Constants";
+import multer from "multer";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
+import { createProfile, login } from "../../controllers/ProfileController";
+import { createTopic } from "../../controllers/TopicController";
+import { authenticationHandler } from "../../middleware/Authenticate";
+import { createWork } from "../../controllers/work/WorkController";
+import {
+  createWorkResponse,
+  getWorkResponses,
+  getWorkResponsesByAuthor,
+} from "../../controllers/work/WorkResponseController";
 
 describe("POST /work_resp/new", () => {
   it("create response to a work", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
+    router.post("/topic/new", (req, res, next) =>
+      createTopic(req, res, next, repo)
+    );
+    router.post(
+      "/work/new",
+      authenticationHandler,
+      upload.array("images", 10),
+      (req, res, next) => createWork(req, res, next, repo)
+    );
+    router.post("/work_resp/new", authenticationHandler, (req, res, next) =>
+      createWorkResponse(req, res, next, repo)
+    );
+    app.use(router);
+
     const authorResp = await request(app)
       .post("/profile/new")
       .attach("file", getAvatar(), {
@@ -54,7 +91,7 @@ describe("POST /work_resp/new", () => {
         password,
       })
       .expect(200);
-    const { _userId, accessToken } = loginResponse.body;
+    const { accessToken } = loginResponse.body;
 
     const topicResp = await request(app)
       .post("/topic/new")
@@ -98,11 +135,22 @@ describe("POST /work_resp/new", () => {
         const workResp = await repo.WorkResp.selectWorkResponses(workId, 1);
         assert.equal(workResp[0].id, BigInt(res.body));
       });
+    cleanup();
   });
 });
 
 describe("POST /work_resp", () => {
   it("get response to a work", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_resp", (req, res, next) =>
+      getWorkResponses(req, res, next, repo)
+    );
+    app.use(router);
+
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -177,11 +225,22 @@ describe("POST /work_resp", () => {
         const revResponses = responses.reverse();
         assert.equal(workResp[0].response, revResponses[5]);
       });
+    cleanup();
   });
 });
 
 describe("POST /work_resp_author", () => {
   it("get work responses by author", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_resp_author", (req, res, next) =>
+      getWorkResponsesByAuthor(req, res, next, repo)
+    );
+    app.use(router);
+
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -259,5 +318,6 @@ describe("POST /work_resp_author", () => {
         const revResponses = responses.reverse();
         assert.equal(workResp[0].response, revResponses[5]);
       });
+    cleanup();
   });
 });

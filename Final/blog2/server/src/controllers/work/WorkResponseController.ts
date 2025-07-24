@@ -1,12 +1,14 @@
-import type { NextFunction, Request, RequestHandler, Response } from "express";
-import { repo } from "../../repository/Repository";
+import type { NextFunction, Request, Response } from "express";
+import { Repository } from "../../repository/Repository";
 import { serializeBigInt } from "lib";
 import type { PagingParams } from "../PagingParams";
+import { deserializeBigInt } from "lib/src/JsonUtils";
 
-export const createWorkResponse: RequestHandler = async (
+export const createWorkResponse = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const {
@@ -32,13 +34,16 @@ export const createWorkResponse: RequestHandler = async (
   }
 };
 
-export const getWorkResponses: RequestHandler = async (
+export const getWorkResponses = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
     res
       .status(200)
       .json(
@@ -51,13 +56,16 @@ export const getWorkResponses: RequestHandler = async (
   }
 };
 
-export const getWorkResponsesByAuthor: RequestHandler = async (
+export const getWorkResponsesByAuthor = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
     res
       .status(200)
       .json(
