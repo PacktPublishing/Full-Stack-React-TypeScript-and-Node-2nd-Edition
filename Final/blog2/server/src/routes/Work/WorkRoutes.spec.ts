@@ -1,13 +1,28 @@
 import { describe, it } from "node:test";
 import request from "supertest";
-import app from "../../app";
+import express, { Router } from "express";
 import { faker } from "@faker-js/faker";
-import { repo } from "../RepoInstance";
 import { avatars, getAvatar } from "../../__test__/avatar";
-import { serializeBigInt } from "common";
+import { serializeBigInt } from "lib";
 import assert from "node:assert";
 import { OctetType } from "../../controllers/lib/Constants";
 import { getRandomizedUserName } from "../../__test__/lib/TestData";
+import multer from "multer";
+import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
+import { createProfile, login } from "../../controllers/ProfileController";
+import { createTopic } from "../../controllers/TopicController";
+import { authenticationHandler } from "../../middleware/Authenticate";
+import {
+  createWork,
+  getLatestWork,
+  getPopularWork,
+  getWork,
+  getWorksByTopic,
+  getWorksOfFollowed,
+  getWorksOfOneFollowed,
+  searchWorks,
+  updateWork,
+} from "../../controllers/work/WorkController";
 
 type TestWorkModel = {
   id: bigint;
@@ -23,6 +38,30 @@ type TestWorkModel = {
 
 describe("POST /work/new", () => {
   it("create work", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
+    router.post("/topic/new", (req, res, next) =>
+      createTopic(req, res, next, repo)
+    );
+    router.post(
+      "/work/new",
+      authenticationHandler,
+      upload.array("images", 10),
+      (req, res, next) => createWork(req, res, next, repo)
+    );
+    app.use(router);
+
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
     const profile = await request(app)
@@ -47,7 +86,7 @@ describe("POST /work/new", () => {
         password,
       })
       .expect(200);
-    const { _userId, accessToken } = loginResponse.body;
+    const { accessToken } = loginResponse.body;
 
     const topicResp = await request(app)
       .post("/topic/new")
@@ -81,11 +120,42 @@ describe("POST /work/new", () => {
         assert.equal(work?.content, content);
         assert.equal(work?.author.id, authorId);
       });
+    cleanup();
   });
 });
 
 describe("POST /work/update", () => {
   it("update work", async () => {
+    const storage = multer.memoryStorage();
+    const upload = multer({ storage });
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/profile/new", upload.single("file"), (req, res, next) =>
+      createProfile(req, res, next, repo)
+    );
+    router.post("/profile/login", (req, res, next) =>
+      login(req, res, next, repo)
+    );
+    router.post("/topic/new", (req, res, next) =>
+      createTopic(req, res, next, repo)
+    );
+    router.post(
+      "/work/new",
+      authenticationHandler,
+      upload.array("images", 10),
+      (req, res, next) => createWork(req, res, next, repo)
+    );
+    router.post(
+      "/work/update",
+      authenticationHandler,
+      upload.array("images", 10),
+      (req, res, next) => updateWork(req, res, next, repo)
+    );
+    app.use(router);
+
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
     const profile = await request(app)
@@ -110,7 +180,7 @@ describe("POST /work/update", () => {
         password,
       })
       .expect(200);
-    const { _userId, accessToken } = loginResponse.body;
+    const { accessToken } = loginResponse.body;
 
     const topicaResp = await request(app)
       .post("/topic/new")
@@ -179,11 +249,20 @@ describe("POST /work/update", () => {
           true
         );
       });
+    cleanup();
   });
 });
 
 describe("GET /work/:id", () => {
   it("get work", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.get("/work/:id", (req, res, next) => getWork(req, res, next, repo));
+    app.use(router);
+
     const profile = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -198,8 +277,7 @@ describe("GET /work/:id", () => {
     const title = faker.lorem.sentence(1);
     const description = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    const authorId = serializeBigInt(profile.id);
-    const topicId = serializeBigInt(topic.id);
+    serializeBigInt(topic.id);
     const work = await repo.Work.insertWork(
       title,
       description,
@@ -238,13 +316,23 @@ describe("GET /work/:id", () => {
         assert.equal(returnedWork?.title, title);
         assert.equal(returnedWork?.description, description);
         assert.equal(returnedWork?.content, content);
-        assert.equal(returnedWork?.author.id, authorId);
+        assert.equal(returnedWork?.author.id, profile.id);
       });
+    cleanup();
   });
 });
 
 describe("POST /work_popular", () => {
   it("get popular work by topic", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_popular", (req, res, next) =>
+      getPopularWork(req, res, next, repo)
+    );
+    app.use(router);
     const profile = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -312,11 +400,22 @@ describe("POST /work_popular", () => {
           true
         );
       });
+    cleanup();
   });
 });
 
 describe("POST /work_latest", () => {
   it("get latest work", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_latest", (req, res, next) =>
+      getLatestWork(req, res, next, repo)
+    );
+    app.use(router);
+
     const profile = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -381,11 +480,22 @@ describe("POST /work_latest", () => {
           true
         );
       });
+    cleanup();
   });
 });
 
 describe("POST /work_followed", () => {
   it("get followed works", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_followed", (req, res, next) =>
+      getWorksOfFollowed(req, res, next, repo)
+    );
+    app.use(router);
+
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -448,11 +558,22 @@ describe("POST /work_followed", () => {
         const reversedWorkIds = followedWorkIds.reverse();
         assert.equal(response[0].id, reversedWorkIds[5]);
       });
+    cleanup();
   });
 });
 
 describe("POST /work_followed_one", () => {
   it("get one followed profile's works", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_followed_one", (req, res, next) =>
+      getWorksOfOneFollowed(req, res, next, repo)
+    );
+    app.use(router);
+
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -512,11 +633,22 @@ describe("POST /work_followed_one", () => {
         const reversedWorkIds = followedWorkIds.reverse();
         assert.equal(response[0].id, reversedWorkIds[5]);
       });
+    cleanup();
   });
 });
 
 describe("POST /work_topic", () => {
   it("selectWorksByTopic, gets works by topic", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_topic", (req, res, next) =>
+      getWorksByTopic(req, res, next, repo)
+    );
+    app.use(router);
+
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -565,11 +697,22 @@ describe("POST /work_topic", () => {
         assert.equal(nextFive[0].id, reversedTopicWorkIds[5]);
         assert.equal(nextFive[4].id, reversedTopicWorkIds[9]);
       });
+    cleanup();
   });
 });
 
 describe("POST /work_search", () => {
   it("searchWorks, gets works by search text", async () => {
+    const app = express();
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
+    const { repo, cleanup } = await createClientAndTestDb();
+    const router = Router();
+    router.post("/work_search", (req, res, next) =>
+      searchWorks(req, res, next, repo)
+    );
+    app.use(router);
+
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
@@ -633,5 +776,6 @@ describe("POST /work_search", () => {
         assert.equal(searchedWorks[0].title, title);
         assert.equal(searchedWorks[0].description, title + description);
       });
+    cleanup();
   });
 });

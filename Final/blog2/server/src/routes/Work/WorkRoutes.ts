@@ -11,7 +11,8 @@ import {
   updateWork,
 } from "../../controllers/work/WorkController.js";
 import multer from "multer";
-import { authenticationHandler } from "../../middleware/Authenticate.js";
+import { authenticationHandler } from "../../middleware/Authenticate";
+import { repo } from "../../repository/Repository.js";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -22,20 +23,32 @@ router.post(
   "/work/new",
   authenticationHandler,
   upload.array("images", 10),
-  createWork
+  (req, res, next) => createWork(req, res, next, repo)
 );
 router.post(
   "/work/update",
   authenticationHandler,
   upload.array("images", 10),
-  updateWork
+  (req, res, next) => updateWork(req, res, next, repo)
 );
-router.get("/work/:id", getWork);
-router.post("/work_popular", getPopularWork);
-router.post("/work_latest", getLatestWork);
-router.post("/work_followed", getWorksOfFollowed);
-router.post("/work_followed_one", getWorksOfOneFollowed);
-router.post("/work_topic", getWorksByTopic);
-router.post("/work_search", searchWorks);
+router.get("/work/:id", (req, res, next) => getWork(req, res, next, repo));
+router.post("/work_popular", (req, res, next) =>
+  getPopularWork(req, res, next, repo)
+);
+router.post("/work_latest", (req, res, next) =>
+  getLatestWork(req, res, next, repo)
+);
+router.post("/work_followed", (req, res, next) =>
+  getWorksOfFollowed(req, res, next, repo)
+);
+router.post("/work_followed_one", (req, res, next) =>
+  getWorksOfOneFollowed(req, res, next, repo)
+);
+router.post("/work_topic", (req, res, next) =>
+  getWorksByTopic(req, res, next, repo)
+);
+router.post("/work_search", (req, res, next) =>
+  searchWorks(req, res, next, repo)
+);
 
 export default router;

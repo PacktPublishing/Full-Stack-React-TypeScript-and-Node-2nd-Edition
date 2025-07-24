@@ -17,3 +17,26 @@ export function serializeBigInt(obj: any): any {
   }
   return obj;
 }
+
+export function deserializeBigInt(obj: any): any {
+  if (Array.isArray(obj)) {
+    return obj.map(deserializeBigInt);
+  } else if (obj !== null && typeof obj === "object") {
+    return Object.fromEntries(
+      Object.entries(obj).map(([key, value]: [string, any]) => [
+        key,
+        deserializeBigInt(value),
+      ])
+    );
+  } else if (typeof obj === "string" && !isNaN(Number(obj))) {
+    return BigInt(obj);
+  }
+  return obj;
+}
+
+export function isBigInt(value: any): boolean {
+  return (
+    typeof value === "bigint" ||
+    (typeof value === "string" && /^\d+n$/.test(value))
+  );
+}

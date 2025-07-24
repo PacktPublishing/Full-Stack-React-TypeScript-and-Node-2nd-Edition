@@ -1,9 +1,10 @@
-import type { NextFunction, Request, RequestHandler, Response } from "express";
+import type { NextFunction, Request, Response } from "express";
 import { serializeBigInt } from "lib";
-import { repo, Repository } from "../../repository/Repository";
+import { Repository } from "../../repository/Repository";
 import type { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
 import type { WorkImageItem } from "../../repository/work/WorkImage";
 import type { PagingParams, PopularWorkParams } from "../PagingParams";
+import { deserializeBigInt } from "lib/src/JsonUtils";
 
 export const createWork = async (
   req: Request,
@@ -61,10 +62,11 @@ export const createWork = async (
   }
 };
 
-export const updateWork: RequestHandler = async (
+export const updateWork = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     let {
@@ -110,10 +112,11 @@ export const updateWork: RequestHandler = async (
   }
 };
 
-export const getWork: RequestHandler = async (
+export const getWork = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     res
@@ -124,10 +127,11 @@ export const getWork: RequestHandler = async (
   }
 };
 
-export const getPopularWork: RequestHandler = async (
+export const getPopularWork = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const {
@@ -148,10 +152,11 @@ export const getPopularWork: RequestHandler = async (
   }
 };
 
-export const getLatestWork: RequestHandler = async (
+export const getLatestWork = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const { id, pageSize, lastCursor }: PagingParams = req.body;
@@ -167,13 +172,16 @@ export const getLatestWork: RequestHandler = async (
   }
 };
 
-export const getWorksOfFollowed: RequestHandler = async (
+export const getWorksOfFollowed = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
     const works = await repo.Work.selectWorksOfFollowed(
       id,
       pageSize,
@@ -186,13 +194,17 @@ export const getWorksOfFollowed: RequestHandler = async (
   }
 };
 
-export const getWorksOfOneFollowed: RequestHandler = async (
+export const getWorksOfOneFollowed = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
-    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const { id, pageSize, lastCursor }: PagingParams = deserializeBigInt(
+      req.body
+    );
+
     const works = await repo.Work.selectWorksOfOneFollowed(
       id,
       pageSize,
@@ -205,10 +217,11 @@ export const getWorksOfOneFollowed: RequestHandler = async (
   }
 };
 
-export const getWorksByTopic: RequestHandler = async (
+export const getWorksByTopic = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const { id, pageSize, lastCursor }: PagingParams = req.body;
@@ -220,10 +233,11 @@ export const getWorksByTopic: RequestHandler = async (
   }
 };
 
-export const searchWorks: RequestHandler = async (
+export const searchWorks = async (
   req: Request,
   res: Response,
-  next: NextFunction
+  next: NextFunction,
+  repo: Repository
 ) => {
   try {
     const {

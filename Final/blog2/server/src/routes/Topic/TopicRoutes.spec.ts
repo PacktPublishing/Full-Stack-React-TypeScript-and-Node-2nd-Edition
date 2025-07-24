@@ -89,10 +89,7 @@ describe("GET /topic", () => {
       .field("description", faker.lorem.sentence(3))
       .field("socialLinkPrimary", faker.internet.url())
       .field("socialLinkSecondary", faker.internet.url())
-      //.expect(200)
-      .then((res) => {
-        console.log("Profile created:", res.body);
-      });
+      .expect(200);
 
     const loginResponse = await request(app)
       .post("/profile/login")
