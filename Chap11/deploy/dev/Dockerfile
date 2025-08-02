@@ -11,12 +11,12 @@ RUN  apt-get update -y && \
      apt-get install zip -y
 
 # install node
-RUN curl -sL https://deb.nodesource.com/setup_22.x | bash -
+RUN curl -sL https://deb.nodesource.com/setup_24.x | bash -
 RUN apt-get install -y nodejs
 
 ENV NODE_ENV=production
 WORKDIR /usr/fsrtn
-COPY common/ ./common/
+COPY lib/ ./lib/
 WORKDIR /usr/fsrtn/server
 COPY server/package.json ./
 COPY server/prisma ./prisma

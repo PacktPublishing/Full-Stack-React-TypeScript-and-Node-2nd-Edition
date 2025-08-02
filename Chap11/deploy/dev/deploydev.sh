@@ -1,14 +1,13 @@
 # Note must run from deploy folder
 
 db_name="db"
-api_name="api"
 
 echo "clear docker images"
-container_ids=$(docker ps -q --filter "name=$db_name" --filter "name=$api_name")
+container_ids=$(docker ps -q --filter "name=$db_name")
 if [ -z "$container_ids" ]; then
-  echo "No container id found using image: $db_name or image: $api_name"
+  echo "No container id found using image: $db_name"
 else
-  echo "Stopping and removing containers using images: $db_name, $api_name"
+  echo "Stopping and removing containers using images: $db_name"
   pwd
   docker stop $container_ids
   docker rm $container_ids
