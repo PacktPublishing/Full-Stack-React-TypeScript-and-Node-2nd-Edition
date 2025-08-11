@@ -24,7 +24,8 @@
     "lib": "file:../lib",
     "multer": "^2.0.2",
     "pino": "9.7.0",
-    "pino-http": "10.5.0"
+    "pino-http": "10.5.0",
+    "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@faker-js/faker": "9.9.0",

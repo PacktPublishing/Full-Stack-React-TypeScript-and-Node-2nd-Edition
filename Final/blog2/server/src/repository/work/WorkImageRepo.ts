@@ -1,6 +1,5 @@
 import { Prisma, PrismaClient } from "../../generated/prisma";
 import { type WorkImageItem } from "./WorkImage.js";
-import { type DefaultArgs } from "@prisma/client/runtime/library";
 
 export class WorkImageRepo {
   #client: PrismaClient;
@@ -13,10 +12,7 @@ export class WorkImageRepo {
   async insertWorkImages(
     images: WorkImageItem[] | undefined,
     workId: bigint,
-    tx: Omit<
-      PrismaClient<Prisma.PrismaClientOptions, never, DefaultArgs>,
-      "$connect" | "$disconnect" | "$on" | "$transaction" | "$use" | "$extends"
-    >
+    tx: Prisma.TransactionClient
   ) {
     if (images) {
       const workImagesTask = images.map((image) =>
