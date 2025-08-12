@@ -1,4 +1,8 @@
-import { PrismaClient } from "../../generated/prisma";
+import {
+  PrismaClient,
+  type WorkLike,
+  type WorkTopic,
+} from "../../generated/prisma";
 import {
   selectWorksOfOneFollowed,
   selectWorksOfFollowed,
@@ -325,7 +329,6 @@ export class WorkRepo {
     }));
   }
 
-  /// todo: needs review
   async selectWorksOfFollowed(
     followerId: bigint,
     pageSize: number,
@@ -345,12 +348,11 @@ export class WorkRepo {
       userName: w.userName,
       fullName: w.fullName,
       authorDesc: w.description,
-      workTopics: w.workTopics,
-      workLikes: w.workLikes,
+      workTopics: w.workTopics as unknown as WorkTopic[],
+      workLikes: w.workLikes as unknown as WorkLike[],
     }));
   }
 
-  /// note: TypedSql calls require running npx prisma generate --sql first
   async selectWorksOfOneFollowed(
     followedId: bigint,
     pageSize: number,
@@ -371,8 +373,8 @@ export class WorkRepo {
       userName: w.userName,
       fullName: w.fullName,
       authorDesc: w.authorDesc,
-      workTopics: w.workTopics,
-      workLikes: w.workLikes,
+      workTopics: w.workTopics as unknown as WorkTopic[],
+      workLikes: w.workLikes as unknown as WorkLike[],
     }));
   }
 

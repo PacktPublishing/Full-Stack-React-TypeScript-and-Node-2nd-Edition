@@ -370,6 +370,7 @@ describe("Work tests", () => {
       avatar
     );
 
+    const topic = await repo.Topic.insertTopic(faker.company.name());
     const followedCount = 10;
     const followedWorkIds: bigint[] = [];
     for (let i = 0; i < followedCount; i++) {
@@ -390,7 +391,7 @@ describe("Work tests", () => {
           description,
           content,
           followed.id,
-          []
+          i === 0 ? [topic.id] : [] // only associate a topic to the first work
         );
         followedWorkIds.push(followedWork.id);
       }
@@ -405,6 +406,8 @@ describe("Work tests", () => {
     );
     const reversedWorkIds = followedWorkIds.reverse();
     assert.equal(nextFive[0].id, reversedWorkIds[5]);
+    assert.equal(nextFive[nextFive.length - 1].workTopics.length, 1);
+    assert.equal(nextFive[nextFive.length - 2].workTopics.length, 0);
     assert.equal(nextFive[nextFive.length - 1].id, reversedWorkIds[9]);
     cleanup();
   });
