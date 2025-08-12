@@ -1,0 +1,25 @@
+import { PrismaClient } from "../../generated/prisma";
+
+export class TopicRepo {
+  #client: PrismaClient;
+
+  constructor(client: PrismaClient) {
+    this.#client = client;
+  }
+
+  async insertTopic(name: string) {
+    return await this.#client.topic.create({
+      data: {
+        name,
+      },
+    });
+  }
+
+  async selectAllTopics() {
+    return await this.#client.topic.findMany({
+      orderBy: {
+        name: "desc",
+      },
+    });
+  }
+}

@@ -1,0 +1,21 @@
+version: "3.8"
+
+name: fsrtn-blog
+services:
+  api:
+    image: server
+    build:
+      context: ../../../blog
+      dockerfile: ./deploy/dev/Dockerfile
+    depends_on:
+      - db
+    env_file: ../../server/.env.dev
+    ports:
+      - 4001:4001
+  db:
+    image: postgres:17.5-alpine3.22
+    ports:
+      - 5432:5432
+    env_file: ../../server/.env.dev
+    volumes:
+      - ../../server/dbdata:/var/lib/postgresql/data
