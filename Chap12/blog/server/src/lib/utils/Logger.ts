@@ -3,7 +3,7 @@ import pinoHttp from "pino-http";
 
 export const logger = pino({
   name: "blog",
-  level: "info",
+  level: process.env.NODE_ENV === "test" ? "silent" : "info",
 });
 
 export const pinoHttpMiddleware = pinoHttp({

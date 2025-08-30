@@ -4,17 +4,56 @@ import { faker } from "@faker-js/faker";
 import { avatars } from "../../__test__/avatar";
 import assert from "node:assert";
 import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
-import app from "../../app";
-import router from "./WorkRoutes";
+import { serializeBigInt } from "lib";
+import Api from "../../app";
+
+describe("POST /work/new", () => {
+  it("create work", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+    const app = new Api(repo).app;
+
+    const author = await repo.Profile.insertProfile(
+      faker.internet.username(),
+      faker.internet.password(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+    const topic = await repo.Topic.insertTopic(faker.company.name());
+
+    const title = faker.lorem.sentence(1);
+    const description = faker.lorem.sentence(2);
+    const content = faker.lorem.sentence(4);
+    await request(app)
+      .post("/work/new")
+      .attach("images", avatars[0], "image1.png")
+      .attach("images", avatars[1], "image2.png")
+      .field("imagesPlaceholder[0]", "A")
+      .field("imagesPlaceholder[1]", "B")
+      .field("title", title)
+      .field("description", description)
+      .field("content", content)
+      .field("authorId", serializeBigInt(author.id).toString())
+      .field("topicIds[0]", serializeBigInt(topic.id).toString())
+      .expect("Content-Type", /json/)
+      .expect(200)
+      .then(async (res) => {
+        const work = await repo.Work.selectWork(BigInt(res.body));
+        assert.equal(work?.title, title);
+        assert.equal(work?.description, description);
+        assert.equal(work?.content, content);
+        assert.equal(work?.author.id, author.id.toString());
+      });
+    cleanup();
+  });
+});
 
 describe("GET /work/:id", () => {
   it("get work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
-    app.use((req, _res, next) => {
-      req.repo = repo;
-      next();
-    });
-    app.use(router);
+    const app = new Api(repo).app;
 
     const profile = await repo.Profile.insertProfile(
       faker.internet.username(),

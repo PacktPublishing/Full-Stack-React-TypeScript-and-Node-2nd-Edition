@@ -1,6 +1,6 @@
 export function serializeBigInt(
   obj: [] | Object | string | bigint
-): [] | Object | string | bigint {
+): [] | Object | string {
   if (Array.isArray(obj)) {
     return obj.map(serializeBigInt);
   } else if (obj !== null && typeof obj === "object") {
@@ -21,7 +21,7 @@ export function serializeBigInt(
 }
 
 export function deserializeBigInt(
-  obj: [] | Object | string | bigint
+  obj: [] | Object | string
 ): [] | Object | string | bigint {
   if (Array.isArray(obj)) {
     return obj.map(deserializeBigInt);
