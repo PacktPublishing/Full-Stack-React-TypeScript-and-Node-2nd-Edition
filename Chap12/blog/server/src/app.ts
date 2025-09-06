@@ -4,9 +4,9 @@ import express, { type Express } from "express";
 import workRoutes from "./routes/work/WorkRoutes";
 // import topicRoutes from "./routes/Topic/TopicRoutes";
 // import followRoutes from "./routes/Follow/FollowRoutes";
-// import workImageRoutes from "./routes/Work/WorkImageRoutes";
-// import workLikesRoutes from "./routes/Work/WorkLikesRoutes";
-// import workResponseRoutes from "./routes/Work/WorkResponseRoutes";
+import workImageRoutes from "./routes/work/WorkImageRoutes";
+import workLikesRoutes from "./routes/work/WorkLikesRoutes";
+import workResponseRoutes from "./routes/work/WorkResponseRoutes";
 import cors from "cors";
 import type { Repository } from "./repository/Repository";
 
@@ -42,9 +42,9 @@ export default class Api {
   #setupRoutes() {
     // #app.use(profileRoutes);
     this.#app.use(workRoutes);
-    // #app.use(workImageRoutes);
-    // #app.use(workLikesRoutes);
-    // #app.use(workResponseRoutes);
+    this.#app.use(workImageRoutes);
+    this.#app.use(workLikesRoutes);
+    this.#app.use(workResponseRoutes);
     // #app.use(topicRoutes);
     // #app.use(followRoutes);
   }
