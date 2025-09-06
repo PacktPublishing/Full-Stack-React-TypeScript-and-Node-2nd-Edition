@@ -6,11 +6,8 @@ dotenv.config();
 const port = process.env.PORT;
 
 const api = new Api(repo);
-const app = api.app;
-app.use((req, _res, next) => {
-  req.repo = repo;
-  next();
-});
+const app = api.App;
+
 app.listen(port, () => {
-  console.log(`[server]: Server is running at http://localhost:${port}`);
+  console.log(`[server]: Server is running on port ${port}`);
 });

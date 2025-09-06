@@ -10,7 +10,7 @@ import Api from "../../app";
 describe("POST /work/new", () => {
   it("create work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
-    const app = new Api(repo).app;
+    const app = new Api(repo).App;
 
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
@@ -30,8 +30,8 @@ describe("POST /work/new", () => {
       .post("/work/new")
       .attach("images", avatars[0], "image1.png")
       .attach("images", avatars[1], "image2.png")
-      .field("imagesPlaceholder[0]", "A")
-      .field("imagesPlaceholder[1]", "B")
+      .field("imagesPlaceholders[0]", "A")
+      .field("imagesPlaceholders[1]", "B")
       .field("title", title)
       .field("description", description)
       .field("content", content)
@@ -46,6 +46,76 @@ describe("POST /work/new", () => {
         assert.equal(work?.content, content);
         assert.equal(work?.author.id, author.id.toString());
       });
+
+    cleanup();
+  });
+});
+
+describe("POST /work/update", () => {
+  it("update work", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+    const app = new Api(repo).App;
+
+    const profile = await repo.Profile.insertProfile(
+      faker.internet.username(),
+      faker.internet.password(),
+      faker.internet.displayName(),
+      faker.lorem.sentence(2),
+      faker.internet.url(),
+      faker.internet.url(),
+      avatars[0]
+    );
+
+    const topica = await repo.Topic.insertTopic(faker.company.name());
+    const topicb = await repo.Topic.insertTopic(faker.company.name());
+
+    const title = faker.lorem.sentence(1);
+    const description = faker.lorem.sentence(2);
+    const content = faker.lorem.sentence(4);
+    const work = await request(app)
+      .post("/work/new")
+      .attach("images", avatars[0], "image1.png")
+      .field("imagesPlaceholders[0]", "A")
+      .field("title", title)
+      .field("description", description)
+      .field("content", content)
+      .field("authorId", profile.id.toString())
+      .field("topicIds[0]", topica.id.toString())
+      .expect("Content-Type", /json/)
+      .expect(200);
+    const workId = BigInt(work.body);
+
+    await request(app)
+      .post("/work/update")
+      .attach("images", avatars[1], "image2.png")
+      .field("imagesPlaceholders[0]", "B")
+      .field("workId", workId.toString())
+      .field("title", title)
+      .field("description", description)
+      .field("content", content)
+      .field("topicIds[0]", topicb.id.toString())
+      .expect(204)
+      .then(async () => {
+        const comparisonWork = await repo.Work.selectWork(workId);
+        assert.equal(comparisonWork?.title, title);
+        assert.equal(comparisonWork?.description, description);
+        assert.equal(comparisonWork?.content, content);
+        assert.equal(comparisonWork?.author.id, profile.id);
+        assert.equal(
+          comparisonWork?.workTopics
+            .map((wt) => wt.topic.id)
+            .includes(topica.id),
+          false
+        );
+
+        assert.equal(
+          comparisonWork?.workTopics
+            .map((wt) => wt.topic.id)
+            .includes(topicb.id),
+          true
+        );
+      });
+
     cleanup();
   });
 });
@@ -53,7 +123,7 @@ describe("POST /work/new", () => {
 describe("GET /work/:id", () => {
   it("get work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
-    const app = new Api(repo).app;
+    const app = new Api(repo).App;
 
     const profile = await repo.Profile.insertProfile(
       faker.internet.username(),

@@ -1,12 +1,10 @@
-import { type WorkImageItem } from "../../repository/work/WorkImage";
-
 export type CreateWorkParams = {
   title: string;
   description: string;
   content: string;
   authorId: bigint;
   topicIds: bigint[];
-  images?: WorkImageItem[];
+  imagesPlaceholders: string[];
 };
 
 export type UpdateWorkParams = { workId: bigint } & Omit<
