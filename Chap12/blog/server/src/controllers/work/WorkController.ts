@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from "express";
 import { serializeBigInt } from "lib";
 import type { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
 import type { WorkImageItem } from "../../repository/work/WorkImage";
+import type { PagingParams, PopularWorkParams } from "../PagingParams";
 
 export const createWork = async (
   req: Request,
@@ -68,7 +69,7 @@ export const updateWork = async (
       imagesPlaceholders,
     }: UpdateWorkParams = req.body;
     const workImages: WorkImageItem[] = [];
-    console.log("Updating images:", req.files);
+
     if (req.files) {
       if (Array.isArray(req.files)) {
         for (let i = 0; i < req.files.length; i++) {
@@ -111,6 +112,49 @@ export const getWork = async (
   try {
     const result = await req.repo.Work.selectWork(BigInt(req.params.id));
     res.status(200).json(result ? serializeBigInt(result) : result);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getPopularWork = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {
+      topicId,
+      pageSize,
+      lastCursor: cursor,
+    }: PopularWorkParams = req.body;
+
+    res
+      .status(200)
+      .json(
+        serializeBigInt(
+          await req.repo.Work.selectMostPopularWorks(topicId, pageSize, cursor)
+        )
+      );
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getLatestWork = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const works = await req.repo.Work.selectLatestWorksByAuthor(
+      id,
+      pageSize,
+      lastCursor
+    );
+
+    res.status(200).json(serializeBigInt(works));
   } catch (e) {
     next(e);
   }
