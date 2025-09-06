@@ -223,7 +223,7 @@ describe("POST /work/update", () => {
       .auth(accessToken, { type: "bearer" })
       .attach("images[0][image]", avatars[1])
       .field("images[0][imagesPlaceholder]", "B")
-      .field("workId", serializeBigInt(workId))
+      .field("workId", workId.toString())
       .field("title", title)
       .field("description", description)
       .field("content", content)

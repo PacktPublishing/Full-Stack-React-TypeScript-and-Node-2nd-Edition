@@ -123,17 +123,17 @@ export const getPopularWork = async (
   next: NextFunction
 ) => {
   try {
-    const {
-      topicId,
-      pageSize,
-      lastCursor: cursor,
-    }: PopularWorkParams = req.body;
+    const { topicId, pageSize, lastCursor }: PopularWorkParams = req.body;
 
     res
       .status(200)
       .json(
         serializeBigInt(
-          await req.repo.Work.selectMostPopularWorks(topicId, pageSize, cursor)
+          await req.repo.Work.selectMostPopularWorks(
+            topicId,
+            pageSize,
+            lastCursor
+          )
         )
       );
   } catch (e) {
@@ -150,6 +150,93 @@ export const getLatestWork = async (
     const { id, pageSize, lastCursor }: PagingParams = req.body;
     const works = await req.repo.Work.selectLatestWorksByAuthor(
       id,
+      pageSize,
+      lastCursor
+    );
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getWorksOfFollowed = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    // Why are these parameters cast to bigint, when our other functions don't need that?
+    // selectWorksOfFollowed is a call to raw SQL, which requires exact type matching.
+    // Other functions rely on Prisma to do the type casting for us.
+    const works = await req.repo.Work.selectWorksOfFollowed(
+      BigInt(id),
+      pageSize,
+      lastCursor ? BigInt(lastCursor) : undefined
+    );
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getWorksOfOneFollowed = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+
+    // Why are these parameters cast to bigint, when our other functions don't need that?
+    // selectWorksOfFollowed is a call to raw SQL, which requires exact type matching.
+    // Other functions rely on Prisma to do the type casting for us.
+    const works = await req.repo.Work.selectWorksOfOneFollowed(
+      BigInt(id),
+      pageSize,
+      lastCursor ? BigInt(lastCursor) : undefined
+    );
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const getWorksByTopic = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    const works = await req.repo.Work.selectWorksByTopic(
+      id,
+      pageSize,
+      lastCursor
+    );
+
+    res.status(200).json(serializeBigInt(works));
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const searchWorks = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const {
+      searchTxt,
+      pageSize,
+      lastCursor,
+    }: { searchTxt: string; pageSize: number; lastCursor: bigint } = req.body;
+    const works = await req.repo.Work.searchWorks(
+      searchTxt,
       pageSize,
       lastCursor
     );

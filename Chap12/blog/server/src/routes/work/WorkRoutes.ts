@@ -5,6 +5,10 @@ import {
   getLatestWork,
   getPopularWork,
   getWork,
+  getWorksByTopic,
+  getWorksOfFollowed,
+  getWorksOfOneFollowed,
+  searchWorks,
   updateWork,
 } from "../../controllers/work/WorkController";
 
@@ -18,5 +22,9 @@ router.post("/work/update", upload.array("images", 10), updateWork);
 router.get("/work/:id", getWork);
 router.post("/work_popular", getPopularWork);
 router.post("/work_latest", getLatestWork);
+router.post("/work_followed", getWorksOfFollowed);
+router.post("/work_followed_one", getWorksOfOneFollowed);
+router.post("/work_topic", getWorksByTopic);
+router.post("/work_search", searchWorks);
 
 export default router;
