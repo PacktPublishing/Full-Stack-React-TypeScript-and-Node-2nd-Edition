@@ -2,8 +2,8 @@ import express, { type Express } from "express";
 // import { pinoHttpMiddleware } from "./lib/utils/Logger";
 import profileRoutes from "./routes/profile/ProfileRoutes";
 import workRoutes from "./routes/work/WorkRoutes";
-// import topicRoutes from "./routes/Topic/TopicRoutes";
-// import followRoutes from "./routes/Follow/FollowRoutes";
+import topicRoutes from "./routes/topic/TopicRoutes";
+import followRoutes from "./routes/follow/FollowRoutes";
 import workImageRoutes from "./routes/work/WorkImageRoutes";
 import workLikesRoutes from "./routes/work/WorkLikesRoutes";
 import workResponseRoutes from "./routes/work/WorkResponseRoutes";
@@ -45,7 +45,7 @@ export default class Api {
     this.#app.use(workImageRoutes);
     this.#app.use(workLikesRoutes);
     this.#app.use(workResponseRoutes);
-    // #app.use(topicRoutes);
-    // #app.use(followRoutes);
+    this.#app.use(topicRoutes);
+    this.#app.use(followRoutes);
   }
 }
