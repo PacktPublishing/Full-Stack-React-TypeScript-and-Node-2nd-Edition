@@ -1,4 +1,6 @@
-export function serializeBigInt(obj: any): any {
+export function serializeBigInt(
+  obj: [] | Object | string | bigint
+): [] | Object | string | bigint {
   if (Array.isArray(obj)) {
     return obj.map(serializeBigInt);
   } else if (obj !== null && typeof obj === "object") {
@@ -18,7 +20,9 @@ export function serializeBigInt(obj: any): any {
   return obj;
 }
 
-export function deserializeBigInt(obj: any): any {
+export function deserializeBigInt(
+  obj: [] | Object | string | bigint
+): [] | Object | string | bigint {
   if (Array.isArray(obj)) {
     return obj.map(deserializeBigInt);
   } else if (obj !== null && typeof obj === "object") {
@@ -34,7 +38,7 @@ export function deserializeBigInt(obj: any): any {
   return obj;
 }
 
-export function isBigInt(value: any): boolean {
+export function isBigInt(value: [] | Object | string | bigint): boolean {
   return (
     typeof value === "bigint" ||
     (typeof value === "string" && /^\d+n$/.test(value))

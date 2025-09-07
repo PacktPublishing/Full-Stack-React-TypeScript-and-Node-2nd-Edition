@@ -5,7 +5,7 @@ import assert from "node:assert";
 import { faker } from "@faker-js/faker";
 import { getAvatar } from "../../__test__/avatar";
 import { serializeBigInt } from "lib/src/JsonUtils";
-import type { ProfileModel } from "../Profile/ProfileModel";
+import type { ProfileModel } from "../profile/ProfileModel";
 import { getRandomizedUserName } from "../../__test__/lib/TestData";
 import { OctetType } from "../../controllers/lib/Constants";
 import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";

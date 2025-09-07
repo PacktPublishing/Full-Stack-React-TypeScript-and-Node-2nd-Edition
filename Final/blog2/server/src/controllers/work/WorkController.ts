@@ -119,9 +119,8 @@ export const getWork = async (
   repo: Repository
 ) => {
   try {
-    res
-      .status(200)
-      .json(serializeBigInt(await repo.Work.selectWork(BigInt(req.params.id))));
+    const result = await repo.Work.selectWork(BigInt(req.params.id));
+    res.status(200).json(result ? serializeBigInt(result) : result);
   } catch (e) {
     next(e);
   }
