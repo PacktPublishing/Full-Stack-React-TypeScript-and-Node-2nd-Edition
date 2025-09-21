@@ -12,6 +12,7 @@ describe("POST /work_resp/new", () => {
   it("create response to a work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const author = await repo.Profile.insertProfile(
       getRandomizedUserName(),
@@ -41,10 +42,18 @@ describe("POST /work_resp/new", () => {
 
     const topic = await repo.Topic.insertTopic(faker.company.name());
 
+    await agent
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+
     const title = faker.lorem.sentence(1);
     const workDesc = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    const workResp = await request(app)
+    const workResp = await agent
       .post("/work/new")
       .attach("images[0][image]", avatars[0])
       .field("images[0][imagesPlaceholder]", "A")
@@ -58,7 +67,7 @@ describe("POST /work_resp/new", () => {
     const workId = workResp.body;
 
     const responseStr = faker.lorem.sentence(1);
-    await request(app)
+    await agent
       .post("/work_resp/new")
       .send({
         workId: serializeBigInt(workId),

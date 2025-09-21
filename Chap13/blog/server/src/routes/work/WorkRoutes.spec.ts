@@ -24,13 +24,14 @@ describe("POST /work/new", () => {
   it("create work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
 
     const author = await repo.Profile.insertProfile(
-      faker.internet.username(),
-      faker.internet.password(),
+      userName,
+      password,
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -39,21 +40,19 @@ describe("POST /work/new", () => {
     );
     const topic = await repo.Topic.insertTopic(faker.company.name());
 
-    const loginResponse = await request(app)
+    await agent
       .post("/profile/login")
       .send({
         userName,
         password,
       })
       .expect(200);
-    const { accessToken } = loginResponse.body;
 
     const title = faker.lorem.sentence(1);
     const description = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    await request(app)
+    await agent
       .post("/work/new")
-      .auth(accessToken, { type: "bearer" })
       .attach("images", avatars[0], "image1.png")
       .attach("images", avatars[1], "image2.png")
       .field("imagesPlaceholders[0]", "A")
@@ -81,10 +80,13 @@ describe("POST /work/update", () => {
   it("update work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
+    const userName = faker.internet.username();
+    const password = faker.internet.password();
     const profile = await repo.Profile.insertProfile(
-      faker.internet.username(),
-      faker.internet.password(),
+      userName,
+      password,
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -95,10 +97,18 @@ describe("POST /work/update", () => {
     const topica = await repo.Topic.insertTopic(faker.company.name());
     const topicb = await repo.Topic.insertTopic(faker.company.name());
 
+    await agent
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+
     const title = faker.lorem.sentence(1);
     const description = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    const work = await request(app)
+    const work = await agent
       .post("/work/new")
       .attach("images", avatars[0], "image1.png")
       .field("imagesPlaceholders[0]", "A")
@@ -111,7 +121,7 @@ describe("POST /work/update", () => {
       .expect(200);
     const workId = BigInt(work.body);
 
-    await request(app)
+    await agent
       .post("/work/update")
       .attach("images", avatars[1], "image2.png")
       .field("imagesPlaceholders[0]", "B")
