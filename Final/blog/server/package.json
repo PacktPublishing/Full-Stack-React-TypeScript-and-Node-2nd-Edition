@@ -19,7 +19,7 @@
   "dependencies": {
     "@prisma/client": "6.2.1",
     "common": "file:../common",
-    "cookie-session": "2.1.0",
+    "cookie-parser": "^1.4.7",
     "cors": "2.8.5",
     "dotenv": "16.4.7",
     "express": "^5.0.1",

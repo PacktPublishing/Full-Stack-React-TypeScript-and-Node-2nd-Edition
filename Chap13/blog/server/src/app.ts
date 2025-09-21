@@ -9,6 +9,8 @@ import workLikesRoutes from "./routes/work/WorkLikesRoutes";
 import workResponseRoutes from "./routes/work/WorkResponseRoutes";
 import cors from "cors";
 import type { Repository } from "./repository/Repository";
+import helmet from "helmet";
+import cookieParser from "cookie-parser";
 
 export default class Api {
   #app: Express;
@@ -34,6 +36,8 @@ export default class Api {
         origin: process.env.CLIENT_URL,
       })
     );
+    this.#app.use(cookieParser());
+    this.#app.use(helmet());
     this.#app.use(express.json({ limit: "10mb" }));
     this.#app.use(express.urlencoded({ extended: true }));
     // this.#app.use(pinoHttpMiddleware);

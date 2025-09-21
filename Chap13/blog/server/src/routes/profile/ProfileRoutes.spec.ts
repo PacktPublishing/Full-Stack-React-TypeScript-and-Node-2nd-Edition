@@ -10,9 +10,10 @@ import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 import Api from "../../app";
 
 describe("POST /profile/avatar/new", () => {
-  it("create profile avatar", async () => {
+  it.only("create profile avatar", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
@@ -26,7 +27,15 @@ describe("POST /profile/avatar/new", () => {
       avatars[0]
     );
 
-    await request(app)
+    await agent
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+
+    await agent
       .post("/profile/avatar/new")
       .attach("file", getAvatar(), {
         filename: "test.jpg",
@@ -55,6 +64,82 @@ describe("GET /profile/avatar/:avatarId", () => {
       .then((res) => {
         assert.deepStrictEqual(res.body, Buffer.from(avatar.avatar));
       });
+
+    cleanup();
+  });
+});
+
+describe("POST /profile/login", () => {
+  it("login profile", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+    const app = new Api(repo).App;
+
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+    await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: OctetType,
+      })
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(3))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200)
+      .then((res) => {
+        assert.equal(res.statusCode, 200);
+      });
+
+    await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200)
+      .then((res) => {
+        assert.equal(res.statusCode, 200);
+      });
+
+    cleanup();
+  });
+});
+
+describe("POST /profile/logout", () => {
+  it("logout profile", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+    const app = new Api(repo).App;
+
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+    await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: OctetType,
+      })
+      .field("userName", userName)
+      .field("password", password)
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(3))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(200)
+      .then((res) => {
+        assert.equal(res.statusCode, 200);
+      });
+
+    await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    await request(app).post("/profile/logout").expect(204);
 
     cleanup();
   });
@@ -113,8 +198,18 @@ describe("POST /profile/update", () => {
       .expect(200);
     const profileId = profileResp.body;
 
+    const loginResponse = await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    const { accessToken } = loginResponse.body;
+
     await request(app)
       .post("/profile/update")
+      .auth(accessToken, { type: "bearer" })
       .attach("file", getAvatar(), {
         filename: "test.jpg",
         contentType: OctetType,

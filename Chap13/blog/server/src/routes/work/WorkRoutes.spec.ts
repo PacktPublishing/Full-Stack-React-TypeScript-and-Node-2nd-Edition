@@ -6,6 +6,7 @@ import assert from "node:assert";
 import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 import { serializeBigInt } from "lib";
 import Api from "../../app";
+import { getRandomizedUserName } from "../../__test__/lib/TestData";
 
 type TestWorkModel = {
   id: bigint;
@@ -24,6 +25,9 @@ describe("POST /work/new", () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 
+    const userName = getRandomizedUserName();
+    const password = faker.internet.password();
+
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
       faker.internet.password(),
@@ -35,11 +39,21 @@ describe("POST /work/new", () => {
     );
     const topic = await repo.Topic.insertTopic(faker.company.name());
 
+    const loginResponse = await request(app)
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+    const { accessToken } = loginResponse.body;
+
     const title = faker.lorem.sentence(1);
     const description = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
     await request(app)
       .post("/work/new")
+      .auth(accessToken, { type: "bearer" })
       .attach("images", avatars[0], "image1.png")
       .attach("images", avatars[1], "image2.png")
       .field("imagesPlaceholders[0]", "A")

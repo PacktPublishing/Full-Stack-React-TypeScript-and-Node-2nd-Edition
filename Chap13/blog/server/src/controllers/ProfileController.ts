@@ -1,6 +1,7 @@
 import type { Request, Response, NextFunction } from "express";
 import { serializeBigInt } from "lib";
 import { OctetType } from "./lib/Constants";
+import { clearAuthCookies, setAuthCookies } from "./lib/AuthenticationUtils";
 
 export const createProfileAvatar = async (
   req: Request,
@@ -33,6 +34,46 @@ export const getProfileAvatar = async (
     );
 
     res.status(200).contentType(OctetType).send(file?.avatar);
+  } catch (e) {
+    next(e);
+  }
+};
+
+export const login = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { userName, password }: { userName: string; password: string } =
+      req.body;
+    const result = await req.repo.Profile.login(userName, password);
+
+    if (!result.status && !result.profileId) {
+      res.status(401).json({ message: "Failed to authenticate" });
+      return;
+    }
+
+    const userId = result.profileId!.toString();
+    setAuthCookies(res, userId);
+
+    res.status(200).json({
+      userId,
+    });
+  } catch (e) {
+    console.log("login error:", e);
+    next(e);
+  }
+};
+
+export const logout = async (
+  _req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    clearAuthCookies(res);
+    res.status(204).send();
   } catch (e) {
     next(e);
   }
