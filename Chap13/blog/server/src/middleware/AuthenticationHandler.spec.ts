@@ -12,6 +12,7 @@ describe("Authorization Middleware", () => {
   it("should first fail user and then authorize user", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const userName = getRandomizedUserName();
     const fullName = faker.internet.displayName();
@@ -20,7 +21,7 @@ describe("Authorization Middleware", () => {
     const socialLinkPrimary = faker.internet.url();
     const socialLinkSecondary = faker.internet.url();
 
-    const profileResp = await request(app)
+    const profileResp = await agent
       .post("/profile/new")
       .attach("file", getAvatar(), {
         filename: "test.jpg",
@@ -35,7 +36,7 @@ describe("Authorization Middleware", () => {
       .expect(200);
     const profileId = profileResp.body;
 
-    await request(app)
+    await agent
       .post("/profile/update")
       .auth("", { type: "bearer" }) // notice no token!
       .attach("file", getAvatar(), {
@@ -50,18 +51,16 @@ describe("Authorization Middleware", () => {
       .field("socialLinkSecondary", socialLinkSecondary)
       .expect(401);
 
-    const loginResponse = await request(app)
+    await agent
       .post("/profile/login")
       .send({
         userName,
         password,
       })
       .expect(200);
-    const { accessToken } = loginResponse.body;
 
-    await request(app)
+    await agent
       .post("/profile/update")
-      .auth(accessToken, { type: "bearer" })
       .attach("file", getAvatar(), {
         filename: "test.jpg",
         contentType: OctetType,

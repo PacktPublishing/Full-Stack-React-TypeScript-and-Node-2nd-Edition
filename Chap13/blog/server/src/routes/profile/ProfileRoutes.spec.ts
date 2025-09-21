@@ -10,7 +10,7 @@ import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 import Api from "../../app";
 
 describe("POST /profile/avatar/new", () => {
-  it.only("create profile avatar", async () => {
+  it("create profile avatar", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
     const agent = request.agent(app);
@@ -112,10 +112,11 @@ describe("POST /profile/logout", () => {
   it("logout profile", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
-    await request(app)
+    await agent
       .post("/profile/new")
       .attach("file", getAvatar(), {
         filename: "test.jpg",
@@ -132,14 +133,14 @@ describe("POST /profile/logout", () => {
         assert.equal(res.statusCode, 200);
       });
 
-    await request(app)
+    await agent
       .post("/profile/login")
       .send({
         userName,
         password,
       })
       .expect(200);
-    await request(app).post("/profile/logout").expect(204);
+    await agent.post("/profile/logout").expect(204);
 
     cleanup();
   });
@@ -175,6 +176,7 @@ describe("POST /profile/update", () => {
   it("update profile", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const userName = getRandomizedUserName();
     const fullName = faker.internet.displayName();
@@ -183,7 +185,7 @@ describe("POST /profile/update", () => {
     const socialLinkPrimary = faker.internet.url();
     const socialLinkSecondary = faker.internet.url();
 
-    const profileResp = await request(app)
+    const profileResp = await agent
       .post("/profile/new")
       .attach("file", getAvatar(), {
         filename: "test.jpg",
@@ -198,18 +200,16 @@ describe("POST /profile/update", () => {
       .expect(200);
     const profileId = profileResp.body;
 
-    const loginResponse = await request(app)
+    await agent
       .post("/profile/login")
       .send({
         userName,
         password,
       })
       .expect(200);
-    const { accessToken } = loginResponse.body;
 
-    await request(app)
+    await agent
       .post("/profile/update")
-      .auth(accessToken, { type: "bearer" })
       .attach("file", getAvatar(), {
         filename: "test.jpg",
         contentType: OctetType,
