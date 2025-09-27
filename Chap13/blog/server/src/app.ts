@@ -1,5 +1,5 @@
 import express, { type Express } from "express";
-// import { pinoHttpMiddleware } from "./lib/utils/Logger";
+import { pinoHttpMiddleware } from "./lib/utils/Logger";
 import profileRoutes from "./routes/profile/ProfileRoutes";
 import workRoutes from "./routes/work/WorkRoutes";
 import topicRoutes from "./routes/topic/TopicRoutes";
@@ -40,7 +40,7 @@ export default class Api {
     this.#app.use(helmet());
     this.#app.use(express.json({ limit: "10mb" }));
     this.#app.use(express.urlencoded({ extended: true }));
-    // this.#app.use(pinoHttpMiddleware);
+    this.#app.use(pinoHttpMiddleware);
   }
 
   #setupRoutes() {

@@ -65,7 +65,7 @@ function getRefreshToken(userId: string) {
       type: "refresh",
       exp:
         Math.floor(Date.now() / 1000) +
-        ms(process.env.JWT_EXPIRES_IN as StringValue) / 1000,
+        ms(process.env.JWT_REFRESH_EXPIRES_IN as StringValue) / 1000,
     },
     JWT_REFRESH_SECRET,
     {
@@ -76,12 +76,17 @@ function getRefreshToken(userId: string) {
   );
 }
 
-export function verifyJwtToken(token: string) {
+export function verifyJwtToken(token: string, isRefresh = false) {
   try {
-    const payload = jwt.verify(token, JWT_SECRET, {
-      issuer: COOKIE_DOMAIN,
-      audience: COOKIE_DOMAIN,
-    }) as JwtPayload;
+    // notice verify checks not only the token, but also the issuer and audience
+    const payload = jwt.verify(
+      token,
+      !isRefresh ? JWT_SECRET : JWT_REFRESH_SECRET,
+      {
+        issuer: COOKIE_DOMAIN,
+        audience: COOKIE_DOMAIN,
+      }
+    ) as JwtPayload;
 
     return payload;
   } catch (e) {
