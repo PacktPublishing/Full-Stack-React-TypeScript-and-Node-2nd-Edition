@@ -123,6 +123,11 @@ export const updateProfile = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.userId) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
     const {
       profileId,
       fullName,
@@ -140,7 +145,8 @@ export const updateProfile = async (
     } = req.body;
 
     await req.repo.Profile.updateProfile(
-      profileId,
+      req.userId,
+      BigInt(profileId),
       fullName,
       password,
       description,

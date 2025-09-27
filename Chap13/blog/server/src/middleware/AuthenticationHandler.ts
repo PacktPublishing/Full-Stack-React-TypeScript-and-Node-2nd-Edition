@@ -70,7 +70,7 @@ export const authenticationHandler = async (
       setAuthCookies(res, payload.userId);
     }
 
-    req.userId = payload.userId; // convenience for downstream handlers
+    req.userId = BigInt(payload.userId); // convenience for downstream handlers
     next();
   } catch (e) {
     clearAuthCookies(res);

@@ -70,7 +70,8 @@ export class ProfileRepo {
   }
 
   async updateProfile(
-    profileId: bigint,
+    profileUpdaterId: bigint,
+    profileToUpdateId: bigint,
     fullName: string,
     password: string,
     description: string,
@@ -78,6 +79,10 @@ export class ProfileRepo {
     socialLinkSecondary: string | undefined,
     avatar: Buffer | undefined
   ) {
+    if (profileUpdaterId !== profileToUpdateId) {
+      throw new Error("You can update only your own profile");
+    }
+
     return await this.#client.$transaction(async (tx) => {
       let avatarId: bigint | undefined;
       if (avatar) {
@@ -86,7 +91,7 @@ export class ProfileRepo {
             avatarId: true,
           },
           where: {
-            id: profileId,
+            id: profileToUpdateId,
           },
         });
         if (currentAvatarId && currentAvatarId.avatarId) {
@@ -118,7 +123,7 @@ export class ProfileRepo {
           id: true,
         },
         where: {
-          id: profileId,
+          id: profileToUpdateId,
         },
         data: {
           fullName,

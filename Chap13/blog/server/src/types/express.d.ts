@@ -5,7 +5,7 @@ declare global {
   namespace Express {
     interface Request {
       repo: Repository;
-      userId?: string | null;
+      userId?: bigint | null;
     }
   }
 }
