@@ -29,24 +29,6 @@ function getJwtSecret() {
 }
 const JWT_SECRET = getJwtSecret();
 
-function getAccessToken(userId: string) {
-  return jwt.sign(
-    {
-      userId,
-      type: "access",
-      exp:
-        Math.floor(Date.now() / 1000) +
-        ms(process.env.JWT_EXPIRES_IN as StringValue) / 1000,
-    },
-    JWT_SECRET,
-    {
-      subject: userId,
-      issuer: COOKIE_DOMAIN,
-      audience: COOKIE_DOMAIN,
-    }
-  );
-}
-
 function getJwtRefreshSecret() {
   if (!process.env.JWT_REFRESH_SECRET) {
     throw new Error(
@@ -58,16 +40,21 @@ function getJwtRefreshSecret() {
 }
 const JWT_REFRESH_SECRET = getJwtRefreshSecret();
 
-function getRefreshToken(userId: string) {
+function getToken(userId: string, isRefresh = false) {
   return jwt.sign(
     {
       userId,
-      type: "refresh",
+      type: !isRefresh ? "access" : "refresh",
       exp:
         Math.floor(Date.now() / 1000) +
-        ms(process.env.JWT_REFRESH_EXPIRES_IN as StringValue) / 1000,
+        ms(
+          (!isRefresh
+            ? process.env.JWT_EXPIRES_IN
+            : process.env.JWT_REFRESH_EXPIRES_IN) as StringValue
+        ) /
+          1000,
     },
-    JWT_REFRESH_SECRET,
+    !isRefresh ? JWT_SECRET : JWT_REFRESH_SECRET,
     {
       subject: userId,
       issuer: COOKIE_DOMAIN,
@@ -128,8 +115,8 @@ function setSecureCookie(
 }
 
 export function setAuthCookies(res: Response, userId: string) {
-  setSecureCookie(res, "access", getAccessToken(userId));
-  setSecureCookie(res, "refresh", getRefreshToken(userId));
+  setSecureCookie(res, "access", getToken(userId));
+  setSecureCookie(res, "refresh", getToken(userId, true));
 }
 
 export function clearAuthCookies(res: Response) {
