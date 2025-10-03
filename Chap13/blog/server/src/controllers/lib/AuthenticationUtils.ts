@@ -96,7 +96,7 @@ function getCookieOptions(name: JwtPayloadType) {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.SAME_SITE
       ? (process.env.SAME_SITE as "none" | "lax" | "strict")
-      : "none",
+      : "lax",
     domain,
     path: "/",
     maxAge:
