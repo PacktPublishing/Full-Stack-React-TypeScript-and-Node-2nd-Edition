@@ -15,6 +15,7 @@ export const authenticationHandler = async (
   next: NextFunction
 ) => {
   try {
+    // 1. verify the access token exists
     const token = req.cookies?.["access"] as string;
     if (!token) {
       logger.warn("No authorization token provided");
@@ -22,6 +23,7 @@ export const authenticationHandler = async (
       return;
     }
 
+    // 2. verify the access token is valid
     const payload = verifyJwtToken(token);
     if (payload.type !== "access") {
       logger.warn(`Invalid token type ${payload.type}`);
@@ -32,8 +34,9 @@ export const authenticationHandler = async (
       return res.status(401).json({ message: AUTH_ERROR_MESSAGE });
     }
 
+    // 3. if the token is expired and a valid refresh token exists, try to refresh it
     const now = Math.floor(Date.now() / 1000);
-    if (payload.exp < now) {
+    if (payload.exp <= now) {
       logger.warn("Token expired, refreshing");
 
       const refreshToken = req.cookies?.["refresh"] as string;
@@ -48,6 +51,7 @@ export const authenticationHandler = async (
         clearAuthCookies(res);
         return res.status(401).json({ message: AUTH_ERROR_MESSAGE });
       }
+
       if (refreshPayload.userId !== payload.userId) {
         logger.warn(
           `Token user ${payload.userId} does not match refresh user ${refreshPayload.userId}`
@@ -70,7 +74,8 @@ export const authenticationHandler = async (
       setAuthCookies(res, payload.userId);
     }
 
-    req.userId = BigInt(payload.userId); // convenience for downstream handlers
+    // 4. if successful, set the userId on the request for downstream handlers
+    req.userId = BigInt(payload.userId);
     next();
   } catch (e) {
     clearAuthCookies(res);

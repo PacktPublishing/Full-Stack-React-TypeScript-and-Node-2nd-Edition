@@ -23,17 +23,19 @@ router.post(
   upload.single("file"),
   createProfileAvatar
 );
-router.get("/profile/avatar/:avatarId", getProfileAvatar);
-router.post("/profile/login", login);
 router.post("/profile/logout", authenticationHandler, logout);
-router.post("/profile/new", upload.single("file"), createProfile);
-router.get("/profile/:profileId", getProfile);
 router.post(
   "/profile/update",
   authenticationHandler,
   upload.single("file"),
   updateProfile
 );
+
+router.get("/profile/avatar/:avatarId", getProfileAvatar);
+router.post("/profile/login", login);
+
+router.post("/profile/new", upload.single("file"), createProfile);
+router.get("/profile/:profileId", getProfile);
 router.get("/profile_popular", getMostPopularAuthors);
 
 export default router;
