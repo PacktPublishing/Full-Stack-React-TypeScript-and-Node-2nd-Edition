@@ -1,0 +1,14 @@
+version: "3.8"
+
+name: fsrtn-blog
+services:
+  db:
+    image: postgres:17.5-alpine3.22
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_DB: fsrtn
+      POSTGRES_USER: fsrtn
+      POSTGRES_PASSWORD: fsrtn
+    volumes:
+      - ../../server/dbdata:/var/lib/postgresql/data
