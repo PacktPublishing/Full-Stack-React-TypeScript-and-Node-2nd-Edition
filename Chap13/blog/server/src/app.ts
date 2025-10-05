@@ -11,6 +11,7 @@ import cors from "cors";
 import type { Repository } from "./repository/Repository";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
+import { errorHandler } from "./middleware/ErrorHandler";
 
 export default class Api {
   #app: Express;
@@ -23,6 +24,8 @@ export default class Api {
 
     this.#setupMiddlewares(repo);
     this.#setupRoutes();
+    // warning: error handlers must be registered after all routes and other middleware!!!
+    this.#setupErrorHandlers();
   }
 
   #setupMiddlewares(repo: Repository) {
@@ -51,5 +54,9 @@ export default class Api {
     this.#app.use(workResponseRoutes);
     this.#app.use(topicRoutes);
     this.#app.use(followRoutes);
+  }
+
+  #setupErrorHandlers() {
+    this.#app.use(errorHandler);
   }
 }
