@@ -2,6 +2,8 @@ import type { Request, Response, NextFunction } from "express";
 import { serializeBigInt } from "lib";
 import { OctetType } from "./lib/Constants";
 import { clearAuthCookies, setAuthCookies } from "./lib/AuthenticationUtils";
+import type z from "zod";
+import type { createProfileSchema } from "lib/dist/validation/ProfileSchema";
 
 export const createProfileAvatar = async (
   req: Request,
@@ -85,6 +87,7 @@ export const createProfile = async (
   next: NextFunction
 ) => {
   try {
+    type Body = z.infer<typeof createProfileSchema>;
     const {
       userName,
       password,
@@ -92,14 +95,7 @@ export const createProfile = async (
       description,
       socialLinkPrimary,
       socialLinkSecondary,
-    }: {
-      userName: string;
-      password: string;
-      fullName: string;
-      description: string;
-      socialLinkPrimary: string | undefined;
-      socialLinkSecondary: string | undefined;
-    } = req.body;
+    }: Body = req.body;
 
     const profile = await req.repo.Profile.insertProfile(
       userName,

@@ -11,6 +11,8 @@ import {
 } from "../../controllers/ProfileController";
 import multer from "multer";
 import { authenticationHandler } from "../../middleware/AuthenticationHandler";
+import { validate } from "../lib/Validation";
+import { createProfileSchema } from "lib/dist/validation/ProfileSchema";
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -34,7 +36,12 @@ router.post(
 router.get("/profile/avatar/:avatarId", getProfileAvatar);
 router.post("/profile/login", login);
 
-router.post("/profile/new", upload.single("file"), createProfile);
+router.post(
+  "/profile/new",
+  validate({ body: createProfileSchema }),
+  upload.single("file"),
+  createProfile
+);
 router.get("/profile/:profileId", getProfile);
 router.get("/profile_popular", getMostPopularAuthors);
 

@@ -170,6 +170,33 @@ describe("POST /profile/new", () => {
 
     cleanup();
   });
+
+  it.only("test create new profile validation", async () => {
+    const { repo, cleanup } = await createClientAndTestDb();
+    const app = new Api(repo).App;
+
+    await request(app)
+      .post("/profile/new")
+      .attach("file", getAvatar(), {
+        filename: "test.jpg",
+        contentType: OctetType,
+      })
+      .field("userName", "")
+      .field("password", faker.internet.password())
+      .field("fullName", faker.internet.displayName())
+      .field("description", faker.lorem.sentence(3))
+      .field("socialLinkPrimary", faker.internet.url())
+      .field("socialLinkSecondary", faker.internet.url())
+      .expect(400)
+      .then((res) => {
+        console.log("body:", res.body);
+        assert.equal(res.statusCode, 400);
+        assert.equal(res.body.message, "Validation failure");
+        assert.equal(res.body.errors.length > 0, true);
+      });
+
+    cleanup();
+  });
 });
 
 describe("POST /profile/update", () => {
