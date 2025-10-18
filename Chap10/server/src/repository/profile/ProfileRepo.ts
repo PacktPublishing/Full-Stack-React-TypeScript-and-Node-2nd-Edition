@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from "../../generated/prisma/client";
 import { PAGE_SIZE } from "../lib/Constants.js";
 
 export class ProfileRepo {
@@ -11,7 +11,7 @@ export class ProfileRepo {
   // note: in chapter 12 we will learn about authentication and build out this function
   async login(
     userName: string,
-    password: string
+    _password: string
   ): Promise<{ status: boolean; profileId?: bigint }> {
     const profile = await this.#client.profile.findFirst({
       select: {
