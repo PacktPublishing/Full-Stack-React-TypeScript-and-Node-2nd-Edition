@@ -12,6 +12,7 @@ describe("POST /work_like/new", () => {
   it("create work like", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
@@ -53,7 +54,15 @@ describe("POST /work_like/new", () => {
       [topic.id]
     );
 
-    await request(app)
+    await agent
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+
+    await agent
       .post("/work_like/new")
       .send({
         workId: serializeBigInt(work.id),
@@ -74,6 +83,7 @@ describe("POST /work_like/:workId", () => {
   it("get work like", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
+    const agent = request.agent(app);
 
     const author = await repo.Profile.insertProfile(
       faker.internet.username(),
@@ -115,7 +125,15 @@ describe("POST /work_like/:workId", () => {
       [topic.id]
     );
 
-    await request(app)
+    await agent
+      .post("/profile/login")
+      .send({
+        userName,
+        password,
+      })
+      .expect(200);
+
+    await agent
       .post("/work_like/new")
       .send({
         workId: serializeBigInt(work.id),
@@ -123,7 +141,7 @@ describe("POST /work_like/:workId", () => {
       })
       .expect(200);
 
-    await request(app)
+    await agent
       .get(`/work_like/${work.id}`)
       .expect(200)
       .then((res) => {

@@ -82,6 +82,7 @@ describe("Work tests", () => {
       updateTitle,
       updateDesc,
       updateContent,
+      author.id,
       [topicb.id] // work updated where topica is removed and topicb is added
     );
     const updatedWork = await repo.Work.selectWork(work.id);

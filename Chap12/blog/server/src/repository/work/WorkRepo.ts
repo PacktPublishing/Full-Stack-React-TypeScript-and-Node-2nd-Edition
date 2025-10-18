@@ -62,10 +62,25 @@ export class WorkRepo {
     title: string,
     description: string,
     content: string,
+    authorId: bigint,
     /// the topics here are considered overwrites, if any existing they will be deleted
     topicIds: bigint[],
     images?: WorkImageItem[]
   ) {
+    const work = this.#client.work.findFirst({
+      where: {
+        id: {
+          equals: workId,
+        },
+        authorId: {
+          equals: authorId,
+        },
+      },
+    });
+    if (!work) {
+      throw new Error("work not found or not owned by author");
+    }
+
     return await this.#client.$transaction(async (tx) => {
       await tx.work.update({
         where: {
