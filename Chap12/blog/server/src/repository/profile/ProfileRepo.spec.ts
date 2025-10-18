@@ -144,6 +144,7 @@ describe("Repository Profile", () => {
     secondaryUrl = faker.internet.url();
     await repo.Profile.updateProfile(
       createdAuthor.id,
+      createdAuthor.id,
       fullName,
       password,
       desc,

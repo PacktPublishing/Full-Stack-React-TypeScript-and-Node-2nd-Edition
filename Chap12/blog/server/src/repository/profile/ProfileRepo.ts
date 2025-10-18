@@ -1,4 +1,5 @@
 import { PrismaClient } from "../../generated/prisma";
+import { hashPassword, verifyPassword } from "../../lib/utils/PasswordHash";
 import { PAGE_SIZE } from "../lib/Constants.js";
 
 export class ProfileRepo {
@@ -8,7 +9,6 @@ export class ProfileRepo {
     this.#client = client;
   }
 
-  // note: in chapter 12 we will learn about authentication and build out this function
   async login(
     userName: string,
     password: string
@@ -24,8 +24,7 @@ export class ProfileRepo {
     });
     if (!profile) return { status: false };
 
-    const isPasswordValid = true;
-    if (isPasswordValid) {
+    if (await verifyPassword(password, profile.password)) {
       return { status: true, profileId: profile.id };
     }
     return { status: false };
@@ -51,13 +50,15 @@ export class ProfileRepo {
         avatarId = avatarResult.id;
       }
 
+      const hashedPassword = await hashPassword(password);
+
       return await tx.profile.create({
         select: {
           id: true,
         },
         data: {
           userName,
-          password,
+          password: hashedPassword,
           fullName,
           description,
           socialLinkPrimary,
@@ -69,7 +70,8 @@ export class ProfileRepo {
   }
 
   async updateProfile(
-    profileId: bigint,
+    profileUpdaterId: bigint,
+    profileToUpdateId: bigint,
     fullName: string,
     password: string,
     description: string,
@@ -77,6 +79,10 @@ export class ProfileRepo {
     socialLinkSecondary: string | undefined,
     avatar: Buffer | undefined
   ) {
+    if (profileUpdaterId !== profileToUpdateId) {
+      throw new Error("You can update only your own profile");
+    }
+
     return await this.#client.$transaction(async (tx) => {
       let avatarId: bigint | undefined;
       if (avatar) {
@@ -85,7 +91,7 @@ export class ProfileRepo {
             avatarId: true,
           },
           where: {
-            id: profileId,
+            id: profileToUpdateId,
           },
         });
         if (currentAvatarId && currentAvatarId.avatarId) {
@@ -110,16 +116,18 @@ export class ProfileRepo {
         }
       }
 
+      const hashedPassword = await hashPassword(password);
+
       return await tx.profile.update({
         select: {
           id: true,
         },
         where: {
-          id: profileId,
+          id: profileToUpdateId,
         },
         data: {
           fullName,
-          password,
+          password: hashedPassword,
           description,
           socialLinkPrimary,
           socialLinkSecondary,
@@ -140,7 +148,6 @@ export class ProfileRepo {
     });
   }
 
-  /// todo: query may need pairing down for works
   async selectMostPopularAuthors(size: number = PAGE_SIZE) {
     const authors = await this.#client.work.findMany({
       select: {

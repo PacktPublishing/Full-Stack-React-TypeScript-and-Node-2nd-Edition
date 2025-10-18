@@ -1,0 +1,17 @@
+{
+  "name": "lib",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "test": "npx tsx --test \"**/*.{spec,test}.ts\""
+  },
+  "devDependencies": {
+    "@types/node": "24.3.0",
+    "tsx": "4.20.4",
+    "typescript": "5.9.2"
+  }
+}

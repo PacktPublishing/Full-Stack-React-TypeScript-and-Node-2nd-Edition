@@ -219,7 +219,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/davidchoi/Work/packt/fsrtn-v2/Full-Stack-React-TypeScript-and-Node-2nd-Edition/Chap12/blog/server/src/generated/prisma",
+      "value": "/Users/davidchoi/Work/packt/fsrtn-v2/Full-Stack-React-TypeScript-and-Node-2nd-Edition/Chap13/blog/server/src/generated/prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -235,7 +235,7 @@ const config = {
     "previewFeatures": [
       "typedSql"
     ],
-    "sourceFilePath": "/Users/davidchoi/Work/packt/fsrtn-v2/Full-Stack-React-TypeScript-and-Node-2nd-Edition/Chap12/blog/server/prisma/schema.prisma",
+    "sourceFilePath": "/Users/davidchoi/Work/packt/fsrtn-v2/Full-Stack-React-TypeScript-and-Node-2nd-Edition/Chap13/blog/server/prisma/schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {

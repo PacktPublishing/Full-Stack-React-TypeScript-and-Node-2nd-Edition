@@ -60,6 +60,11 @@ export const updateWork = async (
   next: NextFunction
 ) => {
   try {
+    if (!req.userId) {
+      res.status(401).send("Unauthorized");
+      return;
+    }
+
     let {
       workId,
       title,
@@ -94,6 +99,7 @@ export const updateWork = async (
       title,
       description,
       content,
+      req.userId,
       topicIds,
       workImages
     );

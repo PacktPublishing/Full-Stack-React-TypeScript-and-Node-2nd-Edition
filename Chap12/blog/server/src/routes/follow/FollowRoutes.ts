@@ -6,10 +6,11 @@ import {
   getFollowers,
   getFollowersCount,
 } from "../../controllers/follow/FollowController";
+import { authenticationHandler } from "../../middleware/AuthenticationHandler";
 
 const router = Router();
 
-router.post("/follow/new", createFollow);
+router.post("/follow/new", authenticationHandler, createFollow);
 router.post("/follow/followers", getFollowers);
 router.get("/follow/followers/count/:followedId", getFollowersCount);
 router.post("/follow/followed", getFollowed);
