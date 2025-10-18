@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "../../generated/prisma";
+import { Prisma, PrismaClient } from "../../generated/prisma/client";
 import { type WorkImageItem } from "./WorkImage.js";
 
 export class WorkImageRepo {

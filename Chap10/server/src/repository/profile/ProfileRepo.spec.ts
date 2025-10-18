@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { describe, it } from "node:test";
 import { getAvatar } from "../../__test__/avatar.js";
 import assert from "node:assert";
-import { type Work } from "../../generated/prisma";
+import { type Work } from "../../generated/prisma/client";
 import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils.js";
 
 describe("Repository Profile", () => {

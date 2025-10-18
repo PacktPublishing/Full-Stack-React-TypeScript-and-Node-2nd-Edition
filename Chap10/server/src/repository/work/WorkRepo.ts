@@ -2,7 +2,7 @@ import {
   PrismaClient,
   type WorkLike,
   type WorkTopic,
-} from "../../generated/prisma";
+} from "../../generated/prisma/client";
 import {
   selectWorksOfOneFollowed,
   selectWorksOfFollowed,

@@ -1,4 +1,4 @@
-# create migration files and dev deploy to db
+# create migration files with a specific name
 
 npx prisma migrate dev --name init
 
