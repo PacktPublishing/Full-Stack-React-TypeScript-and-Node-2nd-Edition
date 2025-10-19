@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "../generated/prisma/client";
 import { WorkRepo } from "./work/WorkRepo.js";
 import { ProfileRepo } from "./profile/ProfileRepo.js";
 import { TopicRepo } from "./topic/TopicRepo.js";
@@ -9,6 +9,7 @@ import { WorkLikesRepo } from "./work/WorkLikesRepo.js";
 import { WorkImageRepo } from "./work/WorkImageRepo.js";
 import { ProfileAvatarRepo } from "./profile/ProfileAvatarRepo.js";
 import { WorkResponseLikeRepo } from "./work/WorkResponseLikeRepo.js";
+import { PrismaPg } from "@prisma/adapter-pg";
 
 export class Repository {
   #client: PrismaClient;
@@ -76,7 +77,7 @@ export class Repository {
     return this.#workImage;
   }
 
-  constructor(client: PrismaClient = new PrismaClient()) {
+  constructor(client: PrismaClient) {
     this.#client = client;
     this.#workImage = new WorkImageRepo(this.#client);
     this.#work = new WorkRepo(this.#client, this.#workImage);
@@ -95,4 +96,8 @@ export class Repository {
   }
 }
 
-export const repo = new Repository();
+const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
+const prisma = new PrismaClient({
+  adapter,
+});
+export const repo = new Repository(prisma);
