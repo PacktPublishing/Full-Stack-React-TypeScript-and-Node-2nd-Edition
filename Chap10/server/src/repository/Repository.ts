@@ -1,4 +1,5 @@
 import { PrismaClient } from "../generated/prisma/client";
+import { PrismaPg } from "@prisma/adapter-pg";
 import { WorkRepo } from "./work/WorkRepo.js";
 import { ProfileRepo } from "./profile/ProfileRepo.js";
 import { TopicRepo } from "./topic/TopicRepo.js";
@@ -9,7 +10,6 @@ import { WorkLikesRepo } from "./work/WorkLikesRepo.js";
 import { WorkImageRepo } from "./work/WorkImageRepo.js";
 import { ProfileAvatarRepo } from "./profile/ProfileAvatarRepo.js";
 import { WorkResponseLikeRepo } from "./work/WorkResponseLikeRepo.js";
-import { PrismaPg } from "@prisma/adapter-pg";
 
 export class Repository {
   #client: PrismaClient;
