@@ -16,7 +16,7 @@ export class WorkResponseLikeRepo {
     });
   }
 
-  async selectedWorkRespLikes(workResponseId: bigint) {
+  async selectWorkRespLikes(workResponseId: bigint) {
     return await this.#client.workResponseLike.findMany({
       where: {
         workResponseId,
