@@ -59,14 +59,6 @@ export class FollowRepo {
     });
   }
 
-  async selectFollowersCount(followedId: bigint) {
-    return await this.#client.follow.count({
-      where: {
-        followedId,
-      },
-    });
-  }
-
   async selectFollowed(
     followerId: bigint,
     pageSize: number,
@@ -107,6 +99,14 @@ export class FollowRepo {
         followId: item.id,
         ...item.followed,
       };
+    });
+  }
+
+  async selectFollowersCount(followedId: bigint) {
+    return await this.#client.follow.count({
+      where: {
+        followedId,
+      },
     });
   }
 
