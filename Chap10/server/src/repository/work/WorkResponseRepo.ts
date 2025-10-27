@@ -63,7 +63,7 @@ export class WorkResponseRepo {
     });
   }
 
-  async selectWorkResponsesByAuthor(
+  async selectWorkResponsesByResponder(
     responderId: bigint,
     pageSize: number,
     workResponseIdCursor?: bigint

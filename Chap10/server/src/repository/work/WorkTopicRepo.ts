@@ -8,7 +8,7 @@ export class WorkTopicRepo {
   }
 
   async insertWorkTopic(workId: bigint, topicId: bigint) {
-    return this.#client.workTopic.create({
+    return await this.#client.workTopic.create({
       data: {
         workId,
         topicId,
@@ -17,9 +17,11 @@ export class WorkTopicRepo {
   }
 
   async selectWorkTopicsByWork(workId: bigint) {
-    return this.#client.workTopic.findMany({
+    return await this.#client.workTopic.findMany({
       where: {
-        workId,
+        workId: {
+          equals: workId,
+        },
       },
       orderBy: {
         updatedAt: "desc",

@@ -19,61 +19,51 @@ export class Repository {
 
   #work: WorkRepo;
   get Work() {
-    if (!this.#work) throw new Error("work is undefined");
     return this.#work;
   }
 
   #profile: ProfileRepo;
   get Profile() {
-    if (!this.#profile) throw new Error("profile is undefined");
     return this.#profile;
   }
 
   #profileAvatar: ProfileAvatarRepo;
   get ProfileAvatar() {
-    if (!this.#profileAvatar) throw new Error("profileAvatar is undefined");
     return this.#profileAvatar;
   }
 
   #workResp: WorkResponseRepo;
   get WorkResp() {
-    if (!this.#workResp) throw new Error("workResp is undefined");
     return this.#workResp;
   }
 
   #workRespLike: WorkResponseLikeRepo;
   get WorkRespLike() {
-    if (!this.#workRespLike) throw new Error("workRespLike is undefined");
     return this.#workRespLike;
   }
 
   #workTopic: WorkTopicRepo;
   get WorkTopic() {
-    if (!this.#workTopic) throw new Error("workTopic is undefined");
     return this.#workTopic;
   }
 
   #workLikes: WorkLikesRepo;
   get WorkLikes() {
-    if (!this.#workLikes) throw new Error("workLikes is undefined");
     return this.#workLikes;
   }
 
   #follow: FollowRepo;
   get Follow() {
-    if (!this.#follow) throw new Error("follow is undefined");
     return this.#follow;
   }
 
   #topic: TopicRepo;
   get Topic() {
-    if (!this.#topic) throw new Error("topic is undefined");
     return this.#topic;
   }
 
   #workImage: WorkImageRepo;
   get WorkImage() {
-    if (!this.#workImage) throw new Error("workImage is undefined");
     return this.#workImage;
   }
 

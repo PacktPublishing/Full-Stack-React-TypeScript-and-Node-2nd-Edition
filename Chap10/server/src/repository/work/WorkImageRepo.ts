@@ -15,21 +15,18 @@ export class WorkImageRepo {
     tx: Prisma.TransactionClient
   ) {
     if (images) {
-      const workImagesTask = images.map((image) =>
-        tx.workImage.create({
-          data: {
-            imagePlaceholder: image.imagePlaceholder,
-            image: image.image,
-            workId: workId,
-          },
-        })
-      );
-      await Promise.all(workImagesTask);
+      await tx.workImage.createMany({
+        data: images.map((image) => ({
+          imagePlaceholder: image.imagePlaceholder,
+          image: image.image,
+          workId: workId,
+        })),
+      });
     }
   }
 
   async selectWorkImage(workId: bigint, placeholder: string) {
-    return this.#client.workImage.findFirst({
+    return await this.#client.workImage.findFirst({
       where: {
         workId: {
           equals: workId,
