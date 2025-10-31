@@ -140,7 +140,6 @@ export class ProfileRepo {
     });
   }
 
-  /// todo: query may need pairing down for works
   async selectMostPopularAuthors(size: number = PAGE_SIZE) {
     const authors = await this.#client.work.findMany({
       select: {
