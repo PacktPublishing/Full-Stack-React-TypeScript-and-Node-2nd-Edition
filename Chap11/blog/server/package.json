@@ -27,10 +27,8 @@
   "devDependencies": {
     "@faker-js/faker": "10.1.0",
     "@testcontainers/postgresql": "11.7.2",
-    "@types/cookie-parser": "^1.4.9",
     "@types/cors": "2.8.19",
     "@types/express": "5.0.5",
-    "@types/jsonwebtoken": "9.0.10",
     "@types/multer": "2.0.0",
     "@types/supertest": "6.0.3",
     "prisma": "6.18.0",
