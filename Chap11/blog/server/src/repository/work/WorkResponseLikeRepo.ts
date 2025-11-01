@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from "../../generated/prisma/client";
 
 export class WorkResponseLikeRepo {
   #client: PrismaClient;
@@ -16,8 +16,8 @@ export class WorkResponseLikeRepo {
     });
   }
 
-  async selectedWorkRespLikes(workResponseId: bigint) {
-    return this.#client.workResponseLike.findMany({
+  async selectWorkRespLikes(workResponseId: bigint) {
+    return await this.#client.workResponseLike.findMany({
       where: {
         workResponseId,
       },
