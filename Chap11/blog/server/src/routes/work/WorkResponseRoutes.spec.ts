@@ -212,7 +212,7 @@ describe("POST /work_resp_author", () => {
         responses[i]
       );
     }
-    const firstFive = await repo.WorkResp.selectWorkResponsesByAuthor(
+    const firstFive = await repo.WorkResp.selectWorkResponsesByResponder(
       responder.id,
       5
     );

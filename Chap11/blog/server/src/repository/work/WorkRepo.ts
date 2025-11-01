@@ -2,7 +2,7 @@ import {
   PrismaClient,
   type WorkLike,
   type WorkTopic,
-} from "../../generated/prisma";
+} from "../../generated/prisma/client";
 import {
   selectWorksOfOneFollowed,
   selectWorksOfFollowed,
@@ -78,6 +78,7 @@ export class WorkRepo {
         },
       });
 
+      // delete existing records that are not in topicIds
       const existingWorkTopics = await tx.workTopic.findMany({
         select: { id: true, topicId: true },
         where: {
@@ -100,6 +101,8 @@ export class WorkRepo {
         },
       });
 
+      // get records that are not already associated to Work,
+      // and add only those association
       const topicsToAdd = new Set<bigint>();
       const existingTopicIds = (
         await tx.workTopic.findMany({

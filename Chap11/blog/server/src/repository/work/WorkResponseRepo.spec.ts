@@ -100,13 +100,13 @@ describe("Repository WorkResponse", () => {
         responses[i]
       );
     }
-    const firstFive = await repo.WorkResp.selectWorkResponsesByAuthor(
+    const firstFive = await repo.WorkResp.selectWorkResponsesByResponder(
       responder.id,
       5
     );
     const lastCursor = firstFive[firstFive.length - 1].id;
 
-    const nextFive = await repo.WorkResp.selectWorkResponsesByAuthor(
+    const nextFive = await repo.WorkResp.selectWorkResponsesByResponder(
       responder.id,
       5,
       lastCursor
