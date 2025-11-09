@@ -64,7 +64,7 @@ describe("POST /work/new", () => {
 });
 
 describe("POST /work/update", () => {
-  it("update work", async () => {
+  it.only("update work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 
@@ -81,9 +81,9 @@ describe("POST /work/update", () => {
     const topica = await repo.Topic.insertTopic(faker.company.name());
     const topicb = await repo.Topic.insertTopic(faker.company.name());
 
-    const title = faker.lorem.sentence(1);
-    const description = faker.lorem.sentence(2);
-    const content = faker.lorem.sentence(4);
+    let title = faker.lorem.sentence(1);
+    let description = faker.lorem.sentence(2);
+    let content = faker.lorem.sentence(4);
     const work = await request(app)
       .post("/work/new")
       .attach("images", avatars[0], "image1.png")
@@ -97,6 +97,9 @@ describe("POST /work/update", () => {
       .expect(200);
     const workId = BigInt(work.body);
 
+    title = faker.lorem.sentence(2);
+    description = faker.lorem.sentence(4);
+    content = faker.lorem.sentence(6);
     await request(app)
       .post("/work/update")
       .attach("images", avatars[1], "image2.png")
@@ -108,7 +111,20 @@ describe("POST /work/update", () => {
       .field("topicIds[0]", topicb.id.toString())
       .expect(204)
       .then(async () => {
-        const comparisonWork = await repo.Work.selectWork(workId);
+        const comparisonWork = await repo.Work.selectWork(workId, true);
+        assert.equal(comparisonWork?.workImages.length, 2);
+        assert.equal(comparisonWork!.workImages[0].imagePlaceholder, "A");
+        assert.ok(
+          Buffer.from(comparisonWork!.workImages[0].image).equals(
+            Buffer.from(avatars[0])
+          )
+        );
+        assert.equal(comparisonWork?.workImages[1].imagePlaceholder, "B");
+        assert.ok(
+          Buffer.from(comparisonWork!.workImages[1].image).equals(
+            Buffer.from(avatars[1])
+          )
+        );
         assert.equal(comparisonWork?.title, title);
         assert.equal(comparisonWork?.description, description);
         assert.equal(comparisonWork?.content, content);

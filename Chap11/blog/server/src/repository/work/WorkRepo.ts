@@ -135,7 +135,7 @@ export class WorkRepo {
     });
   }
 
-  async selectWork(workId: bigint) {
+  async selectWork(workId: bigint, includeImages: boolean = false) {
     return await this.#client.work.findFirst({
       select: {
         id: true,
@@ -151,6 +151,7 @@ export class WorkRepo {
             description: true,
           },
         },
+        workImages: includeImages,
         workTopics: {
           select: {
             topic: {

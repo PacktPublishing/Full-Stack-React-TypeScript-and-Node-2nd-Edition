@@ -6,7 +6,7 @@
   "scripts": {
     "build": "npm run -w lib build && tsc",
     "dev": "npx tsx --watch src/server.ts",
-    "test": "npx tsx --test \"**/*.{spec,test}.ts\""
+    "test": "NODE_ENV=test npx tsx --test \"**/*.{spec,test}.ts\""
   },
   "keywords": [],
   "author": "",
