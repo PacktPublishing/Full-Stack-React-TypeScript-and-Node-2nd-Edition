@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from "../../generated/prisma/client";
 
 export class ProfileAvatarRepo {
   #client: PrismaClient;
@@ -10,7 +10,7 @@ export class ProfileAvatarRepo {
   async insertProfileAvatar(avatar: Buffer) {
     return await this.#client.profileAvatar.create({
       data: {
-        avatar,
+        avatar: new Uint8Array(avatar),
       },
     });
   }

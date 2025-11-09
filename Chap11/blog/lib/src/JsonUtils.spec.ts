@@ -13,10 +13,10 @@ describe("JsonUtils", () => {
     type ExpectedType = typeof expectedFirst;
 
     const serialized = serializeBigInt(input) as unknown as ExpectedType[];
-    assert.deepEqual(serialized[0].id, expectedFirst.id);
-    assert.deepEqual(serialized[0].name, expectedFirst.name);
-    assert.deepEqual(serialized[1].id, expectedSecond.id);
-    assert.deepEqual(serialized[1].name, expectedSecond.name);
+    assert.equal(serialized[0].id, expectedFirst.id);
+    assert.equal(serialized[0].name, expectedFirst.name);
+    assert.equal(serialized[1].id, expectedSecond.id);
+    assert.equal(serialized[1].name, expectedSecond.name);
   });
 
   test("deserializeBigInt should convert string to BigInt", () => {
@@ -29,10 +29,10 @@ describe("JsonUtils", () => {
     type ExpectedType = typeof expectedFirst;
 
     const deserialized = deserializeBigInt(input) as unknown as ExpectedType[];
-    assert.deepEqual(deserialized[0].id, expectedFirst.id);
-    assert.deepEqual(deserialized[0].name, expectedFirst.name);
-    assert.deepEqual(deserialized[1].id, expectedSecond.id);
-    assert.deepEqual(deserialized[1].name, expectedSecond.name);
+    assert.equal(deserialized[0].id, expectedFirst.id);
+    assert.equal(deserialized[0].name, expectedFirst.name);
+    assert.equal(deserialized[1].id, expectedSecond.id);
+    assert.equal(deserialized[1].name, expectedSecond.name);
   });
 
   test("isBigInt should return true for BigInt and string representation", () => {

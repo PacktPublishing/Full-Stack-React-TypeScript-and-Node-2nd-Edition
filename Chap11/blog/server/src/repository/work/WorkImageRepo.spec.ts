@@ -30,25 +30,23 @@ describe("Repository WorkImage", () => {
       []
     );
 
-    let i = 0;
+    const workImageItems: WorkImageItem[] = avatars.map((a, i) => {
+      return {
+        imagePlaceholder: `Item ${i}`,
+        image: a,
+      };
+    });
     await repo.Client.$transaction(async (tx) => {
-      const workImageItems: WorkImageItem[] = avatars.map((a) => {
-        i += 1;
-        return {
-          imagePlaceholder: `Item ${i}`,
-          image: a,
-        };
-      });
-
       await repo.WorkImage.insertWorkImages(workImageItems, work.id, tx);
     });
 
-    for (let y = 0; y < i; y++) {
+    for (let i = 0; i < workImageItems.length; i++) {
+      const placeholder = `Item ${i}`;
       const selectedWorkImage = await repo.WorkImage.selectWorkImage(
         work.id,
-        `Item ${y + 1}`
+        placeholder
       );
-      assert.equal(selectedWorkImage?.imagePlaceholder, `Item ${y + 1}`);
+      assert.equal(selectedWorkImage?.imagePlaceholder, placeholder);
     }
 
     cleanup();

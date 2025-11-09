@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../generated/prisma";
+import { PrismaClient } from "../../generated/prisma/client";
 
 export class WorkResponseRepo {
   #client: PrismaClient;
@@ -63,7 +63,7 @@ export class WorkResponseRepo {
     });
   }
 
-  async selectWorkResponsesByAuthor(
+  async selectWorkResponsesByResponder(
     responderId: bigint,
     pageSize: number,
     workResponseIdCursor?: bigint

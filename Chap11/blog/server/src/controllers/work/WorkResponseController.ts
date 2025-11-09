@@ -61,7 +61,7 @@ export const getWorkResponsesByAuthor = async (
       .status(200)
       .json(
         serializeBigInt(
-          await req.repo.WorkResp.selectWorkResponsesByAuthor(
+          await req.repo.WorkResp.selectWorkResponsesByResponder(
             id,
             pageSize,
             lastCursor

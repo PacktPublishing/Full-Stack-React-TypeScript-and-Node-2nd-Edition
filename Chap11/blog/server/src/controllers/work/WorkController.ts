@@ -49,7 +49,6 @@ export const createWork = async (
 
     res.status(200).json(serializeBigInt(newWork.id));
   } catch (e) {
-    console.log("Error in /work/new:", e);
     next(e);
   }
 };
