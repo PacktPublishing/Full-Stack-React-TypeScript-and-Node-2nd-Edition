@@ -64,7 +64,7 @@ describe("POST /work/new", () => {
 });
 
 describe("POST /work/update", () => {
-  it.only("update work", async () => {
+  it("update work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 
@@ -356,6 +356,7 @@ describe("POST /work_latest", () => {
             latestWorks[latestWorks.length - 1].updatedAt,
           true
         );
+        assert.equal(latestWorks.length, 5);
       });
 
     cleanup();
@@ -370,8 +371,8 @@ describe("POST /work_followed", () => {
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
-    let avatar: Buffer | undefined = getAvatar();
 
+    let avatar: Buffer | undefined = getAvatar();
     const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();
@@ -434,7 +435,7 @@ describe("POST /work_followed", () => {
 });
 
 describe("POST /work_followed_one", () => {
-  it("get one followed profile's works", async () => {
+  it.only("get one followed profile's works", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 
