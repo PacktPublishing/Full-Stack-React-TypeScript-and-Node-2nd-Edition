@@ -8,7 +8,7 @@ export const createWorkLike = async (
 ) => {
   try {
     const { workId, likerId }: { workId: bigint; likerId: bigint } = req.body;
-    console.log(workId, likerId);
+
     res
       .status(200)
       .json(

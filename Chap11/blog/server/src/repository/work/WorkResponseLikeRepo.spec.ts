@@ -60,7 +60,7 @@ describe("Repository WorkResponseLike", () => {
 
     assert.equal(responseLike.workResponseId, workResponse.id);
 
-    const workResponses = await repo.WorkRespLike.selectedWorkRespLikes(
+    const workResponses = await repo.WorkRespLike.selectWorkRespLikes(
       workResponse.id
     );
     assert.equal(workResponses.length, 1);
