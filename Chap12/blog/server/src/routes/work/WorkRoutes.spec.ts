@@ -6,7 +6,6 @@ import assert from "node:assert";
 import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 import { serializeBigInt } from "lib";
 import Api from "../../app";
-import { getRandomizedUserName } from "../../__test__/lib/TestData";
 
 type TestWorkModel = {
   id: bigint;
@@ -24,14 +23,10 @@ describe("POST /work/new", () => {
   it("create work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
-    const agent = request.agent(app);
-
-    const userName = getRandomizedUserName();
-    const password = faker.internet.password();
 
     const author = await repo.Profile.insertProfile(
-      userName,
-      password,
+      faker.internet.username(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -40,18 +35,10 @@ describe("POST /work/new", () => {
     );
     const topic = await repo.Topic.insertTopic(faker.company.name());
 
-    await agent
-      .post("/profile/login")
-      .send({
-        userName,
-        password,
-      })
-      .expect(200);
-
     const title = faker.lorem.sentence(1);
     const description = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    await agent
+    await request(app)
       .post("/work/new")
       .attach("images", avatars[0], "image1.png")
       .attach("images", avatars[1], "image2.png")
@@ -80,13 +67,10 @@ describe("POST /work/update", () => {
   it("update work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
-    const agent = request.agent(app);
 
-    const userName = faker.internet.username();
-    const password = faker.internet.password();
     const profile = await repo.Profile.insertProfile(
-      userName,
-      password,
+      faker.internet.username(),
+      faker.internet.password(),
       faker.internet.displayName(),
       faker.lorem.sentence(2),
       faker.internet.url(),
@@ -97,18 +81,10 @@ describe("POST /work/update", () => {
     const topica = await repo.Topic.insertTopic(faker.company.name());
     const topicb = await repo.Topic.insertTopic(faker.company.name());
 
-    await agent
-      .post("/profile/login")
-      .send({
-        userName,
-        password,
-      })
-      .expect(200);
-
-    const title = faker.lorem.sentence(1);
-    const description = faker.lorem.sentence(2);
-    const content = faker.lorem.sentence(4);
-    const work = await agent
+    let title = faker.lorem.sentence(1);
+    let description = faker.lorem.sentence(2);
+    let content = faker.lorem.sentence(4);
+    const work = await request(app)
       .post("/work/new")
       .attach("images", avatars[0], "image1.png")
       .field("imagesPlaceholders[0]", "A")
@@ -121,7 +97,10 @@ describe("POST /work/update", () => {
       .expect(200);
     const workId = BigInt(work.body);
 
-    await agent
+    title = faker.lorem.sentence(2);
+    description = faker.lorem.sentence(4);
+    content = faker.lorem.sentence(6);
+    await request(app)
       .post("/work/update")
       .attach("images", avatars[1], "image2.png")
       .field("imagesPlaceholders[0]", "B")
@@ -132,7 +111,20 @@ describe("POST /work/update", () => {
       .field("topicIds[0]", topicb.id.toString())
       .expect(204)
       .then(async () => {
-        const comparisonWork = await repo.Work.selectWork(workId);
+        const comparisonWork = await repo.Work.selectWork(workId, true);
+        assert.equal(comparisonWork?.workImages.length, 2);
+        assert.equal(comparisonWork!.workImages[0].imagePlaceholder, "A");
+        assert.ok(
+          Buffer.from(comparisonWork!.workImages[0].image).equals(
+            Buffer.from(avatars[0])
+          )
+        );
+        assert.equal(comparisonWork?.workImages[1].imagePlaceholder, "B");
+        assert.ok(
+          Buffer.from(comparisonWork!.workImages[1].image).equals(
+            Buffer.from(avatars[1])
+          )
+        );
         assert.equal(comparisonWork?.title, title);
         assert.equal(comparisonWork?.description, description);
         assert.equal(comparisonWork?.content, content);
@@ -364,6 +356,7 @@ describe("POST /work_latest", () => {
             latestWorks[latestWorks.length - 1].updatedAt,
           true
         );
+        assert.equal(latestWorks.length, 5);
       });
 
     cleanup();
@@ -378,8 +371,8 @@ describe("POST /work_followed", () => {
     const title = faker.lorem.sentence(6);
     const description = faker.lorem.sentence(10);
     const content = faker.lorem.sentences(2);
-    let avatar: Buffer | undefined = getAvatar();
 
+    let avatar: Buffer | undefined = getAvatar();
     const userName = faker.internet.username();
     const password = faker.internet.password();
     const fullName = faker.internet.displayName();

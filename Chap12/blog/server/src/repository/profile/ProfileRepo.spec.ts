@@ -2,7 +2,7 @@ import { faker } from "@faker-js/faker";
 import { describe, it } from "node:test";
 import { getAvatar } from "../../__test__/avatar.js";
 import assert from "node:assert";
-import { type Work } from "../../generated/prisma/index.js";
+import { type Work } from "../../generated/prisma/client.js";
 import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils.js";
 
 describe("Repository Profile", () => {
@@ -143,7 +143,6 @@ describe("Repository Profile", () => {
     primaryUrl = faker.internet.url();
     secondaryUrl = faker.internet.url();
     await repo.Profile.updateProfile(
-      createdAuthor.id,
       createdAuthor.id,
       fullName,
       password,

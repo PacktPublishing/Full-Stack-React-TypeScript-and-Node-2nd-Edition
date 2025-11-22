@@ -2,7 +2,7 @@ import {
   PrismaClient,
   type WorkLike,
   type WorkTopic,
-} from "../../generated/prisma";
+} from "../../generated/prisma/client";
 import {
   selectWorksOfOneFollowed,
   selectWorksOfFollowed,
@@ -62,25 +62,10 @@ export class WorkRepo {
     title: string,
     description: string,
     content: string,
-    authorId: bigint,
     /// the topics here are considered overwrites, if any existing they will be deleted
     topicIds: bigint[],
     images?: WorkImageItem[]
   ) {
-    const work = this.#client.work.findFirst({
-      where: {
-        id: {
-          equals: workId,
-        },
-        authorId: {
-          equals: authorId,
-        },
-      },
-    });
-    if (!work) {
-      throw new Error("work not found or not owned by author");
-    }
-
     return await this.#client.$transaction(async (tx) => {
       await tx.work.update({
         where: {
@@ -93,6 +78,7 @@ export class WorkRepo {
         },
       });
 
+      // delete existing records that are not in topicIds
       const existingWorkTopics = await tx.workTopic.findMany({
         select: { id: true, topicId: true },
         where: {
@@ -115,6 +101,8 @@ export class WorkRepo {
         },
       });
 
+      // get records that are not already associated to Work,
+      // and add only those association
       const topicsToAdd = new Set<bigint>();
       const existingTopicIds = (
         await tx.workTopic.findMany({
@@ -147,7 +135,7 @@ export class WorkRepo {
     });
   }
 
-  async selectWork(workId: bigint) {
+  async selectWork(workId: bigint, includeImages: boolean = false) {
     return await this.#client.work.findFirst({
       select: {
         id: true,
@@ -163,6 +151,7 @@ export class WorkRepo {
             description: true,
           },
         },
+        workImages: includeImages,
         workTopics: {
           select: {
             topic: {

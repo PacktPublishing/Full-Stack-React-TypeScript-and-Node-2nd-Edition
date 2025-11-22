@@ -49,7 +49,6 @@ export const createWork = async (
 
     res.status(200).json(serializeBigInt(newWork.id));
   } catch (e) {
-    console.log("Error in /work/new:", e);
     next(e);
   }
 };
@@ -60,11 +59,6 @@ export const updateWork = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.userId) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
-
     let {
       workId,
       title,
@@ -99,7 +93,6 @@ export const updateWork = async (
       title,
       description,
       content,
-      req.userId,
       topicIds,
       workImages
     );

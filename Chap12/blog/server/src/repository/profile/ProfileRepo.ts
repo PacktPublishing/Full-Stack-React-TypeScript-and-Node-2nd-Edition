@@ -1,5 +1,4 @@
-import { PrismaClient } from "../../generated/prisma";
-import { hashPassword, verifyPassword } from "../../lib/utils/PasswordHash";
+import { PrismaClient } from "../../generated/prisma/client";
 import { PAGE_SIZE } from "../lib/Constants.js";
 
 export class ProfileRepo {
@@ -9,9 +8,10 @@ export class ProfileRepo {
     this.#client = client;
   }
 
+  // note: in chapter 12 we will learn about authentication and build out this function
   async login(
     userName: string,
-    password: string
+    _password: string
   ): Promise<{ status: boolean; profileId?: bigint }> {
     const profile = await this.#client.profile.findFirst({
       select: {
@@ -24,7 +24,8 @@ export class ProfileRepo {
     });
     if (!profile) return { status: false };
 
-    if (await verifyPassword(password, profile.password)) {
+    const isPasswordValid = true;
+    if (isPasswordValid) {
       return { status: true, profileId: profile.id };
     }
     return { status: false };
@@ -44,13 +45,11 @@ export class ProfileRepo {
       if (avatar) {
         const avatarResult = await tx.profileAvatar.create({
           data: {
-            avatar,
+            avatar: new Uint8Array(avatar),
           },
         });
         avatarId = avatarResult.id;
       }
-
-      const hashedPassword = await hashPassword(password);
 
       return await tx.profile.create({
         select: {
@@ -58,7 +57,7 @@ export class ProfileRepo {
         },
         data: {
           userName,
-          password: hashedPassword,
+          password,
           fullName,
           description,
           socialLinkPrimary,
@@ -70,8 +69,7 @@ export class ProfileRepo {
   }
 
   async updateProfile(
-    profileUpdaterId: bigint,
-    profileToUpdateId: bigint,
+    profileId: bigint,
     fullName: string,
     password: string,
     description: string,
@@ -79,10 +77,6 @@ export class ProfileRepo {
     socialLinkSecondary: string | undefined,
     avatar: Buffer | undefined
   ) {
-    if (profileUpdaterId !== profileToUpdateId) {
-      throw new Error("You can update only your own profile");
-    }
-
     return await this.#client.$transaction(async (tx) => {
       let avatarId: bigint | undefined;
       if (avatar) {
@@ -91,7 +85,7 @@ export class ProfileRepo {
             avatarId: true,
           },
           where: {
-            id: profileToUpdateId,
+            id: profileId,
           },
         });
         if (currentAvatarId && currentAvatarId.avatarId) {
@@ -102,32 +96,30 @@ export class ProfileRepo {
           });
           const avatarResult = await tx.profileAvatar.create({
             data: {
-              avatar,
+              avatar: new Uint8Array(avatar),
             },
           });
           avatarId = avatarResult.id;
         } else {
           const avatarResult = await tx.profileAvatar.create({
             data: {
-              avatar,
+              avatar: new Uint8Array(avatar),
             },
           });
           avatarId = avatarResult.id;
         }
       }
 
-      const hashedPassword = await hashPassword(password);
-
       return await tx.profile.update({
         select: {
           id: true,
         },
         where: {
-          id: profileToUpdateId,
+          id: profileId,
         },
         data: {
           fullName,
-          password: hashedPassword,
+          password,
           description,
           socialLinkPrimary,
           socialLinkSecondary,
