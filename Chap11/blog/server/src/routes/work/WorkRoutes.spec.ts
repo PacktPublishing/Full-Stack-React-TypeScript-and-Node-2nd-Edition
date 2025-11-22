@@ -435,7 +435,7 @@ describe("POST /work_followed", () => {
 });
 
 describe("POST /work_followed_one", () => {
-  it.only("get one followed profile's works", async () => {
+  it("get one followed profile's works", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 
