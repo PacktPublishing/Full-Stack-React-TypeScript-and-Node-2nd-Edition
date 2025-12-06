@@ -57,13 +57,12 @@ describe("POST /work_resp/new", () => {
       .expect(200);
     const workId = workResp.body;
 
-    const responseStr = faker.lorem.sentence(1);
     await request(app)
       .post("/work_resp/new")
       .send({
         workId: serializeBigInt(workId),
         responderId: serializeBigInt(responder.id),
-        response: responseStr,
+        response: faker.lorem.sentence(1),
       })
       .expect("Content-Type", /json/)
       .expect(200)
@@ -76,7 +75,7 @@ describe("POST /work_resp/new", () => {
 });
 
 describe("POST /work_resp", () => {
-  it("get response to a work", async () => {
+  it.only("get response to a work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 

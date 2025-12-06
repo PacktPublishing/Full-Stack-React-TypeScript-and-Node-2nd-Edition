@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import { type FollowParams } from "./FollowModels";
 import { serializeBigInt } from "lib/src/JsonUtils";
-import { type PagingParams } from "../PagingParams";
+import { type PagingParams } from "../../routes/PagingParams";
 
 export async function createFollow(
   req: Request,

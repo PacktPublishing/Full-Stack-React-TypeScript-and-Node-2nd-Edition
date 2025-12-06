@@ -71,7 +71,7 @@ describe("POST /work_like/new", () => {
 });
 
 describe("POST /work_like/:workId", () => {
-  it("get work like", async () => {
+  it.only("get work like", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 

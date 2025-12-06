@@ -1,8 +1,4 @@
 import { Router } from "express";
-import {
-  createWorkLike,
-  getWorkLikesCount,
-} from "../../controllers/work/WorkLikesController";
 import { serializeBigInt } from "lib";
 
 const router = Router();
@@ -22,6 +18,14 @@ router.post("/work_like/new", async (req, res, next) => {
     next(e);
   }
 });
-router.get("/work_like/:workId", getWorkLikesCount);
+
+router.get("/work_like/:workId", async (req, res, next) => {
+  try {
+    const workId = req.params.workId as unknown as bigint;
+    res.status(200).json(await req.repo.WorkLikes.selectWorkLikesCount(workId));
+  } catch (e) {
+    next(e);
+  }
+});
 
 export default router;

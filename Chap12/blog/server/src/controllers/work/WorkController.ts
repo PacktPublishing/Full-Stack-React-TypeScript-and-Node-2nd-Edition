@@ -1,8 +1,14 @@
 import type { NextFunction, Request, Response } from "express";
 import { serializeBigInt } from "lib";
-import type { CreateWorkParams, UpdateWorkParams } from "./WorkModels";
+import type {
+  CreateWorkParams,
+  UpdateWorkParams,
+} from "../../routes/work/WorkModels";
 import type { WorkImageItem } from "../../repository/work/WorkImage";
-import type { PagingParams, PopularWorkParams } from "../PagingParams";
+import type {
+  PagingParams,
+  PopularWorkParams,
+} from "../../routes/PagingParams";
 
 export const createWork = async (
   req: Request,

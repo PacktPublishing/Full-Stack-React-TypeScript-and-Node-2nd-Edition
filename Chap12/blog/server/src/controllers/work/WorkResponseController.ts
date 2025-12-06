@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { serializeBigInt } from "lib";
-import type { PagingParams } from "../PagingParams";
+import type { PagingParams } from "../../routes/PagingParams";
 
 export const createWorkResponse = async (
   req: Request,
