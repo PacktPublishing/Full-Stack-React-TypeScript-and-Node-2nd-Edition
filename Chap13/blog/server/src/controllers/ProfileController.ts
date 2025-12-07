@@ -1,9 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { serializeBigInt } from "lib";
 import { OctetType } from "./lib/Constants";
-import { clearAuthCookies, setAuthCookies } from "./lib/AuthenticationUtils";
-import type z from "zod";
-import type { createProfileSchema } from "lib/dist/validation/ProfileSchema";
 
 export const createProfileAvatar = async (
   req: Request,
@@ -41,53 +38,12 @@ export const getProfileAvatar = async (
   }
 };
 
-export const login = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    const { userName, password }: { userName: string; password: string } =
-      req.body;
-    const result = await req.repo.Profile.login(userName, password);
-
-    if (!result.status && !result.profileId) {
-      res.status(401).json({ message: "Failed to authenticate" });
-      return;
-    }
-
-    const userId = result.profileId!.toString();
-    setAuthCookies(res, userId);
-
-    res.status(200).json({
-      userId,
-    });
-  } catch (e) {
-    console.log("login error:", e);
-    next(e);
-  }
-};
-
-export const logout = async (
-  _req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  try {
-    clearAuthCookies(res);
-    res.status(204).send();
-  } catch (e) {
-    next(e);
-  }
-};
-
 export const createProfile = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
-    type Body = z.infer<typeof createProfileSchema>;
     const {
       userName,
       password,
@@ -95,7 +51,14 @@ export const createProfile = async (
       description,
       socialLinkPrimary,
       socialLinkSecondary,
-    }: Body = req.body;
+    }: {
+      userName: string;
+      password: string;
+      fullName: string;
+      description: string;
+      socialLinkPrimary: string | undefined;
+      socialLinkSecondary: string | undefined;
+    } = req.body;
 
     const profile = await req.repo.Profile.insertProfile(
       userName,
@@ -119,11 +82,6 @@ export const updateProfile = async (
   next: NextFunction
 ) => {
   try {
-    if (!req.userId) {
-      res.status(401).send("Unauthorized");
-      return;
-    }
-
     const {
       profileId,
       fullName,
@@ -141,8 +99,7 @@ export const updateProfile = async (
     } = req.body;
 
     await req.repo.Profile.updateProfile(
-      req.userId,
-      BigInt(profileId),
+      profileId,
       fullName,
       password,
       description,

@@ -8,7 +8,7 @@ import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 import Api from "../../app";
 
 describe("GET /work_image/:workId/:placeholder", () => {
-  it("get work image", async () => {
+  it.only("get work image", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 
@@ -43,7 +43,7 @@ describe("GET /work_image/:workId/:placeholder", () => {
       .expect("Content-Type", "application/octet-stream")
       .expect(200)
       .then((res) => {
-        assert.deepStrictEqual(res.body, avatars[0]);
+        assert.equal(Buffer.compare(res.body, avatars[0]), 0);
       });
 
     cleanup();

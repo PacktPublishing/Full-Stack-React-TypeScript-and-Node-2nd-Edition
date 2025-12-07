@@ -9,10 +9,7 @@ export const getWorkImage = async (
     const workId = req.params.workId as unknown as bigint;
     const placeholder = req.params.placeholder;
 
-    const image = await req.repo.WorkImage.selectWorkImage(
-      BigInt(workId),
-      placeholder
-    );
+    const image = await req.repo.WorkImage.selectWorkImage(workId, placeholder);
 
     res.status(200).contentType("application/octet-stream").send(image?.image);
   } catch (e) {

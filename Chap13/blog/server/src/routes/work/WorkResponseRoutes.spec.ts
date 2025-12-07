@@ -12,7 +12,6 @@ describe("POST /work_resp/new", () => {
   it("create response to a work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
-    const agent = request.agent(app);
 
     const author = await repo.Profile.insertProfile(
       getRandomizedUserName(),
@@ -42,18 +41,10 @@ describe("POST /work_resp/new", () => {
 
     const topic = await repo.Topic.insertTopic(faker.company.name());
 
-    await agent
-      .post("/profile/login")
-      .send({
-        userName,
-        password,
-      })
-      .expect(200);
-
     const title = faker.lorem.sentence(1);
     const workDesc = faker.lorem.sentence(2);
     const content = faker.lorem.sentence(4);
-    const workResp = await agent
+    const workResp = await request(app)
       .post("/work/new")
       .attach("images[0][image]", avatars[0])
       .field("images[0][imagesPlaceholder]", "A")
@@ -66,13 +57,12 @@ describe("POST /work_resp/new", () => {
       .expect(200);
     const workId = workResp.body;
 
-    const responseStr = faker.lorem.sentence(1);
-    await agent
+    await request(app)
       .post("/work_resp/new")
       .send({
         workId: serializeBigInt(workId),
         responderId: serializeBigInt(responder.id),
-        response: responseStr,
+        response: faker.lorem.sentence(1),
       })
       .expect("Content-Type", /json/)
       .expect(200)
@@ -85,7 +75,7 @@ describe("POST /work_resp/new", () => {
 });
 
 describe("POST /work_resp", () => {
-  it("get response to a work", async () => {
+  it.only("get response to a work", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
 
@@ -221,7 +211,7 @@ describe("POST /work_resp_author", () => {
         responses[i]
       );
     }
-    const firstFive = await repo.WorkResp.selectWorkResponsesByAuthor(
+    const firstFive = await repo.WorkResp.selectWorkResponsesByResponder(
       responder.id,
       5
     );

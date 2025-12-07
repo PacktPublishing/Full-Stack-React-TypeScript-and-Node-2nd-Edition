@@ -14,12 +14,11 @@ describe("POST /follow/new", () => {
   it("create new follow and return 200", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
-    const agent = request.agent(app);
 
     const userName = getRandomizedUserName();
     const password = faker.internet.password();
 
-    const profilea = await agent
+    const profilea = await request(app)
       .post("/profile/new")
       .attach("file", getAvatar(), {
         filename: "test.jpg",
@@ -34,7 +33,7 @@ describe("POST /follow/new", () => {
       .expect(200);
     const profileaId = profilea.body;
 
-    const profileb = await agent
+    const profileb = await request(app)
       .post("/profile/new")
       .attach("file", getAvatar(), {
         filename: "test.jpg",
@@ -49,15 +48,7 @@ describe("POST /follow/new", () => {
       .expect(200);
     const profilebId = profileb.body;
 
-    await agent
-      .post("/profile/login")
-      .send({
-        userName,
-        password,
-      })
-      .expect(200);
-
-    await agent
+    await request(app)
       .post("/follow/new")
       .send({
         followedId: profileaId,

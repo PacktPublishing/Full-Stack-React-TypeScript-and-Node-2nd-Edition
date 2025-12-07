@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { serializeBigInt } from "lib";
-import type { PagingParams } from "../PagingParams";
+import type { PagingParams } from "../../routes/PagingParams";
 
 export const createWorkResponse = async (
   req: Request,
@@ -50,7 +50,7 @@ export const getWorkResponses = async (
   }
 };
 
-export const getWorkResponsesByAuthor = async (
+export const getWorkResponsesByResponder = async (
   req: Request,
   res: Response,
   next: NextFunction
@@ -61,7 +61,7 @@ export const getWorkResponsesByAuthor = async (
       .status(200)
       .json(
         serializeBigInt(
-          await req.repo.WorkResp.selectWorkResponsesByAuthor(
+          await req.repo.WorkResp.selectWorkResponsesByResponder(
             id,
             pageSize,
             lastCursor

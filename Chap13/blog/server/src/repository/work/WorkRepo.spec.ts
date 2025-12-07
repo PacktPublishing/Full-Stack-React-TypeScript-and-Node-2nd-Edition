@@ -82,7 +82,6 @@ describe("Work tests", () => {
       updateTitle,
       updateDesc,
       updateContent,
-      author.id,
       [topicb.id] // work updated where topica is removed and topicb is added
     );
     const updatedWork = await repo.Work.selectWork(work.id);
@@ -352,10 +351,6 @@ describe("Work tests", () => {
 
   it("selectWorksOfFollowed, gets works by follower's followed users desc", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
-    const title = faker.lorem.sentence(6);
-    const description = faker.lorem.sentence(10);
-    const content = faker.lorem.sentences(2);
-    let avatar: Buffer | undefined = getAvatar();
 
     const userName = faker.internet.username();
     const password = faker.internet.password();
@@ -368,12 +363,15 @@ describe("Work tests", () => {
       desc,
       faker.internet.url(),
       faker.internet.url(),
-      avatar
+      getAvatar()
     );
 
     const topic = await repo.Topic.insertTopic(faker.company.name());
     const followedCount = 10;
     const followedWorkIds: bigint[] = [];
+    const title = faker.lorem.sentence(6);
+    const description = faker.lorem.sentence(10);
+    const content = faker.lorem.sentences(2);
     for (let i = 0; i < followedCount; i++) {
       const followed = await repo.Profile.insertProfile(
         faker.internet.username(),

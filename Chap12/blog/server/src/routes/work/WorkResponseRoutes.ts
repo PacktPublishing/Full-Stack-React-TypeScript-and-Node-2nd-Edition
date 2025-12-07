@@ -1,9 +1,4 @@
 import { Router } from "express";
-import {
-  createWorkResponse,
-  getWorkResponses,
-  getWorkResponsesByAuthor,
-} from "../../controllers/work/WorkResponseController";
 import { serializeBigInt } from "lib";
 import type { PagingParams } from "../PagingParams";
 
@@ -49,6 +44,23 @@ router.post("/work_resp", async (req, res, next) => {
   }
 });
 
-router.post("/work_resp_author", getWorkResponsesByAuthor);
+router.post("/work_resp_author", async (req, res, next) => {
+  try {
+    const { id, pageSize, lastCursor }: PagingParams = req.body;
+    res
+      .status(200)
+      .json(
+        serializeBigInt(
+          await req.repo.WorkResp.selectWorkResponsesByResponder(
+            id,
+            pageSize,
+            lastCursor
+          )
+        )
+      );
+  } catch (e) {
+    next(e);
+  }
+});
 
 export default router;
