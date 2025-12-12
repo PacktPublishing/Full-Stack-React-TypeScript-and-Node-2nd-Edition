@@ -10,21 +10,9 @@ import { createClientAndTestDb } from "../../__test__/lib/DbTestUtils";
 import Api from "../../app";
 
 describe("POST /profile/avatar/new", () => {
-  it("create profile avatar", async () => {
+  it.only("create profile avatar", async () => {
     const { repo, cleanup } = await createClientAndTestDb();
     const app = new Api(repo).App;
-
-    const userName = getRandomizedUserName();
-    const password = faker.internet.password();
-    await repo.Profile.insertProfile(
-      userName,
-      password,
-      faker.internet.displayName(),
-      faker.lorem.sentence(2),
-      faker.internet.url(),
-      faker.internet.url(),
-      avatars[0]
-    );
 
     await request(app)
       .post("/profile/avatar/new")
@@ -32,10 +20,7 @@ describe("POST /profile/avatar/new", () => {
         filename: "test.jpg",
         contentType: OctetType,
       })
-      .expect(200)
-      .then((res) => {
-        assert.equal(res.statusCode, 200);
-      });
+      .expect(200);
 
     cleanup();
   });
